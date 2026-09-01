@@ -34,18 +34,30 @@
 - 完整模式要求安装 Figma、GitHub，但当前任务不使用时可以保持“未连接（当前不要求）”。
 
 Skill 安装：
-- 优先使用系统自带的 skill-installer；也可以执行依赖清单中的固定 npx skills add 命令。
-- 只从依赖清单固定的 GitHub 仓库安装以下缺失 Skill：
-  - tdd-workflow
-  - frontend-design
-  - api-design
-  - security-review
-  - design-taste-frontend
-  - web-design-guidelines
-  - vercel-react-best-practices
-- 已存在同名 Skill 时不要覆盖。
-- 已存在同名 Skill 时读取其 SKILL.md，核对名称、描述和可识别来源；来源无法确认时标记
-  “来源未验证”，不要直接当作满足依赖。
+- 使用 `codex skills add <GITHUB_REPO> --path <SKILLS_PATH> --skills-dir "$CODEX_HOME/skills"`
+  安装 GitHub 仓库中的 Skill；备选 `skill-installer` Python 脚本。
+- 只从以下精确路径安装缺失 Skill（**必须指定 `--path`，仅凭名称会命中同名 fork**）：
+
+  Skill                          来源仓库                        实际路径
+  tdd-workflow                   affaan-m/everything-claude-code  skills/tdd-workflow
+  api-design                     affaan-m/everything-claude-code  skills/api-design
+  security-review                affaan-m/everything-claude-code  skills/security-review
+  frontend-design                anthropics/skills                skills/frontend-design
+  frontend-design-direction      affaan-m/everything-claude-code  skills/frontend-design-direction
+  taste-skill                    leonxlnx/taste-skill             skills/taste-skill
+  react-best-practices           vercel-labs/agent-skills         skills/react-best-practices
+  web-design-guidelines          vercel-labs/agent-skills         skills/web-design-guidelines
+
+- `codex skills add` 示例（安装 tdd-workflow）：
+  codex skills add affaan-m/everything-claude-code --path skills/tdd-workflow --skills-dir "$CODEX_HOME/skills"
+- `skill-installer` Python 备选（目标也是 `$CODEX_HOME/skills`）：
+  python "$CODEX_HOME/skills/.system/skill-installer/scripts/install-skill-from-github.py"
+        --repo affaan-m/everything-claude-code --path skills/tdd-workflow
+- 若 install 报 "Skill path not found"，先用 API
+  `https://api.github.com/repos/<owner>/<repo>/contents/skills`
+  核对仓库中的实际目录名，再重新安装。
+- 已存在同名 Skill 时不要覆盖；读取其 SKILL.md 核对名称、描述和可识别来源，
+  来源无法确认时标记"来源未验证"，不要直接当作满足依赖。
 - Skill 安装后若要到下一轮对话才可发现，请明确说明并停止在该边界。
 
 验证：
