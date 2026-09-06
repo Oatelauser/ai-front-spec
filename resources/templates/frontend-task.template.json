@@ -1,0 +1,10 @@
+{
+  "taskType": "new-page",
+  "goal": "<待填写：用户完成的事情>",
+  "sources": [],
+  "target": { "route": "<待填写>", "path": "<待填写>" },
+  "constraints": [],
+  "acceptance": [],
+  "confirmedDecisions": [],
+  "unverified": []
+}

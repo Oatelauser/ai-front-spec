@@ -1,0 +1,5 @@
+interface:
+  display_name: "Frontend Task"
+  short_description: "Implement frontend work from visual sources and APIs"
+  default_prompt: "Use $frontend-task to implement and verify a frontend task."
+

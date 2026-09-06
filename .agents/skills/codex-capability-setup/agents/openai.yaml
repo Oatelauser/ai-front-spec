@@ -1,0 +1,5 @@
+interface:
+  display_name: "Codex Capability Setup"
+  short_description: "Audit, install, and verify Codex capabilities"
+  default_prompt: "Use $codex-capability-setup to audit or install approved Codex capabilities."
+
