@@ -14,6 +14,7 @@
 - `来源映射.md`：说明原项目材料如何去业务化、参数化并映射到通用模板。
 - `给Codex的安装提示词.md`：可直接交给 Codex，自动检查并安装缺失插件与 Skill。
 - `通用模板/`：可以合并到新项目根目录的完整脚手架。
+- `通用模板/docs/FRONTEND_CONVENTIONS.md`：可选的前端领域约定；只在项目画像确认前端技术栈并经用户批准后接入。
 
 ## 快速接入
 
@@ -59,6 +60,7 @@ Python 或 CI 门禁。
    ├─ package-scripts.example.json
    ├─ docs/
    │  ├─ PROJECT_PROFILE.md
+   │  ├─ FRONTEND_CONVENTIONS.md
    │  ├─ AI_PROMPT_ENGINEERING.md
    │  ├─ AI_TASK_PROMPT.md
    │  ├─ AI_PAGE_PROMPT.md
@@ -82,7 +84,9 @@ Python 或 CI 门禁。
 日常复杂任务只需补充会改变结果的信息：
 
 ```text
-使用 $project-workflow 完成本次任务。
+遵循当前仓库的 AGENTS.md 和项目工作流。
+
+如果当前宿主不能自动发现项目工作流，再显式加载 `$project-workflow`。
 
 目标：
 - 最终要改变什么，以及用户能完成什么。
