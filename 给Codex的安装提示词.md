@@ -22,10 +22,10 @@
 4. 通用模板/docs/PROJECT_PROFILE.md。
 
 插件安装：
-- 使用 Codex Plugin Management 搜索并安装：
-  - product-design@openai-curated-remote
-  - figma@openai-curated-remote
-  - github@openai-curated-remote
+- 使用 Codex Plugin Management 搜索并安装当前已配置 marketplace 中的精确插件：
+  - product-design（当前环境通常显示为 `product-design@openai-api-curated`）
+  - figma（当前环境通常显示为 `figma@openai-api-curated`）
+  - github（当前环境若未列出该插件，应先刷新或配置包含 GitHub 的 marketplace；不要手工复制插件）
 - 已安装且启用时跳过。
 - 只安装上面三个精确插件，不选择相似名称。
 - browser@openai-bundled、chrome@openai-bundled、computer-use@openai-bundled 属于宿主能力；
@@ -34,9 +34,10 @@
 - 完整模式要求安装 Figma、GitHub，但当前任务不使用时可以保持“未连接（当前不要求）”。
 
 Skill 安装：
-- 使用 `codex skills add <GITHUB_REPO> --path <SKILLS_PATH> --skills-dir "$CODEX_HOME/skills"`
+- 使用 `npx skills add <GITHUB_REPO> --skill <SKILL_NAME> -g -y`
   安装 GitHub 仓库中的 Skill；备选 `skill-installer` Python 脚本。
-- 只从以下精确路径安装缺失 Skill（**必须指定 `--path`，仅凭名称会命中同名 fork**）：
+- 只从以下精确仓库和路径安装缺失 Skill（使用 `npx skills add` 时必须指定表中的精确
+  `--skill` 名称；使用 Python 备选时必须指定对应 `--path`，不能只按显示名称安装）：
 
   Skill                          来源仓库                        实际路径
   tdd-workflow                   affaan-m/everything-claude-code  skills/tdd-workflow
@@ -44,12 +45,12 @@ Skill 安装：
   security-review                affaan-m/everything-claude-code  skills/security-review
   frontend-design                anthropics/skills                skills/frontend-design
   frontend-design-direction      affaan-m/everything-claude-code  skills/frontend-design-direction
-  taste-skill                    leonxlnx/taste-skill             skills/taste-skill
-  react-best-practices           vercel-labs/agent-skills         skills/react-best-practices
+  design-taste-frontend          leonxlnx/taste-skill             skills/taste-skill
+  vercel-react-best-practices    vercel-labs/agent-skills         skills/react-best-practices
   web-design-guidelines          vercel-labs/agent-skills         skills/web-design-guidelines
 
-- `codex skills add` 示例（安装 tdd-workflow）：
-  codex skills add affaan-m/everything-claude-code --path skills/tdd-workflow --skills-dir "$CODEX_HOME/skills"
+- `npx skills add` 示例（安装 tdd-workflow）：
+  npx skills add https://github.com/affaan-m/everything-claude-code --skill tdd-workflow -g -y
 - `skill-installer` Python 备选（目标也是 `$CODEX_HOME/skills`）：
   python "$CODEX_HOME/skills/.system/skill-installer/scripts/install-skill-from-github.py"
         --repo affaan-m/everything-claude-code --path skills/tdd-workflow

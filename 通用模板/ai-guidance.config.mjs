@@ -37,7 +37,7 @@ export default {
     requiredMarkers: [
       '$tdd-workflow',
       '$product-design:index',
-      '$design-taste-frontend',
+      '$frontend-design-direction',
       '$frontend-design',
       '$product-design:image-to-code',
       '$figma:figma-use',
@@ -56,11 +56,12 @@ export default {
   capabilityRequirements: {
     path: 'docs/AI_CAPABILITY_REQUIREMENTS.md',
     requiredMarkers: [
-      'product-design@openai-curated-remote',
-      'figma@openai-curated-remote',
-      'github@openai-curated-remote',
+      'product-design@openai-api-curated',
+      'figma@openai-api-curated',
+      'github',
       'browser@openai-bundled',
       'affaan-m/everything-claude-code',
+      'anthropics/skills',
       'leonxlnx/taste-skill',
       'vercel-labs/agent-skills',
     ],

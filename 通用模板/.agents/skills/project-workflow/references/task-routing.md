@@ -9,7 +9,7 @@
 | 任务 | 组合 | 边界 |
 | --- | --- | --- |
 | 普通功能、缺陷修复、状态规则 | `$tdd-workflow` | 先复现或写失败测试；不自动启用 Product Design |
-| 无定稿视觉源的新页面或重新设计 | `$product-design:index` + `$design-taste-frontend`，实现阶段再用 `$frontend-design` | Product Design 负责方向和体验，项目设计系统负责落地；自主选定最佳方向 |
+| 无定稿视觉源的新页面或重新设计 | `$product-design:index` + `$frontend-design-direction`，实现阶段再用 `$frontend-design` | Product Design 负责方向和体验，项目设计系统负责落地；自主选定最佳方向 |
 | 从截图或选定视觉稿忠实实现 | `$product-design:image-to-code` | 视觉源决定布局，项目组件、可访问性和工程规则决定实现方式 |
 | 创建或更新可编辑 Figma 页面 | `$figma:figma-use` + `$figma:figma-generate-design` | 写 Figma 前必须先加载 figma-use；没有文件时先用 `$figma:figma-create-new-file` |
 | 从 Figma 实现代码 | `$figma:figma-design-to-code` | 先获取 design context；返回代码只作参考，必须适配项目技术栈与组件系统 |

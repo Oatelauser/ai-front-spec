@@ -31,9 +31,9 @@
 
 | 插件 | 精确插件引用 | 提供的组合能力 | 安装级别 | 额外连接 |
 | --- | --- | --- | --- | --- |
-| Product Design | `product-design@openai-curated-remote` | `$product-design:index`、`$product-design:image-to-code`、`$product-design:audit` | 完整模式必装；无 UI 项目可省略 | 无 |
-| Figma | `figma@openai-curated-remote` | `$figma:figma-use`、`$figma:figma-create-new-file`、`$figma:figma-generate-design`、`$figma:figma-design-to-code` | 使用 Figma 时安装 | 需要连接 Figma |
-| GitHub | `github@openai-curated-remote` | PR、Issue、远端仓库读取与写入 | 使用 GitHub 远端操作时安装 | 需要连接 GitHub |
+| Product Design | `product-design@openai-api-curated`（或当前配置的等价 marketplace） | `$product-design:index`、`$product-design:image-to-code`、`$product-design:audit` | 完整模式必装；无 UI 项目可省略 | 无 |
+| Figma | `figma@openai-api-curated`（或当前配置的等价 marketplace） | `$figma:figma-use`、`$figma:figma-create-new-file`、`$figma:figma-generate-design`、`$figma:figma-design-to-code` | 使用 Figma 时安装 | 需要连接 Figma |
+| GitHub | `github`（由当前 Plugin Management 显示的 marketplace 补全） | PR、Issue、远端仓库读取与写入 | 使用 GitHub 远端操作时安装 | 需要连接 GitHub |
 
 安装规则：
 
@@ -64,12 +64,13 @@
 | Skill | 固定来源 | 安装命令 |
 | --- | --- | --- |
 | `$tdd-workflow` | `affaan-m/everything-claude-code` | `npx skills add https://github.com/affaan-m/everything-claude-code --skill tdd-workflow -g -y` |
-| `$frontend-design` | `affaan-m/everything-claude-code` | `npx skills add https://github.com/affaan-m/everything-claude-code --skill frontend-design -g -y` |
+| `$frontend-design` | `anthropics/skills` | `npx skills add https://github.com/anthropics/skills --skill frontend-design -g -y` |
 | `$api-design` | `affaan-m/everything-claude-code` | `npx skills add https://github.com/affaan-m/everything-claude-code --skill api-design -g -y` |
 | `$security-review` | `affaan-m/everything-claude-code` | `npx skills add https://github.com/affaan-m/everything-claude-code --skill security-review -g -y` |
-| `$design-taste-frontend` | `leonxlnx/taste-skill` | `npx skills add https://github.com/leonxlnx/taste-skill --skill design-taste-frontend -g -y` |
+| `$frontend-design-direction` | `affaan-m/everything-claude-code` | `npx skills add https://github.com/affaan-m/everything-claude-code --skill frontend-design-direction -g -y` |
+| `$design-taste-frontend` | `leonxlnx/taste-skill`（目录 `skills/taste-skill`） | `npx skills add https://github.com/leonxlnx/taste-skill --skill taste-skill -g -y` |
 | `$web-design-guidelines` | `vercel-labs/agent-skills` | `npx skills add https://github.com/vercel-labs/agent-skills --skill web-design-guidelines -g -y` |
-| `$vercel-react-best-practices` | `vercel-labs/agent-skills` | `npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices -g -y` |
+| `$vercel-react-best-practices` | `vercel-labs/agent-skills`（目录 `skills/react-best-practices`） | `npx skills add https://github.com/vercel-labs/agent-skills --skill react-best-practices -g -y` |
 
 这些命令使用 `-g` 安装到用户级 Skill 目录，不修改业务仓库。来源默认跟随上游仓库当前版本；
 需要可重复构建的团队应在自己的安装流程中固定审核过的提交。安装后通常需要开启新一轮 Codex
@@ -99,6 +100,7 @@
 $project-workflow
 $tdd-workflow
 $product-design:index
+$frontend-design-direction
 $design-taste-frontend
 $frontend-design
 $product-design:image-to-code
@@ -121,7 +123,7 @@ GitHub 插件
 ## 5. 安装模式
 
 - **核心模式**：`$project-workflow` + `$tdd-workflow` + `$api-design` + `$security-review`。
-- **UI 模式**：核心模式 + Product Design + `$design-taste-frontend` + `$frontend-design` +
+- **UI 模式**：核心模式 + Product Design + `$frontend-design-direction` + `$frontend-design` +
   `$web-design-guidelines` + 浏览器能力。
 - **React UI 模式**：UI 模式 + `$vercel-react-best-practices`。
 - **Figma 模式**：UI 模式 + Figma 插件及连接。
@@ -141,9 +143,9 @@ GitHub 插件
 
 - Product Design、Figma、GitHub 插件引用已通过 Codex Plugin Management 核验。
 - [TDD Workflow](https://skills.sh/affaan-m/everything-claude-code/tdd-workflow)
-- [Frontend Design](https://skills.sh/affaan-m/everything-claude-code/frontend-design)
+- [Frontend Design](https://skills.sh/anthropics/skills/frontend-design)
 - [API Design](https://skills.sh/affaan-m/everything-claude-code/api-design)
 - [Security Review](https://skills.sh/affaan-m/everything-claude-code/security-review)
-- [Design Taste Frontend](https://skills.sh/leonxlnx/taste-skill/design-taste-frontend)
+- [Design Taste Frontend](https://skills.sh/leonxlnx/taste-skill/taste-skill)
 - [Web Design Guidelines](https://skills.sh/vercel-labs/agent-skills/web-design-guidelines)
-- [Vercel React Best Practices](https://skills.sh/vercel-labs/agent-skills/vercel-react-best-practices)
+- [Vercel React Best Practices](https://skills.sh/vercel-labs/agent-skills/react-best-practices)
