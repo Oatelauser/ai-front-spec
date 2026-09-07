@@ -285,6 +285,12 @@
       "mode": "merge"
     },
     {
+      "source": "resources/scripts/lib/bootstrap-profile-selection.test.mjs",
+      "target": ".codex/scripts/lib/bootstrap-profile-selection.test.mjs",
+      "group": "local",
+      "mode": "merge"
+    },
+    {
       "source": "resources/templates/agents.template.md",
       "target": ".codex/templates/agents.template.md",
       "group": "local",

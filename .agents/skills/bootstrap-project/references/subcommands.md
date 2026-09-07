@@ -9,7 +9,7 @@ This is the command contract for `$bootstrap-project`. These are skill-level int
 | `init` | Orchestrate all authorized stages in dependency order | Yes, after confirmation |
 | `status` | Show stage, profile, migration and drift state | No |
 | `inspect` | Collect repository facts, resources and template candidates | No |
-| `profile init` | Select a template and create the first profile plan | Plan plus confirmed apply |
+| `profile init` | Read all `toolkit.json` profile candidates, show the recommendation and choice/pending options, then create the first profile plan | Plan plus confirmed apply |
 | `profile plan` | Plan profile completion or update from current evidence | Plan artifact only |
 | `profile apply` | Apply a current, confirmed profile plan | Yes |
 | `profile migrate plan/apply` | Plan and apply an explicitly requested template/schema migration | Plan / yes |
@@ -21,6 +21,8 @@ This is the command contract for `$bootstrap-project`. These are skill-level int
 | `report` | Summarize every stage and unresolved evidence | No |
 
 `init` is equivalent to `inspect`, profile preparation, then the requested guidance, capability, scaffold and validation stages. It must not scaffold an application without explicit authorization. `profile init` is the first-run convenience flow; `profile migrate plan/apply` is the explicit change flow after initialization.
+
+When no application or framework evidence exists, `profile init` must still show every readable candidate. It marks one as `recommended` (normally generic) but leaves `selected` empty until the user chooses. A pending template may proceed to framework-neutral guidance, capability and validation stages; it cannot authorize framework-specific scaffolding or profile defaults.
 
 ## Plan/apply protocol
 
