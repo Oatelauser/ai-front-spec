@@ -189,6 +189,18 @@
       "mode": "merge"
     },
     {
+      "source": ".agents/skills/frontend-task/references/subcommands.md",
+      "target": ".agents/skills/frontend-task/references/subcommands.md",
+      "group": "core",
+      "mode": "merge"
+    },
+    {
+      "source": ".agents/skills/frontend-task/references/task-state.md",
+      "target": ".agents/skills/frontend-task/references/task-state.md",
+      "group": "core",
+      "mode": "merge"
+    },
+    {
       "source": "resources/docs/AI_ACCEPTANCE_EVIDENCE.md",
       "target": "docs/AI_ACCEPTANCE_EVIDENCE.md",
       "group": "core",
@@ -287,6 +299,12 @@
     {
       "source": "resources/templates/frontend-task.template.json",
       "target": ".codex/templates/frontend-task.template.json",
+      "group": "local",
+      "mode": "merge"
+    },
+    {
+      "source": "resources/templates/task-state.template.json",
+      "target": ".codex/templates/task-state.template.json",
       "group": "local",
       "mode": "merge"
     },

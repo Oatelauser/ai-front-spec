@@ -25,7 +25,7 @@ export default {
       'acceptance-checklist', 'subcommands', 'state-model']
       .map(name => `.agents/skills/bootstrap-project/references/${name}.md`),
     ...['source-routing', 'common-workflow', 'screenshot-workflow', 'prototype-workflow', 'html-workflow',
-      'figma-workflow', 'api-workflow', 'requirement-workflow', 'acceptance-matrix']
+      'figma-workflow', 'api-workflow', 'requirement-workflow', 'acceptance-matrix', 'subcommands', 'task-state']
       .map(name => `.agents/skills/frontend-task/references/${name}.md`),
     ...['setup-phases', 'install-policy', 'verification-checklist', 'status-model']
       .map(name => `.agents/skills/codex-capability-setup/references/${name}.md`),

@@ -1,4 +1,5 @@
 {
+  "taskId": "<task-id>",
   "taskType": "new-page",
   "goal": "<待填写：用户完成的事情>",
   "sources": [],
@@ -6,5 +7,6 @@
   "constraints": [],
   "acceptance": [],
   "confirmedDecisions": [],
-  "unverified": []
+  "unverified": [],
+  "requestedStage": "full"
 }

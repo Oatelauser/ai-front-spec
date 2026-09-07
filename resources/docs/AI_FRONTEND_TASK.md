@@ -36,6 +36,12 @@
 - [未验证项；没有则写“无”]
 ```
 
+## 阶段子命令与任务记录
+
+`$frontend-task` 支持 `inspect`、`plan`、`confirm`、`implement`、`verify`、`report` 和 `resume` 子命令，也支持按依赖顺序组合调用。直接提出实现请求时，必须先执行 inspect 和 plan，并判断高影响决策；高影响信息未确认时停在确认阶段，不能因为“直接实现”而绕过判断。
+
+需要多轮确认、跨会话恢复、正式验收或明显截图/原型/HTML 材料时，在 `docs/tasks/<task-id>/` 保存 `TASK.md`、`PLAN.md`、`STATE.json`、`ACCEPTANCE.md` 及必要的 `assets/`。来源材料记录路径或 URL、版本、读取时间、视口/DPR 和摘要；本地截图、原型和 HTML 可复制到 `assets/`。任务级 override 只对当前任务有效。
+
 ## 页面执行契约
 
 1. 分别确认业务、视觉和工程事实源。

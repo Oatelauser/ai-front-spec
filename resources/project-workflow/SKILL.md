@@ -5,6 +5,21 @@ description: Establish project facts, route the smallest necessary capabilities,
 
 # Project Workflow
 
+## Frontend stage routing
+
+`$project-workflow` remains the project-wide behavior and capability router. When the selected domain is frontend, pass an explicit stage intent to `$frontend-task` when the user's request makes one clear; otherwise route `$frontend-task`'s full flow. This refines routing without moving frontend execution into this skill.
+
+```text
+分析/检查页面       -> frontend-task.inspect
+给出实施方案         -> frontend-task.inspect + frontend-task.plan
+实现/修改页面        -> frontend-task.full
+继续上次任务         -> frontend-task.resume
+只做验收             -> frontend-task.verify
+总结任务             -> frontend-task.report
+```
+
+`$frontend-task` must still inspect the repository and perform its high-impact decision gate. `$project-workflow` chooses the smallest capability combination; it does not bypass confirmation, alter task state, or implement frontend code.
+
 ## 建立项目事实
 
 1. 读取 [AGENTS.md](../../../AGENTS.md) 和 [项目画像](../../../docs/PROJECT_PROFILE.md)。
