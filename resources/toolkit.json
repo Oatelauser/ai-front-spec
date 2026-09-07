@@ -69,6 +69,18 @@
       "mode": "merge"
     },
     {
+      "source": ".agents/skills/bootstrap-project/references/subcommands.md",
+      "target": ".agents/skills/bootstrap-project/references/subcommands.md",
+      "group": "core",
+      "mode": "merge"
+    },
+    {
+      "source": ".agents/skills/bootstrap-project/references/state-model.md",
+      "target": ".agents/skills/bootstrap-project/references/state-model.md",
+      "group": "core",
+      "mode": "merge"
+    },
+    {
       "source": ".agents/skills/codex-capability-setup/SKILL.md",
       "target": ".agents/skills/codex-capability-setup/SKILL.md",
       "group": "core",

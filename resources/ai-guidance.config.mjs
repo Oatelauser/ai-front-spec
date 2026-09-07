@@ -22,7 +22,8 @@ export default {
       `.agents/skills/${name}/agents/openai.yaml`,
     ]),
     ...['profile-selection', 'profile-schema', 'project-creation', 'confirmation-flow', 'merge-policy', 'resource-lifecycle',
-      'acceptance-checklist'].map(name => `.agents/skills/bootstrap-project/references/${name}.md`),
+      'acceptance-checklist', 'subcommands', 'state-model']
+      .map(name => `.agents/skills/bootstrap-project/references/${name}.md`),
     ...['source-routing', 'common-workflow', 'screenshot-workflow', 'prototype-workflow', 'html-workflow',
       'figma-workflow', 'api-workflow', 'requirement-workflow', 'acceptance-matrix']
       .map(name => `.agents/skills/frontend-task/references/${name}.md`),
