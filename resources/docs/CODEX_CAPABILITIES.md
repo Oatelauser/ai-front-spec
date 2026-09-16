@@ -21,7 +21,7 @@
 - **宿主内置插件**：随 Codex 宿主提供，只检查是否可用，不尝试从公共插件目录安装。
 - **独立 Skill**：使用 Codex 的 `skill-installer`，或使用 `npx skills add` 从固定来源安装。
 - **项目 Skill**：`$project-workflow` 已包含在本模板中，不需要从外部安装；只有把
-  三个随仓库提供的项目 Skill 直接复用；由 bootstrap-project 按当前 `resources/toolkit.json` 补齐 project-workflow 等规则后，在实际会话检查可发现性；需要重新发现时再开启新会话。
+  Starter 直接提供项目 Skill；`$project-profile profile` 与 `$project-profile components` 是平级入口（推荐先 profile），使用 `$project-workflow` 路由任务，使用 `$codex-capability-setup` 审计能力；需要重新发现时再开启新会话。
 
 插件安装和 Skill 安装是两条不同流程，不能互相替代。
 

@@ -1,9 +1,0 @@
-{
-  "_说明": "把 scripts 字段合并进项目已有 package.json，不要直接覆盖原文件。",
-  "scripts": {
-    "ai:check": "node .codex/scripts/check-ai-guidance.mjs --root .",
-    "ai:test": "node --test .codex/scripts/lib/ai-guidance-validation.test.mjs",
-    "check": "npm run ai:check && <待填写：项目已有质量命令>"
-  },
-  "_启用严格模式": "确认画像后，将 .codex/ai-guidance.config.mjs 的 allowPlaceholders 改为 false。只有批准接入 package.json 总门禁时才将 packageIntegration.enabled 和 required 同时改为 true；非 JavaScript 项目使用实际 CI 门禁。"
-}

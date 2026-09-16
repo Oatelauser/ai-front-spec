@@ -2,9 +2,11 @@
 
 本模板用于新增页面、重做布局或显著调整交互。先填写 [项目画像](PROJECT_PROFILE.md)，并读取 [组件目录](AI_COMPONENT_CATALOG.md)。
 
-通过 [$frontend-task](../.agents/skills/frontend-task/SKILL.md) 执行，来源和阶段细节见其 references。缺少项目规则或画像时先运行 bootstrap-project。目标目录不是工具包自身。
+通过 [$frontend-task](../.agents/skills/frontend-task/SKILL.md) 执行，来源和阶段细节见其 references。缺少项目规则或画像时提示 `$project-profile`；画像维护不混入页面任务。目标目录不是工具包自身。
 
 任务输入可以是对话或 `.codex/templates/frontend-task.template.json` 的实例：taskType 支持 new-page、incremental、bug-fix、refactor；sources 每项包含 type（screenshot/prototype/html/figma/api/requirement）、path 或 url、版本及适用的 viewport/DPR。另提供目标路由/路径、保留约束、验收和已确认决定。实例留在业务项目任务记录，不修改模板源。
+
+全流程契约：`inspect`、`plan`、`implement`、`verify`、`report` 每一阶段都必须读取 `PROJECT_PROFILE.md` 的“支持端与运行环境”、`.codex/profile-state.json.deliveryTargets` 和 `AI_COMPONENT_CATALOG.md`。计划必须记录适用端、关键视口、组件复用/扩展/业务域/页面私有决策及目标端变体；画像或组件目录冲突时先执行 `$project-profile update`，或记录任务级确认，不得自行猜测。
 
 ## 可直接使用
 
@@ -32,6 +34,8 @@
 - [关键交互、页面状态和业务结果]
 - 针对性测试与项目总质量门禁通过。
 - 浏览器已按项目画像验证桌面/移动、主题、主交互、键盘、焦点、溢出、可访问性和控制台。
+- 已按 `deliveryTargets` 验证所有声明的端类型；未验证端必须列在未验证项中。
+- 已核对组件目录中的目标端变体、触摸行为、安全区域和短屏规则。
 - 接口适用时，已从真实 UI 验证非生产主流程、失败、权限和刷新持久化。
 - [未验证项；没有则写“无”]
 ```

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "proposalId": "<proposal-id>",
+  "status": "proposed",
+  "projectKind": "new-unformed",
+  "cards": [
+    { "id": "Q1", "title": "支持端与运行环境", "status": "recommended", "recommendation": "browser-web + mobile-h5 + tablet-web", "alternatives": ["desktop-only", "mobile-only", "custom"], "fields": [], "impacts": [] },
+    { "id": "Q2", "title": "产品形态与渲染方式", "status": "recommended", "recommendation": "responsive-web + spa-history", "alternatives": ["admin", "mobile-campaign", "content-site"], "fields": [], "impacts": [] },
+    { "id": "Q3", "title": "框架与运行时", "status": "recommended", "recommendation": "vue-typescript-vite", "alternatives": ["react-typescript-vite", "generic", "other"], "fields": [], "impacts": [] },
+    { "id": "Q4", "title": "视觉样式与组件基线", "status": "recommended", "recommendation": "semantic-tokens + framework-adapter", "alternatives": ["design-source-first", "custom-system", "defer"], "fields": [], "impacts": [] },
+    { "id": "Q5", "title": "移动交互与响应式策略", "status": "recommended", "recommendation": "mobile-first", "alternatives": ["desktop-first", "separate-designs", "fixed-layout"], "fields": [], "impacts": [] },
+    { "id": "Q6", "title": "数据、认证与安全", "status": "recommended", "recommendation": "real-api-with-labeled-mocks + server-auth", "alternatives": ["mock-first", "static", "custom"], "fields": [], "impacts": [] },
+    { "id": "Q7", "title": "质量与浏览器验收", "status": "recommended", "recommendation": "desktop-mobile-browser-and-device", "alternatives": ["desktop-automation", "manual-only", "custom"], "fields": [], "impacts": [] }
+  ],
+  "writeScopes": {
+    "facts": "pending",
+    "userDecisions": "pending",
+    "recommendations": "pending",
+    "componentPlan": "pending",
+    "deferred": "pending"
+  },
+  "traceability": [
+    { "decisionId": "Q1", "target": "PROJECT_PROFILE.md#支持端与运行环境", "source": "recommendation", "confidence": "medium", "writeLayer": "recommendation", "status": "pending" },
+    { "decisionId": "Q4", "target": "AI_COMPONENT_CATALOG.md#组件矩阵", "source": "recommendation", "confidence": "medium", "writeLayer": "componentPlan", "status": "pending" }
+  ],
+  "unresolved": []
+}

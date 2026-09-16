@@ -83,6 +83,6 @@
 - 单领域事实更新最接近的 `docs/`。
 - 跨任务稳定流程更新项目 Skill。
 - 仓库级硬边界更新 `AGENTS.md`。
-- 可静态判断的规则优先增加测试、Lint 或画像登记的指引校验；未生成 `.codex/scripts/` 副本时使用当前仓库 `resources/scripts/check-ai-guidance.mjs --root .`。
+- 可静态判断的规则优先增加测试、Lint 或画像登记的指引校验；使用当前项目 `.codex/scripts/check-ai-guidance.mjs --root .`。
 - Skill 增长时保留核心流程，将变体移入 `references/`，避免重复粘贴。
 - 外部能力名称变化时，先核对当前宿主，再更新项目画像、任务路由和门禁配置。

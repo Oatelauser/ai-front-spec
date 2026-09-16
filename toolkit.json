@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 2,
+  "kind": "frontend-project-starter",
+  "name": "codex-frontend-toolkit",
+  "version": "4.0.0",
+  "starter": {
+    "sourceRoot": "resources",
+    "copyContentsToProjectRoot": true,
+    "runtime": ["AGENTS.md", "docs", ".agents", ".codex"]
+  },
+  "profiles": {
+    "generic": "resources/.codex/templates/project-profile.generic.md",
+    "react": "resources/.codex/templates/project-profile.react.md",
+    "vue": "resources/.codex/templates/project-profile.vue.md"
+  },
+  "profileTarget": "docs/PROJECT_PROFILE.md",
+  "internal": {
+    "build": "scripts/build-starter.mjs",
+    "scripts": "scripts",
+    "tests": "scripts/lib",
+    "manifest": "toolkit.json"
+  },
+  "skills": [
+    "project-workflow",
+    "project-profile",
+    "frontend-task",
+    "codex-capability-setup"
+  ]
+}

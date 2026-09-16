@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "presets": {
+    "generic": {
+      "name": "框架中立基础组件契约",
+      "recommended": true,
+      "status": "planned",
+      "components": ["Shell", "Button", "Form", "DataDisplay", "Feedback", "Icon"]
+    },
+    "react": {
+      "name": "Ant Design 基线",
+      "recommended": true,
+      "status": "planned",
+      "components": ["AppShell", "FormField", "DataTable", "FeedbackState", "Icon"]
+    },
+    "vue": {
+      "name": "Element Plus 基线",
+      "recommended": true,
+      "status": "planned",
+      "components": ["AppShell", "FormField", "DataTable", "FeedbackState", "Icon"]
+    }
+  },
+  "choices": ["recommended", "other-candidate", "custom", "defer"]
+}

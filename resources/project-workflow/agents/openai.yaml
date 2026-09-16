@@ -1,5 +1,0 @@
-interface:
-  display_name: "通用项目研发闭环"
-  short_description: "按项目事实路由并验证代码、文档、界面、接口与交付任务"
-  default_prompt: "使用 $project-workflow 调查项目事实，完成并验证一项聚焦改动。"
-

@@ -1,5 +1,0 @@
-interface:
-  display_name: "Bootstrap Project"
-  short_description: "Initialize project facts, rules, and reusable Codex resources"
-  default_prompt: "Use $bootstrap-project to initialize or update this project safely."
-

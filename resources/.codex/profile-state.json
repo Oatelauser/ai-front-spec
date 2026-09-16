@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "status": "draft",
+  "templateSelection": {
+    "status": "pending",
+    "selected": null,
+    "candidates": ["generic", "react", "vue"]
+  },
+  "maturity": {
+    "status": "uncertain",
+    "confidence": "low",
+    "evidence": [],
+    "assessedAt": null
+  },
+  "componentCatalog": {
+    "status": "draft",
+    "unresolved": [],
+    "evidence": [],
+    "lastUpdatedAt": null
+  },
+  "deliveryTargets": {
+    "browserWeb": { "status": "pending", "value": null },
+    "mobileH5": { "status": "pending", "value": null },
+    "tabletWeb": { "status": "pending", "value": null },
+    "webview": { "status": "pending", "value": null },
+    "pwa": { "status": "pending", "value": null },
+    "multiPlatform": { "status": "pending", "value": null, "derived": true }
+  },
+  "proposal": {
+    "path": ".codex/profile-proposal.json",
+    "status": "none",
+    "proposalId": null
+  },
+  "fields": {},
+  "evidence": [],
+  "unresolved": []
+}
