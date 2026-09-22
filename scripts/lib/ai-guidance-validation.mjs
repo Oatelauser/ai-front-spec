@@ -406,9 +406,13 @@ function validateForbiddenPatterns(config, files) {
 function validatePlaceholders(config, files) {
   if (config.allowPlaceholders) return []
 
+  const profileState = parseJsonRecord(
+    files[config.projectRecords?.profile ?? '.codex/profile-state.json'],
+  )
   const matcher = new RegExp(config.placeholderPattern, 'g')
   const errors = []
   for (const [file, content] of Object.entries(files)) {
+    if (keepsPlaceholdersByDesign(file.replace(/\\/g, '/'), profileState)) continue
     const matches = [...content.matchAll(matcher)]
     if (matches.length > 0) {
       errors.push(
@@ -566,6 +570,26 @@ function validatePackageIntegration(config, packageJson) {
   }
 
   return errors
+}
+
+// 模板源文件与 init 前的领域草稿按设计保留占位符；对应状态标记 initialized 后必须完成替换。
+function keepsPlaceholdersByDesign(file, profileState) {
+  if (file.startsWith('.codex/templates/')) return true
+  if (file === 'docs/PROJECT_PROFILE.md') return profileState?.status !== 'initialized'
+  if (file === 'docs/AI_COMPONENT_CATALOG.md') {
+    return profileState?.componentCatalog?.status !== 'initialized'
+  }
+  return false
+}
+
+function parseJsonRecord(text) {
+  if (!text?.trim()) return null
+  try {
+    const record = JSON.parse(text)
+    return record && !Array.isArray(record) ? record : null
+  } catch {
+    return null
+  }
 }
 
 function diagnostic(code, file, message, hint = '') {

@@ -167,6 +167,67 @@ description: >-
     assert.ok(!connectedCodes.includes('PE010'))
   })
 
+  it('严格模式豁免模板与初始化前草稿的占位符，初始化后仍须报错', () => {
+    const placeholderFiles = {
+      ...validFiles,
+      '.codex/templates/component-catalog.react.md': '基础组件：<待填写：组件名>',
+      'docs/PROJECT_PROFILE.md': '运行时：<待填写：运行时>',
+      'docs/AI_COMPONENT_CATALOG.md': '按钮：<待填写：变体>',
+    }
+    const profileState = (status, catalogStatus) =>
+      JSON.stringify({
+        schemaVersion: 1,
+        status,
+        templateSelection: { status: 'pending', selected: null, candidates: ['generic', 'react', 'vue'] },
+        maturity: { status: 'unformed', confidence: 'low', evidence: [], assessedAt: null },
+        componentCatalog: { status: catalogStatus, unresolved: [], evidence: [], lastUpdatedAt: null },
+        deliveryTargets: {
+          browserWeb: { status: 'pending', value: null },
+          mobileH5: { status: 'pending', value: null },
+          tabletWeb: { status: 'pending', value: null },
+          webview: { status: 'pending', value: null },
+          pwa: { status: 'pending', value: null },
+          multiPlatform: { status: 'pending', value: null, derived: true },
+        },
+        proposal: { path: '.codex/profile-proposal.json', status: 'none', proposalId: null },
+        fields: {},
+        evidence: [],
+        unresolved: [],
+      })
+    const strictConfig = {
+      ...config,
+      allowPlaceholders: false,
+      requiredFiles: [
+        ...config.requiredFiles,
+        '.codex/templates/component-catalog.react.md',
+        'docs/PROJECT_PROFILE.md',
+        'docs/AI_COMPONENT_CATALOG.md',
+        '.codex/profile-state.json',
+      ],
+    }
+
+    const draftErrors = collectGuidanceErrors({
+      config: strictConfig,
+      files: { ...placeholderFiles, '.codex/profile-state.json': profileState('draft', 'draft') },
+    })
+    assert.deepEqual(
+      draftErrors.filter((error) => error.code === 'PE012').map((error) => error.file),
+      [],
+    )
+
+    const initializedErrors = collectGuidanceErrors({
+      config: strictConfig,
+      files: {
+        ...placeholderFiles,
+        '.codex/profile-state.json': profileState('initialized', 'initialized'),
+      },
+    })
+    assert.deepEqual(
+      initializedErrors.filter((error) => error.code === 'PE012').map((error) => error.file).sort(),
+      ['docs/AI_COMPONENT_CATALOG.md', 'docs/PROJECT_PROFILE.md'],
+    )
+  })
+
   it('拒绝文档引用不存在的包脚本', () => {
     const errors = validateDocumentedPackageScripts({
       config,
