@@ -39,7 +39,7 @@
 | 移动交互/安全区域 | `<待填写>` | `<待填写：触摸、软键盘、短屏、safe-area>` | `<待填写>` |
 | 深链与部署路径 | `<待填写>` | `<待填写：History fallback、子路径、刷新>` | `<待填写>` |
 
-deliveryTargets 含 webview 或 mobileH5 时，页面任务受 [WebView 移动端规则](docs/AI_WEBVIEW_MOBILE.md) 约束，按页面声明判定生效标签集。
+deliveryTargets 含 webview 或 mobileH5 时，页面任务与全局样式、主题、构建配置改动受 [WebView 移动端规则](docs/AI_WEBVIEW_MOBILE.md) 约束，按页面声明判定生效标签集（全局改动无页面声明，按主端全集合判定）。
 
 ## 4. 技术与目录
 

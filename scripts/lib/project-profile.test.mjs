@@ -108,7 +108,7 @@ test('init proposal, delivery targets, and frontend task contracts are discovera
 })
 
 const WEBVIEW_RULE_SENTENCE =
-  'deliveryTargets 含 webview 或 mobileH5 时，页面任务受 [WebView 移动端规则](docs/AI_WEBVIEW_MOBILE.md) 约束，按页面声明判定生效标签集'
+  'deliveryTargets 含 webview 或 mobileH5 时，页面任务与全局样式、主题、构建配置改动受 [WebView 移动端规则](docs/AI_WEBVIEW_MOBILE.md) 约束，按页面声明判定生效标签集（全局改动无页面声明，按主端全集合判定）'
 
 test('webview mobile rule mounting condition stays identical across templates, AGENTS routing, and rule docs', () => {
   for (const name of ['generic', 'react', 'vue']) {

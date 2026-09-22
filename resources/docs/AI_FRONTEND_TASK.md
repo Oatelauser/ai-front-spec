@@ -1,6 +1,6 @@
 # 页面实现与验收提示词
 
-本模板用于所有改动落在页面或视图组件文件（`.vue`/`.tsx`/`.jsx` 等）的任务，路由判定以 `AGENTS.md` 任务路由行为准；纯文案或样式值微调走 [通用任务提示词](AI_TASK_CONTRACT.md)。先填写 [项目画像](PROJECT_PROFILE.md)，并读取 [组件目录](AI_COMPONENT_CATALOG.md)。
+本模板用于所有改动落在页面或视图组件文件（`.vue`/`.tsx`/`.jsx` 等）或全局样式、主题、构建配置的任务，路由判定以 `AGENTS.md` 任务路由行为准。先填写 [项目画像](PROJECT_PROFILE.md)，并读取 [组件目录](AI_COMPONENT_CATALOG.md)。
 
 通过 [$frontend-task](../.agents/skills/frontend-task/SKILL.md) 执行，来源和阶段细节见其 references。缺少项目规则或画像时提示 `$project-profile`；画像维护不混入页面任务。目标目录不是工具包自身。
 
