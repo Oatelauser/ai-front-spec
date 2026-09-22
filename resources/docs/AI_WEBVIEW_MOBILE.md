@@ -38,7 +38,7 @@ meta: { targets: ['browserWeb', 'webview'] }  // 多端共享页（如登录页�
 ### 标签判定协议（四步，frontend-task inspect 阶段执行）
 
 1. **读项目主端**：`.codex/profile-state.json` 的 `deliveryTargets`，取 user-confirmed 集合（AGENTS.md 本就强制每阶段读，零新读点）。
-2. **读页面声明**：当前任务目标页面的 `route.meta.targets`；缺省 = 第 1 步的主端集合。**第 2 步守卫：声明 ⊄ confirmed 集 → 停**——亮出声明里超出 confirmed 的端，提示用户走 update 流程确认扩端，不静默按扩端执行。
+2. **读页面声明**：当前任务目标页面的 `route.meta.targets`；缺省 = 第 1 步的主端集合。**第 2 步守卫：声明 ⊄ confirmed 集 → 停**——亮出声明里超出 confirmed 的端，提示用户走 update 流程确认扩端，不静默按扩端执行。任务级确认不适用于本守卫：扩端必须走 update 访谈与矩阵复检，不得以任务内确认放行。
 3. **查激活条件表**（上表）→ 得**本页生效标签集**；未激活标签的条目 = 背景知识（可见、不强制）。
 4. **生效标签集落纸**：写进 plan 开头一行（如 `本页生效标签：容器+视口+全端`），锚定验收矩阵（acceptance-matrix）行选择步同步产出——选哪些验收行由本页生效标签集决定。落纸才可核对：verify 阶段复查「生效标签 ↔ 页面声明」一致性，写错了看得见。
 

@@ -29,7 +29,7 @@
 
 ## 三、扫描协议（AI 执行）
 
-1. 取 confirmed 目标集合 S（user-confirmed 的 deliveryTargets 键）与已答选型集合 T（Q2–Q7）。
+1. 取 confirmed 目标集合 S（user-confirmed 的 deliveryTargets 键）与已答选型集合 T（Q2–Q7）。init 访谈期 state 尚未落盘——S 取提案中用户已选的端（deferred 不入 S）；materialize 后以 state 为准。
 2. 逐条匹配合同三半边（命中公式见第二节）。
 3. 消费时机三分：
    - **Q1 展示**：可扫子集 = 选型列为 `—` 的行（T 尚空，只有不依赖选型的行可判）；即时提示不落纸——其命中必被 materialize 前全量覆盖。
@@ -43,6 +43,7 @@
 
 - materialize 时，裁决记录并入 PROJECT_PROFILE 第 10 节「维护信息」的兼容裁决记录（append-only）。
 - update 复检先读该记录，跳过已裁未变条目。
+- 记录形态：四列表格——「条目 | 级别 | 裁决 | 时机」，追加行，不重排不删除既有行。
 
 ## 五、现代容器项目的冲突出口
 
