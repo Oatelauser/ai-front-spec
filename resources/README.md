@@ -83,7 +83,7 @@ $project-profile components
 
 `profile` 会按“扫描仓库 → 保存成熟度证据 →（必要时）选择 `generic`、`react`、`vue` 或 `defer` → 进入 `$grill-me` 风格的分轮画像访谈 → 应用 → 校验”的顺序运行。选择模板后，代理必须扫描 `docs/PROJECT_PROFILE.md` 的全部 `<待填写...>` 占位符，不论字段是否高影响；每轮回答后会重新计算剩余问题，不能只给汇总就结束。
 
-新项目也可以使用 `$project-profile init`：它只接受成熟度扫描判定的 `unformed` 项目，集中询问七张决策卡片，生成可编辑的 `.codex/profile-proposal.json`。提案先展示推荐值、依据、影响字段和追踪矩阵；用户确认后才按“事实、用户决定、推荐、组件规划、deferred”分层写入。Q1 默认推荐桌面 Web、移动 H5、平板响应式，WebView/PWA 暂缓；`multiPlatform` 只能由确认的端类型派生。已有业务代码或稳定规范时应使用 `update`，不能用 `init` 覆盖。
+新项目也可以使用 `$project-profile init`：它只接受成熟度扫描判定的 `unformed` 项目，集中询问七张决策卡片，生成可编辑的 `.codex/profile-proposal.json`。提案先展示推荐值、依据、影响字段和追踪矩阵；用户确认后才按“事实、用户决定、推荐、组件规划、deferred”分层写入。Q1 默认推荐桌面 Web、移动 H5、平板响应式，WebView 可选启用（默认暂缓）、PWA 暂缓；Q1 另提供 `default + enterprise-webview` 组合项，选了 webview 但容器名填不出时保持 deferred 不算 confirmed。选型冲突按 `docs/AI_COMPATIBILITY_MATRIX.md` 扫描：Q1 展示即时提示不落纸，materialize 前全量扫描落纸进提案的 `compatibilityScan`（不落纸=未扫描）。`multiPlatform` 只能由确认的端类型派生。已有业务代码或稳定规范时应使用 `update`，不能用 `init` 覆盖。
 
 1. 选择与仓库证据相符的模板；不确定时选择 defer，保留 `draft + pending`。
 2. 明确语言、目标用户、技术栈、源码/组件目录、质量命令、权限来源和验收矩阵。
@@ -229,6 +229,8 @@ $frontend-task report
 | `docs/AI_WORKFLOW_PRINCIPLES.md` | 提示词分层、事实优先级和反馈沉淀规则 |
 | `docs/AI_COMPONENT_CATALOG.md` | 公共组件选用顺序、矩阵和扩展规则 |
 | `docs/AI_ACCEPTANCE_EVIDENCE.md` | 交付验收证据报告模板 |
+| `docs/AI_WEBVIEW_MOBILE.md` | WebView 与移动端规则层：容器/视口/全端条目与页面声明判定协议；由 AGENTS.md 按 `deliveryTargets` 条件挂载，任务期消费 |
+| `docs/AI_COMPATIBILITY_MATRIX.md` | 端兼容与选型冲突矩阵：合同三句话、扫描协议与种子条目；由 `$project-profile` init/update 访谈消费 |
 | `docs/FRONTEND_CONVENTIONS.md` | 可选的图标、国际化、样式等前端约定 |
 | `docs/CODEX_CAPABILITIES.md` | 插件、Skill、Browser/Figma/GitHub 等能力的来源与安装政策 |
 | `docs/capability-state.json` | 当前项目能力审计和安装状态 |

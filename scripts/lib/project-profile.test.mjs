@@ -106,3 +106,37 @@ test('init proposal, delivery targets, and frontend task contracts are discovera
   assert.match(readFileSync(resolve(starterRoot, '.agents/skills/project-profile/references/init-workflow.md'), 'utf8'), /Q1.*Q2.*Q3.*Q4.*Q5.*Q6.*Q7/s)
   assert.match(readFileSync(resolve(starterRoot, 'docs/AI_FRONTEND_TASK.md'), 'utf8'), /deliveryTargets.*AI_COMPONENT_CATALOG/s)
 })
+
+const WEBVIEW_RULE_SENTENCE =
+  'deliveryTargets 含 webview 或 mobileH5 时，页面任务受 [WebView 移动端规则](docs/AI_WEBVIEW_MOBILE.md) 约束，按页面声明判定生效标签集'
+
+test('webview mobile rule mounting condition stays identical across templates, AGENTS routing, and rule docs', () => {
+  for (const name of ['generic', 'react', 'vue']) {
+    const templatePath = `.codex/templates/project-profile.${name}.md`
+    const template = readFileSync(resolve(starterRoot, templatePath), 'utf8')
+    assert.ok(
+      template.includes(WEBVIEW_RULE_SENTENCE),
+      `${templatePath} 缺少 WebView 引用句（三份模板必须一字不差，检测到复制漂移）：${WEBVIEW_RULE_SENTENCE}`,
+    )
+  }
+
+  const agents = readFileSync(resolve(starterRoot, 'AGENTS.md'), 'utf8')
+  assert.match(
+    agents,
+    /`webview` 或 `mobileH5` 任一为 `user-confirmed`/,
+    'AGENTS.md 路由行挂载条件句与规则层文档头不一致（5 份复制漂移之一）',
+  )
+  assert.match(agents, /AI_WEBVIEW_MOBILE\.md/, 'AGENTS.md 路由行未引用 docs/AI_WEBVIEW_MOBILE.md')
+
+  const webviewRules = readFileSync(resolve(starterRoot, 'docs/AI_WEBVIEW_MOBILE.md'), 'utf8')
+  assert.match(
+    webviewRules,
+    /含 `webview` 或 `mobileH5` 任一为 `user-confirmed` 即载入/,
+    'AI_WEBVIEW_MOBILE.md 文档头生效条件句漂移（5 份复制漂移之一）',
+  )
+  assert.match(webviewRules, /激活条件表/, 'AI_WEBVIEW_MOBILE.md 缺少「激活条件表」锚点')
+
+  const matrix = readFileSync(resolve(starterRoot, 'docs/AI_COMPATIBILITY_MATRIX.md'), 'utf8')
+  assert.match(matrix, /含 任一/, 'AI_COMPATIBILITY_MATRIX.md 缺少合同句「含 任一」锚点')
+  assert.match(matrix, /缺 无一/, 'AI_COMPATIBILITY_MATRIX.md 缺少合同句「缺 无一」锚点')
+})

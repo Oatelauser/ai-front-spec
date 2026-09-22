@@ -11,6 +11,8 @@ export default {
     'docs/AI_COMPONENT_CATALOG.md',
     'docs/CODEX_CAPABILITIES.md',
     'docs/AI_ACCEPTANCE_EVIDENCE.md',
+    'docs/AI_WEBVIEW_MOBILE.md',
+    'docs/AI_COMPATIBILITY_MATRIX.md',
     'docs/FRONTEND_CONVENTIONS.md',
     '.codex/manifest.json',
     '.codex/profile-state.json',

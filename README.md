@@ -8,6 +8,7 @@ Starter 会提供：
 
 - 固定的 `AGENTS.md`；
 - `docs/` 中的跨项目规范、草稿 `PROJECT_PROFILE.md` 和 UI 公共组件目录 `AI_COMPONENT_CATALOG.md`；
+- `docs/AI_WEBVIEW_MOBILE.md`（WebView/移动端规则层，按 `deliveryTargets` 条件挂载）与 `docs/AI_COMPATIBILITY_MATRIX.md`（端兼容与选型冲突矩阵，init/update 访谈消费）；
 - `.agents/skills/` 中的 `project-workflow`、`project-profile`、`frontend-task` 和 `codex-capability-setup`；
 - `.codex/` 中的 manifest、画像状态、模板和运行时指引校验器。
 - `.codex/templates/` 中的项目画像模板、组件目录结构模板和框架候选基线。
@@ -29,7 +30,7 @@ $project-profile update
 
 裸 `$project-profile` 只展示两个平级入口和推荐路径，不执行隐式全流程。`profile` 与 `components` 没有强制先后顺序；推荐先运行 `$project-profile profile` 完成成熟度判断和项目画像，但也可以先运行 `$project-profile components`。谁先运行谁负责共享成熟度扫描，后运行者复用结果；两个阶段都使用分轮 grilling，推荐项仍必须由用户选择，用户可以暂缓并保留独立状态和后续条件。
 
-新项目可用 `$project-profile init` 以一次扫描和七张决策卡片生成可编辑提案；只有用户确认后才分层写入画像和组件目录。默认推荐支持桌面 Web、移动 H5、平板响应式，WebView/PWA 暂缓；`multiPlatform` 是确认端类型的派生值。已有业务代码或稳定规范时使用 `update`，不要用 `init` 覆盖。
+新项目可用 `$project-profile init` 以一次扫描和七张决策卡片生成可编辑提案；只有用户确认后才分层写入画像和组件目录。默认推荐支持桌面 Web、移动 H5、平板响应式，WebView 可选启用（默认暂缓）、PWA 暂缓；`multiPlatform` 是确认端类型的派生值。已有业务代码或稳定规范时使用 `update`，不要用 `init` 覆盖。
 
 `profile` 会记录 `unformed`、`existing` 或 `uncertain` 的成熟度证据；`components` 在缺少记录时也会执行并持久化同一份扫描结果，随后读取画像中的已确认 UI 事实，但不能自行猜测或填写画像。`status` 汇总成熟度、画像和组件目录双状态；`update` 扫描现有项目并在两边都需要协调时按 `profile → components` 路由更新。
 

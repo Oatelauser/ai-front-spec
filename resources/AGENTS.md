@@ -16,6 +16,7 @@
 - 普通任务使用 [任务提示词](docs/AI_TASK_CONTRACT.md)；新增或大改页面时使用 [页面提示词](docs/AI_FRONTEND_TASK.md)，并读取 [组件目录](docs/AI_COMPONENT_CATALOG.md)。
 - 任何前端任务在 `inspect` 前必须读取 `docs/PROJECT_PROFILE.md` 的“支持端与运行环境”、`.codex/profile-state.json` 的 `deliveryTargets` 和 `docs/AI_COMPONENT_CATALOG.md`；`plan`、`implement`、`verify`、`report` 也必须持续读取这三份约束。
 - `deliveryTargets` 缺失、冲突或处于 `deferred` 时不得猜测目标端；组件目录与画像不一致时提示 `$project-profile update`，或记录任务级确认后再继续。
+- `deliveryTargets` 含 `webview` 或 `mobileH5` 任一为 `user-confirmed` 时，页面任务额外受 [WebView 移动端规则](docs/AI_WEBVIEW_MOBILE.md) 约束，并按页面声明判定生效标签集。
 - 接口、身份、权限、数据、AI 责任或安全任务读取 [项目研发规范](docs/AI_PROJECT_STANDARDS.md)。
 - 不为无关任务加载全部领域文档、Skill 或外部工具。
 - 任务需要的外部能力缺失时，先按能力安装清单处理；未确认安装成功前不得假装能力可用。

@@ -31,7 +31,7 @@ Internal stages (`inspect`, `plan`, `confirm`, `apply`, `migrate`, `validate`) m
 3. Build `.codex/profile-proposal.json` from answers and evidence. The proposal must show each decision, recommended value, source, confidence, impacted files/fields, and editable alternatives. Recommendations remain `recommended` until explicitly approved.
 4. Present a field-level proposal traceability matrix. The user may edit any card or field before approval; dependent recommendations must be recomputed and shown again.
 5. Commit in layers: repository facts, explicit user decisions, approved recommendations, approved component planning, and deferred items. Never write a recommendation or component plan merely because it was displayed.
-6. Materialize approved layers into `docs/PROJECT_PROFILE.md`, `docs/AI_COMPONENT_CATALOG.md`, and `.codex/profile-state.json` atomically. Preserve rejected values as `deferred` or unresolved with reason, impact, and follow-up condition.
+6. Materialize approved layers into `docs/PROJECT_PROFILE.md`, `docs/AI_COMPONENT_CATALOG.md`, and `.codex/profile-state.json` atomically. Preserve rejected values as `deferred` or unresolved with reason, impact, and follow-up condition. Also merge the proposal's `compatibilityScan` results into the `兼容裁决记录` entry of section 10 (维护信息) in `docs/PROJECT_PROFILE.md` as append-only records (`{条目, 级别, 裁决, 时机}`): append new entries, never reset prior ones — `update` re-checks rely on these records to skip already-adjudicated unchanged entries.
 7. Validate delivery-target consistency, profile/component framework alignment, placeholder classification, proposal status, and AI guidance. A proposal may be resumed; an approved proposal is archived in state before being cleared.
 
 ## Required behavior: profile

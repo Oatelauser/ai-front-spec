@@ -10,7 +10,7 @@ Use `init` only when the maturity scan classifies the project as `unformed` with
 
 | Card | High-impact decision | Recommended default | Main fields affected |
 | --- | --- | --- | --- |
-| Q1 | Delivery targets and runtime contexts | Browser Web + mobile H5 + tablet responsive; WebView/PWA deferred | `deliveryTargets`, browser matrix, viewport matrix |
+| Q1 | Delivery targets and runtime contexts | Browser Web + mobile H5 + tablet responsive; WebView 可选启用（默认暂缓）；PWA 暂缓 | `deliveryTargets`, browser matrix, viewport matrix |
 | Q2 | Product shape and rendering | Responsive Web application, SPA + History routing, deep-link fallback | product shape, rendering, routing, deployment |
 | Q3 | Framework and runtime | Vue 3 + TypeScript + Vite | framework, runtime, package manager, test/build commands |
 | Q4 | Visual system and component baseline | Semantic tokens plus framework adapter; Element Plus for Vue, Ant Design for React, generic contract otherwise | style, theme, icon, component baseline |
@@ -19,6 +19,8 @@ Use `init` only when the maturity scan classifies the project as `unformed` with
 | Q7 | Quality and browser acceptance | Desktop + mobile Browser/Playwright plus device-equivalent verification | commands, browser matrix, evidence and acceptance |
 
 Q1 must always present a default that enables `browserWeb`, `mobileH5`, and `tabletWeb`. `multiPlatform` is derived from the confirmed target set; it is never independently edited.
+
+Q1 also offers a `default + enterprise-webview` alternative alongside the existing per-value `custom` editing. Container choice is orthogonal to device form: `webview` combines freely with any target (a DingTalk PC embedded page is desktop × webview). The Q1 impact list holds exactly four one-line entries: legacy-kernel CSS fallbacks, JSBridge/SDK detection and wrapping, real-device acceptance cost, and compatibility-matrix involvement — the matrix entry points to the full matrix scan before materialization as the safety net (at Q1 time only rows whose 选型 column is `—` can match; custom answers hitting no row is expected). `webview` becomes `user-confirmed` only when the user can name the real containers (recorded as its value, e.g. DingTalk/Feishu/in-house app); choosing webview without a container name keeps it `deferred`, not confirmed. Matrix consumption has three timings: Q1 display is an immediate hint that is not persisted; the full scan before materialization persists into the proposal's `compatibilityScan`; an update re-check persists with timing `update`. Not persisted means not scanned (see `docs/AI_COMPATIBILITY_MATRIX.md`).
 
 ## Card interaction
 
