@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "kind": "frontend-project-starter",
   "name": "codex-frontend-toolkit",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "starter": {
     "sourceRoot": "resources",
     "copyContentsToProjectRoot": true,
@@ -33,6 +33,7 @@
     "figma",
     "tinypng-compress",
     "playwright",
-    "compatibility-testing"
+    "compatibility-testing",
+    "karpathy-guidelines"
   ]
 }

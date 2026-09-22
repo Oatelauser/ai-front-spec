@@ -26,6 +26,7 @@ const expectedSkills = new Set([
   'tinypng-compress',
   'playwright',
   'compatibility-testing',
+  'karpathy-guidelines',
 ])
 const requiredPaths = [
   'AGENTS.md',
@@ -46,6 +47,7 @@ const requiredPaths = [
   '.agents/skills/tinypng-compress/SKILL.md',
   '.agents/skills/playwright/SKILL.md',
   '.agents/skills/compatibility-testing/SKILL.md',
+  '.agents/skills/karpathy-guidelines/SKILL.md',
 ]
 
 const errors = []

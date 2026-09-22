@@ -21,7 +21,7 @@ status: closed
   - WebView 定位 = 附加层：画像按框架选模板，webview 是 deliveryTargets 的一项，不做框架×端的专属模板组合
   - 适用域 = 三层缝合：项目级挂载（**2026-09-22 票 05 修正**：webview 或 mobileH5 任一确认即载入——原 webview 单键使纯移动 H5 静默缺席 [视口] 规则）× 条目适用标注（仅 WebView 容器/仅移动视口/全端）× `route.meta.targets` 页面声明（缺省跟随项目主端）
   - 判定 = 显式选择（init 决策卡 + update 后补），永不隐式猜测；容器/能力/约束三概念暂不拆分（YAGNI，出现"要容器不要桥"的真实项目再拆）
-  - 技能库 = 前端 9 个入库（mobile-ux、apple-design、gsap×3、figma、tinypng、playwright、compatibility-testing），原生 4 个 + karpathy 仅存档；tinypng 换快照 13KB 新版脚本
+  - 技能库 = 前端 9 个入库（mobile-ux、apple-design、gsap×3、figma、tinypng、playwright、compatibility-testing），原生 4 个仅存档；**2026-09-22 改判：karpathy 入库**（「免安装自包含」原则——starter 不依赖使用者另装原版插件）；tinypng 换快照 13KB 新版脚本
   - 工具链 = Codex 为主；Claude Code 原生读 AGENTS.md，零适配
 - 本地 markdown tracker：`tickets/` 每票一文件，front matter 记 `label/status/blocked-by/assignee`；阻塞关系看 `blocked-by`。
 - **地图完成（2026-09-22）**：5/5 票关闭，雾区清零——规格零决策留白，进执行期（执行范围见 Out of scope 第一条；按既定指令以 subagent 执行，校验器双副本同步）。

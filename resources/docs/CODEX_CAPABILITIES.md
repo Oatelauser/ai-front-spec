@@ -80,6 +80,7 @@
 | `$tinypng-compress` | 本 Starter 内置（`.agents/skills/tinypng-compress`，源自 elms-h5 技能快照 20260917） | 无需安装，随 Starter 分发 |
 | `$playwright` | 本 Starter 内置（`.agents/skills/playwright`，源自 elms-h5 技能快照 20260917） | 无需安装，随 Starter 分发 |
 | `$compatibility-testing` | 本 Starter 内置（`.agents/skills/compatibility-testing`，源自 elms-h5 技能快照 20260917） | 无需安装，随 Starter 分发 |
+| `$karpathy-guidelines` | 本 Starter 内置（`.agents/skills/karpathy-guidelines`，源自 elms-h5 技能快照 20260917，MIT） | 无需安装，随 Starter 分发 |
 
 这些命令使用 `-g` 安装到用户级 Skill 目录，不修改业务仓库。标注“本 Starter 内置”的 Skill 已随模板分发到项目
 `.agents/skills/` 目录，不需要执行安装命令；名称冲突时以内置版本为准，不覆盖用户级同名 Skill。来源默认跟随上游仓库当前版本；
