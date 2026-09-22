@@ -12,7 +12,21 @@ const args = new Set(process.argv.slice(2))
 const targetArgument = process.argv.slice(2).find((value, index, values) => value === '--target' && values[index + 1])
 const targetRoot = targetArgument ? resolve(process.cwd(), process.argv[process.argv.indexOf('--target') + 1]) : null
 
-const expectedSkills = new Set(['project-workflow', 'project-profile', 'frontend-task', 'codex-capability-setup'])
+const expectedSkills = new Set([
+  'project-workflow',
+  'project-profile',
+  'frontend-task',
+  'codex-capability-setup',
+  'mobile-ux-optimizer',
+  'apple-design',
+  'gsap-core',
+  'gsap-performance',
+  'gsap-timeline',
+  'figma',
+  'tinypng-compress',
+  'playwright',
+  'compatibility-testing',
+])
 const requiredPaths = [
   'AGENTS.md',
   'docs/PROJECT_PROFILE.md',
@@ -23,6 +37,15 @@ const requiredPaths = [
   '.agents/skills/project-profile/SKILL.md',
   '.agents/skills/frontend-task/SKILL.md',
   '.agents/skills/codex-capability-setup/SKILL.md',
+  '.agents/skills/mobile-ux-optimizer/SKILL.md',
+  '.agents/skills/apple-design/SKILL.md',
+  '.agents/skills/gsap-core/SKILL.md',
+  '.agents/skills/gsap-performance/SKILL.md',
+  '.agents/skills/gsap-timeline/SKILL.md',
+  '.agents/skills/figma/SKILL.md',
+  '.agents/skills/tinypng-compress/SKILL.md',
+  '.agents/skills/playwright/SKILL.md',
+  '.agents/skills/compatibility-testing/SKILL.md',
 ]
 
 const errors = []

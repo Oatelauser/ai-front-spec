@@ -71,8 +71,18 @@
 | `$design-taste-frontend` | `leonxlnx/taste-skill`（目录 `skills/taste-skill`） | `npx skills add https://github.com/leonxlnx/taste-skill --skill taste-skill -g -y` |
 | `$web-design-guidelines` | `vercel-labs/agent-skills` | `npx skills add https://github.com/vercel-labs/agent-skills --skill web-design-guidelines -g -y` |
 | `$vercel-react-best-practices` | `vercel-labs/agent-skills`（目录 `skills/react-best-practices`） | `npx skills add https://github.com/vercel-labs/agent-skills --skill react-best-practices -g -y` |
+| `$mobile-ux-optimizer` | 本 Starter 内置（`.agents/skills/mobile-ux-optimizer`，源自 elms-h5 技能快照 20260917） | 无需安装，随 Starter 分发 |
+| `$apple-design` | 本 Starter 内置（`.agents/skills/apple-design`，源自 elms-h5 技能快照 20260917） | 无需安装，随 Starter 分发 |
+| `$gsap-core` | 本 Starter 内置（`.agents/skills/gsap-core`，源自 elms-h5 技能快照 20260917） | 无需安装，随 Starter 分发 |
+| `$gsap-performance` | 本 Starter 内置（`.agents/skills/gsap-performance`，源自 elms-h5 技能快照 20260917） | 无需安装，随 Starter 分发 |
+| `$gsap-timeline` | 本 Starter 内置（`.agents/skills/gsap-timeline`，源自 elms-h5 技能快照 20260917） | 无需安装，随 Starter 分发 |
+| `$figma` | 本 Starter 内置（`.agents/skills/figma`，Figma MCP 用法，区别于 `figma@openai-api-curated` 插件） | 无需安装，随 Starter 分发 |
+| `$tinypng-compress` | 本 Starter 内置（`.agents/skills/tinypng-compress`，源自 elms-h5 技能快照 20260917） | 无需安装，随 Starter 分发 |
+| `$playwright` | 本 Starter 内置（`.agents/skills/playwright`，源自 elms-h5 技能快照 20260917） | 无需安装，随 Starter 分发 |
+| `$compatibility-testing` | 本 Starter 内置（`.agents/skills/compatibility-testing`，源自 elms-h5 技能快照 20260917） | 无需安装，随 Starter 分发 |
 
-这些命令使用 `-g` 安装到用户级 Skill 目录，不修改业务仓库。来源默认跟随上游仓库当前版本；
+这些命令使用 `-g` 安装到用户级 Skill 目录，不修改业务仓库。标注“本 Starter 内置”的 Skill 已随模板分发到项目
+`.agents/skills/` 目录，不需要执行安装命令；名称冲突时以内置版本为准，不覆盖用户级同名 Skill。来源默认跟随上游仓库当前版本；
 需要可重复构建的团队应在自己的安装流程中固定审核过的提交。安装后通常需要开启新一轮 Codex
 对话，Skill 才会进入可发现清单。
 

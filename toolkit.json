@@ -24,6 +24,15 @@
     "project-workflow",
     "project-profile",
     "frontend-task",
-    "codex-capability-setup"
+    "codex-capability-setup",
+    "mobile-ux-optimizer",
+    "apple-design",
+    "gsap-core",
+    "gsap-performance",
+    "gsap-timeline",
+    "figma",
+    "tinypng-compress",
+    "playwright",
+    "compatibility-testing"
   ]
 }
