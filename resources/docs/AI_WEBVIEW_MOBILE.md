@@ -20,7 +20,7 @@
 
 ### 页面声明约定
 
-页面声明取值必须来自 `deliveryTargets` 键名枚举：`browserWeb` / `mobileH5` / `tabletWeb` / `webview`——写枚举外的值按声明错误处理，不做近似匹配。
+页面声明取值必须来自 `deliveryTargets` 键名枚举：`browserWeb` / `mobileH5` / `tabletWeb` / `webview`——写枚举外的值按声明错误处理，不做近似匹配。空数组 `[]` 同按声明错误处理（页面至少归属一个端），不视为省略。
 
 ```ts
 meta: { targets: ['webview'] }                // 仅容器页面：全标签硬约束

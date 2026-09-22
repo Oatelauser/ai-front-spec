@@ -2,7 +2,7 @@
 
 This is the execution contract for `$frontend-task`. `$project-workflow` chooses the domain and may select a stage; this skill executes the selected frontend stage.
 
-Every stage reads `docs/PROJECT_PROFILE.md`'s `支持端与运行环境`, `.codex/profile-state.json`'s `deliveryTargets`, and the target-relevant entries in `docs/AI_COMPONENT_CATALOG.md`. If either source is missing, deferred, or conflicts with the other, keep the affected decision high-impact and route it to `$project-profile update` or a task-scoped confirmation before implementation.
+Every stage reads `docs/PROJECT_PROFILE.md`'s `支持端与运行环境`, `.codex/profile-state.json`'s `deliveryTargets`, and the target-relevant entries in `docs/AI_COMPONENT_CATALOG.md`. If `deliveryTargets` is missing, conflicted, or deferred — including page declarations that exceed the confirmed set — keep the affected decision high-impact and route it to `$project-profile update` only: no task-scoped bypass, because expanding targets requires the update interview and matrix re-check. If the component catalog conflicts with the profile, route it to `$project-profile update` or a task-scoped confirmation before implementation.
 
 ## Commands and outputs
 

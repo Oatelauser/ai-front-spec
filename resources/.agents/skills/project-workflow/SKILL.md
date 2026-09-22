@@ -13,7 +13,7 @@ description: Establish project facts, route the smallest necessary capabilities,
 4. 任务需要外部能力时，读取 [能力清单](../../../docs/CODEX_CAPABILITIES.md)，核对插件、宿主能力和独立 Skill；未安装时按授权边界安装或报告缺失。
 5. 只在触发条件适用时加载详细文档：
    - 通用复杂任务：[任务合同](../../../docs/AI_TASK_CONTRACT.md)。
-   - 新增页面、重做布局或显著交互变更：[前端任务规范](../../../docs/AI_FRONTEND_TASK.md) 和 [组件目录](../../../docs/AI_COMPONENT_CATALOG.md)。
+   - 改动落在页面或视图组件文件（`.vue`/`.tsx`/`.jsx` 等）：[前端任务规范](../../../docs/AI_FRONTEND_TASK.md) 和 [组件目录](../../../docs/AI_COMPONENT_CATALOG.md)。
    - 接口、身份、权限、数据、AI 责任或安全：[项目研发规范](../../../docs/AI_PROJECT_STANDARDS.md)。
    - 提示词、Skill、路由或代理工作流：[工作流原则](../../../docs/AI_WORKFLOW_PRINCIPLES.md)。
 6. 分别声明业务、视觉和工程事实源。外部输出只能补充，不能覆盖项目事实。

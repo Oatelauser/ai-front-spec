@@ -29,7 +29,7 @@
 
 ## 三、扫描协议（AI 执行）
 
-1. 取 confirmed 目标集合 S（user-confirmed 的 deliveryTargets 键）与已答选型集合 T（Q2–Q7）。init 访谈期 state 尚未落盘——S 取提案中用户已选的端（deferred 不入 S）；materialize 后以 state 为准。
+1. 取 confirmed 目标集合 S（user-confirmed 的 deliveryTargets 键）与已答选型集合 T（Q2–Q7）。init 访谈期 state 尚未落盘——S 取提案中用户已选的端（deferred 不入 S），T 取提案已答问题；materialize 后 S 以 state `deliveryTargets` 为准、T 以 state `fields` 中 Q2–Q7 已确认答案为准；update 复检时新集尚未写入 state——S、T 均取变更后新确认集（见 project-profile 的 update-policy），不以旧 state 字面为准。
 2. 逐条匹配合同三半边（命中公式见第二节）。
 3. 消费时机三分：
    - **Q1 展示**：可扫子集 = 选型列为 `—` 的行（T 尚空，只有不依赖选型的行可判）；即时提示不落纸——其命中必被 materialize 前全量覆盖。
@@ -43,7 +43,7 @@
 
 - materialize 时，裁决记录并入 PROJECT_PROFILE 第 10 节「维护信息」的兼容裁决记录（append-only）。
 - update 复检先读该记录，跳过已裁未变条目。
-- 记录形态：四列表格——「条目 | 级别 | 裁决 | 时机」，追加行，不重排不删除既有行。
+- 记录形态：四列表格——「条目 | 级别 | 裁决 | 时机」，追加行，不重排不删除既有行。单元格词表：条目 = 矩阵行「特性」字段原文（该行选型列参与命中时追加「+ 选型值」，如「现代 CSS + Tailwind 4」），两侧照抄同一字符串，保证 update 复检「跳过已裁未变」按条目原文匹配；级别 = `冲突` / `提醒`；裁决 = 所选裁决选项的完整文本（不写选项序号）；时机 = `materialize` / `update`。
 
 ## 五、现代容器项目的冲突出口
 

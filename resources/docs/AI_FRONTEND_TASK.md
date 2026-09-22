@@ -1,12 +1,12 @@
 # 页面实现与验收提示词
 
-本模板用于新增页面、重做布局或显著调整交互。先填写 [项目画像](PROJECT_PROFILE.md)，并读取 [组件目录](AI_COMPONENT_CATALOG.md)。
+本模板用于所有改动落在页面或视图组件文件（`.vue`/`.tsx`/`.jsx` 等）的任务，路由判定以 `AGENTS.md` 任务路由行为准；纯文案或样式值微调走 [通用任务提示词](AI_TASK_CONTRACT.md)。先填写 [项目画像](PROJECT_PROFILE.md)，并读取 [组件目录](AI_COMPONENT_CATALOG.md)。
 
 通过 [$frontend-task](../.agents/skills/frontend-task/SKILL.md) 执行，来源和阶段细节见其 references。缺少项目规则或画像时提示 `$project-profile`；画像维护不混入页面任务。目标目录不是工具包自身。
 
 任务输入可以是对话或 `.codex/templates/frontend-task.template.json` 的实例：taskType 支持 new-page、incremental、bug-fix、refactor；sources 每项包含 type（screenshot/prototype/html/figma/api/requirement）、path 或 url、版本及适用的 viewport/DPR。另提供目标路由/路径、保留约束、验收和已确认决定。实例留在业务项目任务记录，不修改模板源。
 
-全流程契约：`inspect`、`plan`、`implement`、`verify`、`report` 每一阶段都必须读取 `PROJECT_PROFILE.md` 的“支持端与运行环境”、`.codex/profile-state.json.deliveryTargets` 和 `AI_COMPONENT_CATALOG.md`。计划必须记录适用端、关键视口、组件复用/扩展/业务域/页面私有决策及目标端变体；画像或组件目录冲突时先执行 `$project-profile update`，或记录任务级确认，不得自行猜测。
+全流程契约：`inspect`、`plan`、`implement`、`verify`、`report` 每一阶段都必须读取 `PROJECT_PROFILE.md` 的“支持端与运行环境”、`.codex/profile-state.json.deliveryTargets` 和 `AI_COMPONENT_CATALOG.md`。计划必须记录适用端、关键视口、组件复用/扩展/业务域/页面私有决策及目标端变体；组件目录与画像不一致时先执行 `$project-profile update`，或记录任务级确认；`deliveryTargets` 缺失、冲突或处于 `deferred` 时不得猜测目标端，页面声明扩端必须走 update 访谈与矩阵复检，不得以任务级确认放行。
 
 ## 可直接使用
 
