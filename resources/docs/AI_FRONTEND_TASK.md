@@ -6,7 +6,7 @@
 
 任务输入可以是对话或 `.codex/templates/frontend-task.template.json` 的实例：taskType 支持 new-page、incremental、bug-fix、refactor；sources 每项包含 type（screenshot/prototype/html/figma/api/requirement）、path 或 url、版本及适用的 viewport/DPR。另提供目标路由/路径、保留约束、验收和已确认决定。实例留在业务项目任务记录，不修改模板源。
 
-全流程契约：`inspect`、`plan`、`implement`、`verify`、`report` 每一阶段都必须读取 `PROJECT_PROFILE.md` 的“支持端与运行环境”、`.codex/profile-state.json.deliveryTargets` 和 `AI_COMPONENT_CATALOG.md`。计划必须记录适用端、关键视口、组件复用/扩展/业务域/页面私有决策及目标端变体；组件目录与画像不一致时先执行 `$project-profile update`，或记录任务级确认；`deliveryTargets` 缺失、冲突或处于 `deferred` 时不得猜测目标端，页面声明扩端必须走 update 访谈与矩阵复检，不得以任务级确认放行。
+全流程契约：`inspect`、`plan`、`implement`、`verify`、`report` 每一阶段都必须读取 `PROJECT_PROFILE.md` 的“支持端与运行环境”、`.codex/profile-state.json.deliveryTargets` 和 `AI_COMPONENT_CATALOG.md`。计划必须记录适用端、关键视口、组件复用/扩展/业务域/页面私有决策及目标端变体；plan 中的视觉判定、行为推断、token 取值等结论逐条标注证据等级：已测量（材料可直接确认）、有依据的推断（跨材料归纳）、暂时假设（材料不足采用的默认值，须明示）；组件目录与画像不一致时先执行 `$project-profile update`，或记录任务级确认；`deliveryTargets` 缺失、冲突或处于 `deferred` 时不得猜测目标端，页面声明扩端必须走 update 访谈与矩阵复检，不得以任务级确认放行。
 
 ## 可直接使用
 
@@ -36,6 +36,7 @@
 - 浏览器已按项目画像验证桌面/移动、主题、主交互、键盘、焦点、溢出、可访问性和控制台。
 - 已按 `deliveryTargets` 验证所有声明的端类型；未验证端必须列在未验证项中。
 - 已核对组件目录中的目标端变体、触摸行为、安全区域和短屏规则。
+- 换一组文案、图片和数据，页面规则仍保持一致（长文本、空数据、极端值不破坏布局）。
 - 接口适用时，已从真实 UI 验证非生产主流程、失败、权限和刷新持久化。
 - [未验证项；没有则写“无”]
 ```
@@ -52,6 +53,6 @@
 2. 搜索邻近路由、公共组件、业务域组件、主题、国际化、权限、API 与测试。
 3. 编码前记录主要可见区域的组件决策：复用、扩展、业务域组件或页面私有结构。
 4. 新规则、组件和关键交互执行 RED → GREEN → REFACTOR。
-5. 完整处理 loading、empty、error、unauthorized、disabled、success 和安全可重试状态。
+5. 完整处理 loading、empty、error、unauthorized、disabled、success 和安全可重试状态；涉及交互组件时，同时覆盖 hover（限指针设备）、focus-visible、pressed（:active）和 selected（Tab/导航/行选中）交互态。
 6. 禁止用硬编码成功数据、静默 Mock 回退、跳过权限或吞异常伪造可用性。
 7. 自动化通过后打开每个目标路由并实际操作；接入接口时再完成真实联调验收。

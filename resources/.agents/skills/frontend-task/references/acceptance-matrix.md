@@ -31,7 +31,7 @@
 
 ## 3. 页面状态及触发方式
 
-只验证页面真实存在的状态；静态展示页不必凭空增加请求和权限界面。数据页面至少覆盖项目要求的loading、empty、error和unauthorized。
+只验证页面真实存在的状态；静态展示页不必凭空增加请求和权限界面。数据页面至少覆盖项目要求的loading、empty、error和unauthorized。涉及交互组件时，同时核对交互态：hover（限指针设备）、focus-visible、pressed（:active）、selected（Tab/导航/行选中）。
 
 | 状态 | 如何触发 | 必须核对 |
 | --- | --- | --- |

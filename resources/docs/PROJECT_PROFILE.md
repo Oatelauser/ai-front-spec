@@ -88,7 +88,7 @@
 - 平板视口：`<待填写：一个或多个，按需横竖屏>`
 - 移动视口：`<待填写：一个或多个>`
 - 主题/配色模式：`<待填写>`
-- 必查状态：loading、empty、error、unauthorized、disabled、success、安全可重试。
+- 必查状态：数据态 loading、empty、error、unauthorized、disabled、success、安全可重试；交互态 hover（限指针设备）、focus-visible、pressed（:active）、selected（Tab/导航/行选中）——涉及交互组件时逐个核对。
 - 必查交互：`<待填写>`
 - 可访问性：键盘顺序、焦点可见、可访问名称、对比度、减少动态效果。
 - 布局：溢出、横向滚动、内容区利用率、长文本和极端数据。

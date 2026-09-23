@@ -53,7 +53,7 @@ Every stage reads `docs/PROJECT_PROFILE.md`'s `支持端与运行环境`, `.code
 ### `verify`
 
 ```text
-依据 taskType、来源、`deliveryTargets` 和组件目录适用端选择 acceptance matrix，而不是机械执行固定命令；同时按页面声明同步产出本页生效标签集（查 `docs/AI_WEBVIEW_MOBILE.md` 激活条件表）并逐页落纸。运行仓库中真实存在且适用的测试、类型检查、lint、构建、Browser、视觉对比和接口验证；区分通过、失败、跳过、未运行和不适用；区分真实联调、mock 和未验证。记录复现/回归、loading/empty/error/unauthorized/disabled/success 等适用状态及证据。
+依据 taskType、来源、`deliveryTargets` 和组件目录适用端选择 acceptance matrix，而不是机械执行固定命令；同时按页面声明同步产出本页生效标签集（查 `docs/AI_WEBVIEW_MOBILE.md` 激活条件表）并逐页落纸。运行仓库中真实存在且适用的测试、类型检查、lint、构建、Browser、视觉对比和接口验证；区分通过、失败、跳过、未运行和不适用；区分真实联调、mock 和未验证。记录复现/回归、loading/empty/error/unauthorized/disabled/success 等适用数据态及 hover（限指针设备）/focus-visible/pressed(:active)/selected 等适用交互态证据。
 ```
 
 ### `report`

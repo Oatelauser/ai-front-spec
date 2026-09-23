@@ -92,7 +92,7 @@ deliveryTargets 含 webview 或 mobileH5 时，页面任务与全局样式、主
 - 平板验收视口：`<待填写：例如 768、820、1024；按项目需要覆盖横屏与竖屏>`
 - 移动验收视口：`<待填写：例如 320、360、375、390、414；至少覆盖竖屏，必要时覆盖横屏；纯中后台不可只写“不适用”，应说明是否不支持及小屏降级行为>`
 - 主题/配色模式：`light、dark；切换后无未变色元素，Element Plus token 与 CSS Variables 同步；若项目只支持一种模式须明确写出`
-- 必查状态：`loading、empty、error、unauthorized、disabled、success、安全可重试；每个状态绑定真实接口或明确标注 mock`
+- 必查状态：`数据态 loading、empty、error、unauthorized、disabled、success、安全可重试，每个状态绑定真实接口或明确标注 mock；交互态 hover（限指针设备）、focus-visible、pressed（:active）、selected（Tab/导航/行选中）——涉及交互组件时逐个核对`
 - 必查交互：`zh-CN / en-US 切换无溢出（英文按 1.3 倍长度预留）；主题与语言切换刷新后保持；<待填写：页面业务交互、键盘操作和可取消动作>`
 - 可访问性：`键盘顺序、焦点可见、可访问名称、对比度、表单错误关联、屏幕阅读器语义、减少动态效果；必要时运行 axe 或项目批准的等价检查`
 - 布局：`溢出、横向滚动、内容区利用率、长文本、极端数据、断点降级、触摸目标尺寸和固定工具栏稳定性`

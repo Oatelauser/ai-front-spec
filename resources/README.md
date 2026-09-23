@@ -165,7 +165,7 @@ $frontend-task report
 | `inspect` | 需求、来源路径/URL、目标分支或路由（已有则复用） | 读取画像、规则、相关代码、测试、组件、请求入口和来源；识别任务类型、冲突和能力缺口 | 事实清单、来源路由和缺口；无须等待实现许可 |
 | `plan` | 对范围、视觉基准、组件、状态、API、权限和响应式问题逐轮回答 | 建立决策前沿，区分事实、假设和待确认项，规划文件与验收矩阵 | 写入 `PLAN.md`、`STATE.json`；高影响项未定则暂停 |
 | `confirm` | 按决策块批准、拒绝或要求修改 | 审核“范围与路由、来源与视觉、组件与状态、API/权限、测试与验收” | 已批准的块进入实现；拒绝项回到 `plan` |
-| `implement` | 确认计划有效，必要时提供获授权的 override | 复用现有基础设施，先补失败测试，再实现 loading/empty/error/unauthorized/disabled/success 等适用状态 | 业务代码和任务状态；计划冲突部分单独暂停 |
+| `implement` | 确认计划有效，必要时提供获授权的 override | 复用现有基础设施，先补失败测试，再实现 loading/empty/error/unauthorized/disabled/success 等适用数据态；涉及交互组件时同时实现 hover（限指针设备）/focus-visible/pressed(:active)/selected 交互态 | 业务代码和任务状态；计划冲突部分单独暂停 |
 | `verify` | 提供非生产环境、测试账号/数据和可用 Browser（如需） | 运行真实存在的测试、类型检查、构建、Browser/API 和状态验收；区分 mock/真实联调 | 写入 `ACCEPTANCE.md`；失败则修复后重跑 |
 | `report` | 确认交付范围及仍可接受的未验证项 | 汇总修改文件、命令/退出码、路由操作、证据、偏差和后续条件 | 交付报告；未验证项不能写成已完成 |
 
@@ -175,7 +175,7 @@ $frontend-task report
 - `plan` 采用决策前沿访谈，明确目标路由、复用组件、状态、API 字段、权限、响应式范围和验收矩阵。
 - `confirm` 只确认决策块，不按文件逐个索要许可。框架/入口、路由范围、API 提交语义、身份权限、安全、视觉基准、响应式和共享组件扩展均属高影响决定。
 - `implement` 仅实现有效且已确认的计划；mock、假设和 `user_override` 必须标注在当前任务内。
-- `verify` 区分通过、失败、跳过、未运行、不适用，以及真实联调、mock 和未验证；适用时检查 loading、empty、error、unauthorized、disabled、success 和安全可重试。
+- `verify` 区分通过、失败、跳过、未运行、不适用，以及真实联调、mock 和未验证；适用时检查 loading、empty、error、unauthorized、disabled、success 和安全可重试等数据态，涉及交互组件时同时检查 hover（限指针设备）、focus-visible、pressed（:active）、selected（Tab/导航/行选中）交互态。
 - `report` 必须列出实际修改文件、命令与结果、计划偏差、未验证项和后续决定；构建成功或 HTTP 200 不能单独代表业务验收完成。
 
 ### 4.4 按任务类型操作
@@ -198,7 +198,7 @@ $frontend-task report
 1. **自动化**：相关单元/集成测试、类型/静态检查、构建和项目总门禁，记录真实命令、工作目录和退出码。
 2. **页面运行**：启动正确服务，打开目标路由和深链，记录浏览器、CSS 视口、DPR、主题、语言及已有控制台错误。
 3. **用户流程**：从入口完成导航、筛选/分页、表单、弹层、返回和刷新；核对请求参数、认证、缓存更新及重复提交。
-4. **状态与极端内容**：按适用范围检查 loading、empty、error、unauthorized、disabled、success、retry，以及长文本、零值、缺失字段、大量数据和短屏溢出。
+4. **状态与极端内容**：按适用范围检查 loading、empty、error、unauthorized、disabled、success、retry 等数据态，涉及交互组件时同时检查 hover（限指针设备）、focus-visible、pressed（:active）、selected（Tab/导航/行选中）等交互态，以及长文本、零值、缺失字段、大量数据和短屏溢出。
 5. **可访问性与响应式**：键盘顺序、焦点可见、可访问名称、标签/错误关联、对比度、减少动态效果、断点两侧布局和触摸操作。
 6. **证据交付**：记录通过、失败、未验证、不适用；附截图或脱敏请求记录。Mock、截图、构建成功和 HTTP 200 都不能单独证明业务流程成功。
 
