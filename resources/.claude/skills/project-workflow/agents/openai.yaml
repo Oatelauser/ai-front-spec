@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project workflow"
+  short_description: "Route and verify scoped project work"
+  default_prompt: "Use $project-workflow to inspect, plan, implement, and verify a scoped task."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project profile"
+  short_description: "Confirm and maintain project facts"
+  default_prompt: "Use $project-profile to choose peer commands profile or components, status, or update; profile is recommended first but not required."

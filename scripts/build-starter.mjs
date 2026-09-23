@@ -30,6 +30,7 @@ const expectedSkills = new Set([
 ])
 const requiredPaths = [
   'AGENTS.md',
+  'CLAUDE.md',
   'docs/PROJECT_PROFILE.md',
   '.codex/manifest.json',
   '.codex/profile-state.json',

@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -139,4 +139,32 @@ test('webview mobile rule mounting condition stays identical across templates, A
   const matrix = readFileSync(resolve(starterRoot, 'docs/AI_COMPATIBILITY_MATRIX.md'), 'utf8')
   assert.match(matrix, /含 任一/, 'AI_COMPATIBILITY_MATRIX.md 缺少合同句「含 任一」锚点')
   assert.match(matrix, /缺 无一/, 'AI_COMPATIBILITY_MATRIX.md 缺少合同句「缺 无一」锚点')
+})
+
+const collectSkillFiles = (dir) =>
+  readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
+    entry.isDirectory()
+      ? collectSkillFiles(resolve(dir, entry.name)).map((relativePath) => `${entry.name}/${relativePath}`)
+      : [entry.name],
+  )
+
+test('claude skills mirror stays byte-identical to agents skills', () => {
+  const agentsDir = resolve(starterRoot, '.agents/skills')
+  const claudeDir = resolve(starterRoot, '.claude/skills')
+  const agentsFiles = collectSkillFiles(agentsDir).sort()
+  const claudeFiles = collectSkillFiles(claudeDir).sort()
+  assert.deepEqual(
+    claudeFiles,
+    agentsFiles,
+    '.claude/skills 与 .agents/skills 相对文件集合不一致（镜像出现增删或漏复制）',
+  )
+  for (const relativePath of agentsFiles) {
+    const agentsContent = readFileSync(resolve(agentsDir, relativePath), 'utf8').replaceAll('\r', '')
+    const claudeContent = readFileSync(resolve(claudeDir, relativePath), 'utf8').replaceAll('\r', '')
+    assert.equal(
+      claudeContent,
+      agentsContent,
+      `.claude/skills/${relativePath} 与 .agents/skills/${relativePath} 去除 \\r 后内容不一致（镜像漂移）`,
+    )
+  }
 })

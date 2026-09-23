@@ -1,0 +1,4 @@
+interface:
+  display_name: "TinyPNG Compress"
+  short_description: "Compress project images with TinyPNG"
+  default_prompt: "Use $tinypng-compress to dry-run and compress project image assets with TinyPNG."

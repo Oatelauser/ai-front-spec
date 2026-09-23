@@ -6,7 +6,7 @@
   "starter": {
     "sourceRoot": "resources",
     "copyContentsToProjectRoot": true,
-    "runtime": ["AGENTS.md", "docs", ".agents", ".codex"]
+    "runtime": ["AGENTS.md", "CLAUDE.md", "docs", ".agents", ".claude", ".codex"]
   },
   "profiles": {
     "generic": "resources/.codex/templates/project-profile.generic.md",
