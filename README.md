@@ -1,6 +1,6 @@
 # ai-front-spec —— 前端项目 AI 规则 Starter
 
-「拷贝即用、零外部下载」的前端项目规则与工作流模板：**23 个技能全部内置**（5 自研 + 18 vendored，清单见 [docs/capabilities.md](docs/capabilities.md)），复制进项目即可被 Codex 与 Claude Code 双宿主发现，无需联网安装。它不是业务应用，也不替你创建框架、路由或接口。
+「拷贝即用、零外部下载」的前端项目规则与工作流模板：**24 个技能全部内置**（5 自研 + 19 vendored，清单见 [docs/capabilities.md](docs/capabilities.md)），复制进项目即可被 Codex 与 Claude Code 双宿主发现，无需联网安装。它不是业务应用，也不替你创建框架、路由或接口。
 
 | 宿主 | 读取路径 | 说明 |
 | --- | --- | --- |
@@ -41,7 +41,7 @@ node .toolkit/scripts/sync-mirror.mjs --check
 
 ### 可选插件（按需）
 
-23 个内置技能零安装，开箱即用。仅以下外部能力按任务需要装入，完整说明见 [docs/capabilities.md](docs/capabilities.md) 第 2 节。
+24 个内置技能零安装，开箱即用。仅以下外部能力按任务需要装入，完整说明见 [docs/capabilities.md](docs/capabilities.md) 第 2 节。
 
 **Claude Code 宿主**（`/plugin` 市场安装）：
 
@@ -72,7 +72,7 @@ node .toolkit/scripts/sync-mirror.mjs --check
 
 ## 3. 命令参考
 
-`$` 命令由宿主识别。三个入口技能（`project-workflow` / `project-profile` / `frontend-task`）+ 18 个 vendored 专项技能全部内置，完整清单与来源见 [docs/capabilities.md](docs/capabilities.md) 第 1 节。
+`$` 命令由宿主识别。三个入口技能（`project-workflow` / `project-profile` / `frontend-task`）+ 19 个 vendored 专项技能全部内置，完整清单与来源见 [docs/capabilities.md](docs/capabilities.md) 第 1 节。
 
 ### $project-profile —— 画像与组件目录
 
@@ -105,7 +105,7 @@ node .toolkit/scripts/sync-mirror.mjs --check
 
 ### 专项技能（16 个 vendored）
 
-`tdd-workflow`、`api-design`、`security-review`、`frontend-design` 系列、`product-design` 整包、`grill-me`（分轮拷问协议）、`prototype`（一次性原型：方向变体 / 状态验证）、`gsap` ×3、`playwright`、`apple-design`、`compatibility-testing`、`mobile-ux-optimizer`、`react-best-practices`、`taste-skill`、`web-design-guidelines`——直接以 `$技能名` 调用，来源与更新方式见 [docs/capabilities.md](docs/capabilities.md)。
+`tdd-workflow`、`api-design`、`security-review`、`frontend-design` 系列、`product-design` 整包、`grill-me`/`grilling`（分轮拷问：入口 + 协议）、`prototype`（一次性原型：方向变体 / 状态验证）、`gsap` ×3、`playwright`、`apple-design`、`compatibility-testing`、`mobile-ux-optimizer`、`react-best-practices`、`taste-skill`、`web-design-guidelines`——直接以 `$技能名` 调用，来源与更新方式见 [docs/capabilities.md](docs/capabilities.md)。
 
 ## 4. 任务操作细节
 
@@ -199,7 +199,7 @@ node .toolkit/scripts/sync-mirror.mjs --check
 
 | 现象 | 处理 |
 | --- | --- |
-| 找不到 `$project-profile` 等技能 | 23 技能全内置；核对 `docs/capabilities.md` 清单，开新会话让宿主重新发现；不要装第三方同名替代 |
+| 找不到 `$project-profile` 等技能 | 24 技能全内置；核对 `docs/capabilities.md` 清单，开新会话让宿主重新发现；不要装第三方同名替代 |
 | 画像 `draft` 或模板 `pending` | 跑 `$project-profile` 选模板并确认高影响字段；不确定就 defer，不要手填 `initialized` |
 | 任务停在 `awaiting-confirmation` | 读 `PLAN.md` 决策块，跑 `$frontend-task confirm` |
 | `resume` 提示 fingerprint 过期 | 先 `inspect` 必要时重新 `plan`，不沿用旧计划 |
