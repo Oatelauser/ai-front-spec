@@ -1,0 +1,34 @@
+# NOTICE
+
+ai-front-spec 按 MIT 许可发布（LICENSE）。
+以下第三方组件随本仓库分发，版权归原作者所有，按其原许可条款提供，
+不受本仓库许可再授权；目录内保留的原许可文件优先。
+
+## Vendored skills（.agents/skills/）
+
+| 目录 | 上游 | 快照 | 许可 | 本仓修改 |
+|---|---|---|---|---|
+| tdd-workflow / api-design / security-review / frontend-design-direction | github.com/affaan-m/everything-claude-code | 2026-09-23 | MIT（仓库级） | 无 |
+| frontend-design | github.com/anthropics/skills | 2026-09-23 | Apache-2.0（目录内 LICENSE.txt） | 无 |
+| taste-skill | github.com/leonxlnx/taste-skill | 2026-09-23 | MIT（仓库级） | 无 |
+| web-design-guidelines | github.com/vercel-labs/agent-skills（内容源 github.com/vercel-labs/web-interface-guidelines） | 2026-09-23 | MIT | SKILL.md 改指本地 command.md（原运行时拉取） |
+| react-best-practices | github.com/vercel-labs/agent-skills | 2026-09-23 | MIT（frontmatter 声明，仓库无 LICENSE 文件） | 无 |
+| playwright | github.com/microsoft/playwright-cli | 先在库 | Apache-2.0 | 见目录内 NOTICE.txt |
+| gsap-core / gsap-performance / gsap-timeline | github.com/greensock/gsap-skills | 2026-09-17（elms-h5 包） | MIT © 2026 GreenSock | 无 |
+| compatibility-testing | github.com/proffesor-for-testing/agentic-qe | 2026-09-17（elms-h5 包） | MIT © 2025 Agentic QE Contributors | 无 |
+| mobile-ux-optimizer | github.com/erichowens/some-claude-skills（原仓已 404；延续仓 curiositech/some_claude_skills 同 MIT） | 2026-09-17（elms-h5 包） | MIT © 2025 Erich Owens | 无 |
+| apple-design | github.com/emilkowalski/skills | 2026-09-17（elms-h5 包） | MIT © 2026 Emil Kowalski | 无（早期版本快照，上游已迭代；更新路径 = 重新 vendor） |
+| product-design | OpenAI product-design 插件 v0.1.52 本机快照（无公开源码仓） | 2026-09-23 | 无许可文件（private:true，默认全保留）——用户裁定自用接受，公开发布前需重审 | 顶层薄路由 SKILL.md 自写 |
+
+在库 6 技能（gsap ×3 / apple-design / compatibility-testing / mobile-ux-optimizer）溯源链：
+上游 → elms-h5 技能包（20260917）→ 本仓 commit a0a5921。
+
+## 派生说明
+
+- karpathy-guidelines（项目技能）：行为准则派生自 Andrej Karpathy 公开帖（URL 待核补），本仓自撰。
+
+## 边界
+
+- 本仓库不对上述第三方组件再许可；任何修改均在表中或目录内 NOTICE 记录。
+- figma 官方技能因 Figma Developer Terms 未授予再分发权，不入库；
+  获取与双路径接入（Codex 插件 / MCP 直连）见 docs/capabilities.md「宿主插件（可选）」。

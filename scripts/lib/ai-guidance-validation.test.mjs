@@ -9,9 +9,10 @@ import { fileURLToPath } from 'node:url'
 import {
   collectGuidanceErrors,
   parseSkillFrontmatter,
+  validateDeadReferences,
   validateDocumentedPackageScripts,
   validateLocalLinks,
-} from './ai-guidance-validation.mjs'
+} from '../../.toolkit/scripts/lib/ai-guidance-validation.mjs'
 
 const config = {
   allowPlaceholders: true,
@@ -19,15 +20,15 @@ const config = {
   placeholderPattern: '<待填写(?:[：；][^>]*)?>',
   requiredFiles: [
     'AGENTS.md',
-    'docs/AI_TASK_CONTRACT.md',
+    'docs/rules/AI_TASK_CONTRACT.md',
     '.agents/skills/project-workflow/SKILL.md',
     '.agents/skills/project-workflow/agents/openai.yaml',
     '.agents/skills/project-workflow/references/task-routing.md',
-    'docs/CODEX_CAPABILITIES.md',
+    'docs/capabilities.md',
   ],
   promptContracts: [
     {
-      file: 'docs/AI_TASK_CONTRACT.md',
+      file: 'docs/rules/AI_TASK_CONTRACT.md',
       sections: ['目标：', '上下文：', '约束：', '完成条件：'],
     },
   ],
@@ -43,7 +44,7 @@ const config = {
     requiredMarkers: ['普通功能', '真实验收'],
   },
   capabilityRequirements: {
-    path: 'docs/CODEX_CAPABILITIES.md',
+    path: 'docs/capabilities.md',
     requiredMarkers: ['plugin@example-marketplace', 'owner/repository'],
   },
   packageIntegration: {
@@ -58,7 +59,7 @@ const config = {
 
 const validFiles = {
   'AGENTS.md': '使用 $project-workflow。',
-  'docs/AI_TASK_CONTRACT.md': '目标：结果\n上下文：事实\n约束：边界\n完成条件：证据',
+  'docs/rules/AI_TASK_CONTRACT.md': '目标：结果\n上下文：事实\n约束：边界\n完成条件：证据',
   '.agents/skills/project-workflow/SKILL.md': `---
 name: project-workflow
 description: Execute and verify project work. Use when changing this repository.
@@ -72,7 +73,7 @@ description: Execute and verify project work. Use when changing this repository.
   default_prompt: "Use $project-workflow to complete a scoped task."
 `,
   '.agents/skills/project-workflow/references/task-routing.md': '普通功能\n真实验收',
-  'docs/CODEX_CAPABILITIES.md': 'plugin@example-marketplace\nowner/repository',
+  'docs/capabilities.md': 'plugin@example-marketplace\nowner/repository',
 }
 
 describe('AI guidance validation', () => {
@@ -84,7 +85,7 @@ describe('AI guidance validation', () => {
     const files = {
       ...validFiles,
       'AGENTS.md': '没有入口',
-      'docs/AI_TASK_CONTRACT.md': '上下文：事实\n目标：结果\n约束：边界',
+      'docs/rules/AI_TASK_CONTRACT.md': '上下文：事实\n目标：结果\n约束：边界',
     }
     delete files['.agents/skills/project-workflow/agents/openai.yaml']
 
@@ -170,9 +171,9 @@ description: >-
   it('严格模式豁免模板与初始化前草稿的占位符，初始化后仍须报错', () => {
     const placeholderFiles = {
       ...validFiles,
-      '.codex/templates/component-catalog.react.md': '基础组件：<待填写：组件名>',
+      '.agents/skills/project-profile/templates/component-catalog.react.md': '基础组件：<待填写：组件名>',
       'docs/PROJECT_PROFILE.md': '运行时：<待填写：运行时>',
-      'docs/AI_COMPONENT_CATALOG.md': '按钮：<待填写：变体>',
+      'docs/rules/AI_COMPONENT_CATALOG.md': '按钮：<待填写：变体>',
     }
     const profileState = (status, catalogStatus) =>
       JSON.stringify({
@@ -189,7 +190,7 @@ description: >-
           pwa: { status: 'pending', value: null },
           multiPlatform: { status: 'pending', value: null, derived: true },
         },
-        proposal: { path: '.codex/profile-proposal.json', status: 'none', proposalId: null },
+        proposal: { path: '.toolkit/profile-proposal.json', status: 'none', proposalId: null },
         fields: {},
         evidence: [],
         unresolved: [],
@@ -199,16 +200,16 @@ description: >-
       allowPlaceholders: false,
       requiredFiles: [
         ...config.requiredFiles,
-        '.codex/templates/component-catalog.react.md',
+        '.agents/skills/project-profile/templates/component-catalog.react.md',
         'docs/PROJECT_PROFILE.md',
-        'docs/AI_COMPONENT_CATALOG.md',
-        '.codex/profile-state.json',
+        'docs/rules/AI_COMPONENT_CATALOG.md',
+        '.toolkit/profile-state.json',
       ],
     }
 
     const draftErrors = collectGuidanceErrors({
       config: strictConfig,
-      files: { ...placeholderFiles, '.codex/profile-state.json': profileState('draft', 'draft') },
+      files: { ...placeholderFiles, '.toolkit/profile-state.json': profileState('draft', 'draft') },
     })
     assert.deepEqual(
       draftErrors.filter((error) => error.code === 'PE012').map((error) => error.file),
@@ -219,12 +220,12 @@ description: >-
       config: strictConfig,
       files: {
         ...placeholderFiles,
-        '.codex/profile-state.json': profileState('initialized', 'initialized'),
+        '.toolkit/profile-state.json': profileState('initialized', 'initialized'),
       },
     })
     assert.deepEqual(
       initializedErrors.filter((error) => error.code === 'PE012').map((error) => error.file).sort(),
-      ['docs/AI_COMPONENT_CATALOG.md', 'docs/PROJECT_PROFILE.md'],
+      ['docs/PROJECT_PROFILE.md', 'docs/rules/AI_COMPONENT_CATALOG.md'],
     )
   })
 
@@ -244,7 +245,7 @@ description: >-
   it('拒绝 Prompt 最后一段为空并被后续标题伪装成正文', () => {
     const files = {
       ...validFiles,
-      'docs/AI_TASK_CONTRACT.md':
+      'docs/rules/AI_TASK_CONTRACT.md':
         '目标：结果\n上下文：事实\n约束：边界\n完成条件：\n## 使用原则\n这是另一节',
     }
     const errors = collectGuidanceErrors({ config, files })
@@ -254,7 +255,7 @@ description: >-
   it('拒绝能力安装清单缺少固定插件或 Skill 来源', () => {
     const files = {
       ...validFiles,
-      'docs/CODEX_CAPABILITIES.md': 'plugin@example-marketplace',
+      'docs/capabilities.md': 'plugin@example-marketplace',
     }
     const errors = collectGuidanceErrors({ config, files })
     assert.ok(errors.some((error) => error.code === 'PE014'))
@@ -289,7 +290,7 @@ description: >-
 
   it('CLI 提供稳定的成功、严格失败和 JSON 退出语义', () => {
     const templateRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-    const script = resolve(templateRoot, 'scripts/check-ai-guidance.mjs')
+    const script = resolve(templateRoot, '.toolkit/scripts/check-ai-guidance.mjs')
     const fixtureRoot = mkdtempSync(join(tmpdir(), 'ai-guidance-cli-'))
     try {
       for (const [path, content] of Object.entries(validFiles)) {
@@ -298,8 +299,8 @@ description: >-
         writeFileSync(target, content, 'utf8')
       }
       writeFileSync(resolve(fixtureRoot, 'AGENTS.md'), validFiles['AGENTS.md'] + '<待填写：命令>')
-      mkdirSync(resolve(fixtureRoot, '.codex'), { recursive: true })
-      writeFileSync(resolve(fixtureRoot, '.codex/ai-guidance.config.mjs'),
+      mkdirSync(resolve(fixtureRoot, '.toolkit'), { recursive: true })
+      writeFileSync(resolve(fixtureRoot, '.toolkit/ai-guidance.config.mjs'),
         `export default ${JSON.stringify(config)}`)
     const normal = spawnSync(process.execPath, [script, '--root', fixtureRoot, '--format', 'json'], {
       cwd: fixtureRoot,
@@ -322,15 +323,15 @@ description: >-
     }
   })
 
-  for (const resourceDirectory of ['resources', '.codex']) {
+  for (const resourceDirectory of ['.toolkit']) {
     it(`CLI 从 ${resourceDirectory} 定位同仓库项目，允许业务代码并保持文件不变`, () => {
-      const scriptRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+      const toolkitScripts = resolve(dirname(fileURLToPath(import.meta.url)), '../../.toolkit/scripts')
       const fixtureRoot = mkdtempSync(join(tmpdir(), 'frontend-in-place-'))
       try {
         const fixtureFiles = {
           ...validFiles,
-          '.codex/ai-guidance.config.mjs': `export default ${JSON.stringify(config)}`,
-          'resources/toolkit.json': JSON.stringify({ kind: 'frontend-project-template',
+          '.toolkit/ai-guidance.config.mjs': `export default ${JSON.stringify(config)}`,
+          'toolkit.json': JSON.stringify({ kind: 'frontend-project-template',
             initialization: { mode: 'in-place', projectRoot: '.' } }),
           'package.json': JSON.stringify({ private: true, scripts: {} }),
           'src/main.js': 'export const existingBusinessValue = 42\n',
@@ -343,8 +344,8 @@ description: >-
         const fixtureScript = resolve(fixtureRoot, resourceDirectory, 'scripts/check-ai-guidance.mjs')
         mkdirSync(dirname(fixtureScript), { recursive: true })
         mkdirSync(resolve(dirname(fixtureScript), 'lib'), { recursive: true })
-        copyFileSync(resolve(scriptRoot, 'check-ai-guidance.mjs'), fixtureScript)
-        copyFileSync(resolve(scriptRoot, 'lib/ai-guidance-validation.mjs'),
+        copyFileSync(resolve(toolkitScripts, 'check-ai-guidance.mjs'), fixtureScript)
+        copyFileSync(resolve(toolkitScripts, 'lib/ai-guidance-validation.mjs'),
           resolve(dirname(fixtureScript), 'lib/ai-guidance-validation.mjs'))
 
         const result = spawnSync(process.execPath, [fixtureScript, '--format', 'json'], {
@@ -369,92 +370,10 @@ description: >-
     assert.ok(errors.some(error => error.code === 'PE003' && error.file.includes('frontend-task')))
   })
 
-  it('真实模板在同仓库布局生成三种画像，搬移后两种资源模式均可校验', (t) => {
-    const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
-    const manifestPath = resolve(projectRoot, 'toolkit.json')
-    if (!existsSync(manifestPath)) {
-      t.skip('仅安装校验脚本的旧项目没有内置模板资源，跳过模板集成检查')
-      return
-    }
-    const toolkit = JSON.parse(readFileSync(manifestPath, 'utf8'))
-    if (!Array.isArray(toolkit.files)) {
-      t.skip('Starter 由 resources 统一构建，使用 project-profile.test.mjs 验证其结构')
-      return
-    }
-    const sourceFiles = new Set(['AGENTS.md', 'CODEX_TOOLKIT.md', 'resources/toolkit.json',
-      ...Object.values(toolkit.profiles), ...toolkit.files.map(entry => entry.source)])
-    const sourceContents = new Map([...sourceFiles].map(file =>
-      [file, readFileSync(resolve(projectRoot, file), 'utf8')]))
-
-    for (const [profile, profileSource] of Object.entries(toolkit.profiles)) {
-      for (const localResources of [true, false]) {
-        const temporaryRoot = mkdtempSync(join(tmpdir(), 'frontend-template-'))
-        try {
-          const fixtureRoot = join(temporaryRoot, 'project')
-          const write = (file, content) => {
-            const target = resolve(fixtureRoot, file)
-            mkdirSync(dirname(target), { recursive: true })
-            writeFileSync(target, content)
-          }
-          for (const [file, content] of sourceContents) write(file, content)
-          const businessFile = 'src/existing.js'
-          const businessContent = 'export const preserved = true\n'
-          write(businessFile, businessContent)
-          write('package.json', JSON.stringify({ private: true, scripts: {} }))
-
-          const installedFiles = ['docs/PROJECT_PROFILE.md']
-          let reusedFiles = 0
-          for (const entry of toolkit.files) {
-            if (entry.group === 'local' && !localResources) continue
-            installedFiles.push(entry.target)
-            if (resolve(fixtureRoot, entry.source) === resolve(fixtureRoot, entry.target)) {
-              reusedFiles += 1
-              continue
-            }
-            const content = readFileSync(resolve(fixtureRoot, entry.source), 'utf8')
-            write(entry.target, entry.target === 'AGENTS.md'
-              ? `${sourceContents.get('AGENTS.md')}\n${content}` : content)
-          }
-          write('docs/PROJECT_PROFILE.md', sourceContents.get(profileSource))
-          const manifest = JSON.parse(readFileSync(resolve(fixtureRoot, '.codex/manifest.json'), 'utf8'))
-          manifest.localResources = localResources
-          manifest.installedFiles = installedFiles
-          write('.codex/manifest.json', JSON.stringify(manifest))
-          assert.equal(manifest.toolkit.source, '.')
-          assert.ok(reusedFiles > 0)
-
-          const movedRoot = join(temporaryRoot, 'moved-project')
-          renameSync(fixtureRoot, movedRoot)
-          const script = resolve(movedRoot, localResources ? '.codex/scripts/check-ai-guidance.mjs'
-            : 'scripts/check-ai-guidance.mjs')
-          const check = (args = []) => spawnSync(process.execPath, [script, ...args, '--format', 'json'], {
-            cwd: temporaryRoot, encoding: 'utf8',
-          })
-          const normal = check()
-          assert.equal(normal.status, 0, `${profile}/${localResources}: ${normal.stdout}${normal.stderr}`)
-          const strict = check(['--strict'])
-          assert.equal(strict.status, 1, strict.stdout + strict.stderr)
-          assert.ok(JSON.parse(strict.stdout).errors.some(error => error.code === 'PE012'))
-          assert.equal(readFileSync(resolve(movedRoot, businessFile), 'utf8'), businessContent)
-          assert.ok(readFileSync(resolve(movedRoot, 'AGENTS.md'), 'utf8')
-            .includes(sourceContents.get('AGENTS.md')))
-          for (const [file, content] of sourceContents) {
-            if (file === 'AGENTS.md') continue
-            assert.equal(readFileSync(resolve(movedRoot, file), 'utf8'), content, file)
-          }
-        } finally {
-          rmSync(temporaryRoot, { force: true, recursive: true })
-        }
-      }
-    }
-    for (const [file, content] of sourceContents) {
-      assert.equal(readFileSync(resolve(projectRoot, file), 'utf8'), content)
-    }
-  })
 
   it('项目状态使用结构化 JSON，拒绝伪造完成或路径越界', () => {
     const recordConfig = { requiredFiles: [], allowPlaceholders: true,
-      projectRecords: { manifest: '.codex/manifest.json', capabilities: 'docs/capability-state.json' } }
+      projectRecords: { manifest: '.toolkit/manifest.json', capabilities: 'docs/capability-state.json' } }
     const manifest = { schemaVersion: 1, kind: 'project-installation', status: 'draft',
       toolkit: { name: 'fixture', version: '1', source: 'fixture-source' },
       installedFiles: ['AGENTS.md'], updates: 'review-required', localResources: true,
@@ -462,7 +381,7 @@ description: >-
     const capabilities = { schemaVersion: 1, mode: 'on-demand', capabilities: [] }
     const check = (current = manifest, capabilityRecord = capabilities, overrides = {}) =>
       collectGuidanceErrors({ config: { ...recordConfig, ...overrides }, files: {
-        '.codex/manifest.json': JSON.stringify(current),
+        '.toolkit/manifest.json': JSON.stringify(current),
         'docs/capability-state.json': JSON.stringify(capabilityRecord),
       } })
     assert.deepEqual(check(), [])
@@ -491,7 +410,73 @@ description: >-
         .some(error => error.code === 'PE015'))
     }
     assert.ok(collectGuidanceErrors({ config: recordConfig, files: {
-      '.codex/manifest.json': '{invalid', 'docs/capability-state.json': '{}',
+      '.toolkit/manifest.json': '{invalid', 'docs/capability-state.json': '{}',
     } }).every(error => error.code === 'PE015'))
+  })
+})
+
+describe('validateDeadReferences 死引用执法', () => {
+  it('三类引用 + 分发视角：正反例、豁免与登记表', () => {
+    const deadRoot = mkdtempSync(join(tmpdir(), 'dead-refs-'))
+    try {
+      for (const dir of ['.agents/skills/demo/scripts', '.agents/skills/product-design',
+        '.claude/skills', 'docs/wayfinder', 'docs', '.toolkit/scripts']) {
+        mkdirSync(join(deadRoot, dir), { recursive: true })
+      }
+      writeFileSync(join(deadRoot, '.agents/skills/demo/SKILL.md'),
+        '---\nname: demo\ndescription: Use when demo.\n---\n调用 `$demo`。\n')
+      writeFileSync(join(deadRoot, '.agents/skills/demo/scripts/run.cjs'), '')
+      writeFileSync(join(deadRoot, '.agents/skills/product-design/SKILL.md'),
+        '整包豁免：`.agents/不存在/x.md` 与 `$nope`。\n')
+      writeFileSync(join(deadRoot, 'AGENTS.md'), [
+        '好链 [画像](docs/PROJECT_PROFILE.md) 与 `$demo`。',
+        '坏链 [丢失](docs/missing.md)。',
+        '坏锚定 `.toolkit/missing.mjs`；坏技能 `$nope`；命名空间 `$demo:sub` 不扫。',
+        '复合引用与运行态：`.toolkit/profile-state.json.deliveryTargets`、`.toolkit/profile-proposal.json` 不报。',
+        '```text',
+        '$fenced-nope 与 `.toolkit/fenced-missing.mjs`',
+        '```',
+      ].join('\n'))
+      writeFileSync(join(deadRoot, 'README.md'),
+        '分发自述（I4 豁免）：`toolkit.json` 与 `scripts/` 不报 PE019。\n')
+      writeFileSync(join(deadRoot, 'docs/PROJECT_PROFILE.md'), '# 画像\n')
+      writeFileSync(join(deadRoot, 'docs/consumer.md'),
+        '随发文件引用开发件 `toolkit.json` 应报 PE019。非路径形态：`镜像目录不存在：.claude/skills` 与 `/g` 不报。\n')
+      writeFileSync(join(deadRoot, '.agents/skills/demo/usage.md'),
+        '包内脚本 `scripts/run.cjs` 豁免；`scripts/absent.cjs` 报 PE019。\n')
+      writeFileSync(join(deadRoot, '.toolkit/scripts/tool.mjs'),
+        'export const good = \'docs/PROJECT_PROFILE.md\'\nexport const bad = \'./missing-lib.mjs\'\n')
+      writeFileSync(join(deadRoot, '.claude/skills/mirror.md'), '`$mirror-nope` 与 `.toolkit/nope.mjs`\n')
+      writeFileSync(join(deadRoot, 'docs/wayfinder/old.md'), '`$old-nope` [旧链](gone.md)\n')
+      mkdirSync(join(deadRoot, '.agents/skills/demo/templates'), { recursive: true })
+      mkdirSync(join(deadRoot, 'docs/rules'), { recursive: true })
+      writeFileSync(join(deadRoot, 'docs/rules/AI_X.md'), '# 规则\n')
+      writeFileSync(join(deadRoot, '.agents/skills/demo/templates/tpl.md'), '[规则](docs/rules/AI_X.md)\n')
+      writeFileSync(join(deadRoot, '.toolkit/profile-state.json'), '{}\n')
+
+      const errors = validateDeadReferences(deadRoot, {})
+      const messages = (file) =>
+        errors.filter((error) => error.file === file).map((error) => `${error.code} ${error.message}`)
+
+      assert.ok(messages('AGENTS.md').some((m) => m.startsWith('PE017') && m.includes('missing.md')))
+      assert.ok(messages('AGENTS.md').some((m) => m.startsWith('PE017') && m.includes('missing.mjs')))
+      assert.equal(messages('AGENTS.md').filter((m) => m.startsWith('PE018')).length, 1)
+      assert.ok(messages('AGENTS.md')[0] !== undefined && messages('AGENTS.md').some((m) => m.startsWith('PE018') && m.includes('$nope')))
+      assert.ok(messages('docs/consumer.md').some((m) => m.startsWith('PE019')))
+      assert.deepEqual(messages('README.md'), [])
+      assert.ok(messages('.agents/skills/demo/usage.md').some((m) => m.startsWith('PE019') && m.includes('absent.cjs')))
+      assert.ok(!messages('.agents/skills/demo/usage.md').some((m) => m.includes('run.cjs')))
+      assert.ok(messages('.toolkit/scripts/tool.mjs').some((m) => m.startsWith('PE017') && m.includes('missing-lib.mjs')))
+      assert.ok(!messages('.toolkit/scripts/tool.mjs').some((m) => m.includes('PROJECT_PROFILE')))
+      assert.ok(!errors.some((error) => error.file === '.claude/skills/mirror.md'))
+      assert.ok(!errors.some((error) => error.file === 'docs/wayfinder/old.md'))
+      assert.ok(!errors.some((error) => error.file === '.agents/skills/product-design/SKILL.md'))
+      assert.ok(!errors.some((error) => error.file === '.agents/skills/demo/SKILL.md'))
+      assert.ok(!messages('AGENTS.md').some((m) => m.includes('deliveryTargets') || m.includes('profile-proposal')))
+      assert.ok(!messages('docs/consumer.md').some((m) => m.includes('claude/skills') || m.includes('/g')))
+      assert.ok(!errors.some((error) => error.file === '.agents/skills/demo/templates/tpl.md'))
+    } finally {
+      rmSync(deadRoot, { recursive: true, force: true })
+    }
   })
 })

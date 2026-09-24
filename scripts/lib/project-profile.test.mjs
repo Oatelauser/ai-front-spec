@@ -1,33 +1,34 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { existsSync, readdirSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { spawnSync } from 'node:child_process'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const toolkit = JSON.parse(readFileSync(resolve(root, 'toolkit.json'), 'utf8'))
-const starterRoot = resolve(root, toolkit.starter.sourceRoot)
+const starterRoot = root
 
-test('starter is the only distributable source and contains all profile candidates', () => {
+test('starter root is the distribution root and contains all profile candidates', () => {
   assert.equal(toolkit.kind, 'frontend-project-starter')
-  assert.equal(toolkit.starter.copyContentsToProjectRoot, true)
+  assert.deepEqual(toolkit.distExcludes, ['scripts', 'toolkit.json', 'docs/wayfinder', '.serena', 'CONTRIBUTING.md', '.git'])
   assert.deepEqual(Object.keys(toolkit.profiles).sort(), ['generic', 'react', 'vue'])
   for (const profilePath of Object.values(toolkit.profiles)) {
     assert.equal(existsSync(resolve(root, profilePath)), true, profilePath)
   }
   assert.equal(existsSync(resolve(starterRoot, '.agents/skills/bootstrap-project')), false)
   assert.equal(existsSync(resolve(starterRoot, '.agents/skills/project-profile/SKILL.md')), true)
-  assert.equal(existsSync(resolve(starterRoot, '.codex/templates/component-catalog.template.md')), true)
-  assert.equal(existsSync(resolve(starterRoot, '.codex/templates/component-catalog.presets.json')), true)
+  assert.equal(existsSync(resolve(starterRoot, '.agents/skills/project-profile/templates/component-catalog.template.md')), true)
+  assert.equal(existsSync(resolve(starterRoot, '.agents/skills/project-profile/templates/component-catalog.presets.json')), true)
   for (const name of ['generic', 'react', 'vue']) {
-    assert.equal(existsSync(resolve(starterRoot, `.codex/templates/component-catalog.${name}.md`)), true)
+    assert.equal(existsSync(resolve(starterRoot, `.agents/skills/project-profile/templates/component-catalog.${name}.md`)), true)
   }
 })
 
 test('project profile owns template selection and keeps recommendation separate from choice', () => {
   const skill = readFileSync(resolve(starterRoot, '.agents/skills/project-profile/SKILL.md'), 'utf8')
   const selection = readFileSync(resolve(starterRoot, '.agents/skills/project-profile/references/template-selection.md'), 'utf8')
-  const state = JSON.parse(readFileSync(resolve(starterRoot, '.codex/profile-state.json'), 'utf8'))
+  const state = JSON.parse(readFileSync(resolve(starterRoot, '.toolkit/profile-state.json'), 'utf8'))
   assert.match(skill, /\$project-profile status/)
   assert.match(skill, /\$project-profile profile/)
   assert.match(skill, /\$project-profile components/)
@@ -52,7 +53,7 @@ test('template selection must continue with exhaustive grilling over profile pla
 })
 
 test('starter manifest is initialized while profile completion remains pending', () => {
-  const manifest = JSON.parse(readFileSync(resolve(starterRoot, '.codex/manifest.json'), 'utf8'))
+  const manifest = JSON.parse(readFileSync(resolve(starterRoot, '.toolkit/manifest.json'), 'utf8'))
   assert.equal(manifest.starterStatus, 'ready')
   assert.equal(manifest.bootstrapStatus, 'initialized')
   assert.equal(manifest.profileStatus, 'draft')
@@ -63,7 +64,7 @@ test('starter manifest is initialized while profile completion remains pending',
 
 test('profile and components are separate peer commands and mutually referential without cross-completing', () => {
   const skill = readFileSync(resolve(starterRoot, '.agents/skills/project-profile/SKILL.md'), 'utf8')
-  const catalog = readFileSync(resolve(starterRoot, 'docs/AI_COMPONENT_CATALOG.md'), 'utf8')
+  const catalog = readFileSync(resolve(starterRoot, 'docs/rules/AI_COMPONENT_CATALOG.md'), 'utf8')
   assert.match(skill, /maturity.status.*missing.*profile/s)
   assert.match(skill, /assessedAt.*null|evidence.*persisted/s)
   assert.match(skill, /do not fill its placeholders|不能.*填.*画像|不能.*profileStatus/s)
@@ -75,13 +76,13 @@ test('profile and components are separate peer commands and mutually referential
 })
 
 test('component catalog has a shared structure template and explicit framework presets', () => {
-  const template = readFileSync(resolve(starterRoot, '.codex/templates/component-catalog.template.md'), 'utf8')
-  const presets = JSON.parse(readFileSync(resolve(starterRoot, '.codex/templates/component-catalog.presets.json'), 'utf8'))
+  const template = readFileSync(resolve(starterRoot, '.agents/skills/project-profile/templates/component-catalog.template.md'), 'utf8')
+  const presets = JSON.parse(readFileSync(resolve(starterRoot, '.agents/skills/project-profile/templates/component-catalog.presets.json'), 'utf8'))
   assert.match(template, /implemented.*planned.*deferred.*conflict/s)
   assert.match(template, /规划依据.*落地条件/s)
   assert.match(template, /全部.*占位符|每个字段/s)
   for (const name of ['generic', 'react', 'vue']) {
-    const presetTemplate = readFileSync(resolve(starterRoot, `.codex/templates/component-catalog.${name}.md`), 'utf8')
+    const presetTemplate = readFileSync(resolve(starterRoot, `.agents/skills/project-profile/templates/component-catalog.${name}.md`), 'utf8')
     assert.match(presetTemplate, /组件矩阵/)
     assert.match(presetTemplate, /全部.*占位符/)
     assert.match(presetTemplate, /planned.*implemented.*deferred/s)
@@ -97,22 +98,22 @@ test('component catalog has a shared structure template and explicit framework p
 })
 
 test('init proposal, delivery targets, and frontend task contracts are discoverable', () => {
-  const proposal = JSON.parse(readFileSync(resolve(starterRoot, '.codex/templates/profile-proposal.template.json'), 'utf8'))
+  const proposal = JSON.parse(readFileSync(resolve(starterRoot, '.agents/skills/project-profile/templates/profile-proposal.template.json'), 'utf8'))
   assert.deepEqual(proposal.cards.map(card => card.id), ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7'])
   assert.deepEqual(Object.keys(proposal.writeScopes).sort(), ['componentPlan', 'deferred', 'facts', 'recommendations', 'userDecisions'])
   assert.ok(proposal.traceability.length > 0)
-  const state = JSON.parse(readFileSync(resolve(starterRoot, '.codex/profile-state.json'), 'utf8'))
+  const state = JSON.parse(readFileSync(resolve(starterRoot, '.toolkit/profile-state.json'), 'utf8'))
   assert.equal(state.deliveryTargets.multiPlatform.derived, true)
   assert.match(readFileSync(resolve(starterRoot, '.agents/skills/project-profile/references/init-workflow.md'), 'utf8'), /Q1.*Q2.*Q3.*Q4.*Q5.*Q6.*Q7/s)
-  assert.match(readFileSync(resolve(starterRoot, 'docs/AI_FRONTEND_TASK.md'), 'utf8'), /deliveryTargets.*AI_COMPONENT_CATALOG/s)
+  assert.match(readFileSync(resolve(starterRoot, 'docs/rules/AI_FRONTEND_TASK.md'), 'utf8'), /deliveryTargets.*AI_COMPONENT_CATALOG/s)
 })
 
 const WEBVIEW_RULE_SENTENCE =
-  'deliveryTargets 含 webview 或 mobileH5 时，页面任务与全局样式、主题、构建配置改动受 [WebView 移动端规则](docs/AI_WEBVIEW_MOBILE.md) 约束，按页面声明判定生效标签集（全局改动无页面声明，按主端全集合判定）'
+  'deliveryTargets 含 webview 或 mobileH5 时，页面任务与全局样式、主题、构建配置改动受 [WebView 移动端规则](docs/rules/AI_WEBVIEW_MOBILE.md) 约束，按页面声明判定生效标签集（全局改动无页面声明，按主端全集合判定）'
 
 test('webview mobile rule mounting condition stays identical across templates, AGENTS routing, and rule docs', () => {
   for (const name of ['generic', 'react', 'vue']) {
-    const templatePath = `.codex/templates/project-profile.${name}.md`
+    const templatePath = `.agents/skills/project-profile/templates/project-profile.${name}.md`
     const template = readFileSync(resolve(starterRoot, templatePath), 'utf8')
     assert.ok(
       template.includes(WEBVIEW_RULE_SENTENCE),
@@ -126,9 +127,9 @@ test('webview mobile rule mounting condition stays identical across templates, A
     /`webview` 或 `mobileH5` 任一为 `user-confirmed`/,
     'AGENTS.md 路由行挂载条件句与规则层文档头不一致（5 份复制漂移之一）',
   )
-  assert.match(agents, /AI_WEBVIEW_MOBILE\.md/, 'AGENTS.md 路由行未引用 docs/AI_WEBVIEW_MOBILE.md')
+  assert.match(agents, /AI_WEBVIEW_MOBILE\.md/, 'AGENTS.md 路由行未引用 docs/rules/AI_WEBVIEW_MOBILE.md')
 
-  const webviewRules = readFileSync(resolve(starterRoot, 'docs/AI_WEBVIEW_MOBILE.md'), 'utf8')
+  const webviewRules = readFileSync(resolve(starterRoot, 'docs/rules/AI_WEBVIEW_MOBILE.md'), 'utf8')
   assert.match(
     webviewRules,
     /含 `webview` 或 `mobileH5` 任一为 `user-confirmed` 即载入/,
@@ -136,35 +137,20 @@ test('webview mobile rule mounting condition stays identical across templates, A
   )
   assert.match(webviewRules, /激活条件表/, 'AI_WEBVIEW_MOBILE.md 缺少「激活条件表」锚点')
 
-  const matrix = readFileSync(resolve(starterRoot, 'docs/AI_COMPATIBILITY_MATRIX.md'), 'utf8')
+  const matrix = readFileSync(resolve(starterRoot, 'docs/rules/AI_COMPATIBILITY_MATRIX.md'), 'utf8')
   assert.match(matrix, /含 任一/, 'AI_COMPATIBILITY_MATRIX.md 缺少合同句「含 任一」锚点')
   assert.match(matrix, /缺 无一/, 'AI_COMPATIBILITY_MATRIX.md 缺少合同句「缺 无一」锚点')
 })
 
-const collectSkillFiles = (dir) =>
-  readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
-    entry.isDirectory()
-      ? collectSkillFiles(resolve(dir, entry.name)).map((relativePath) => `${entry.name}/${relativePath}`)
-      : [entry.name],
+test('claude skills mirror is machine-generated and lockable via sync-mirror --check', () => {
+  const run = spawnSync('node', [resolve(root, '.toolkit/scripts/sync-mirror.mjs'), '--check'], { encoding: 'utf8' })
+  assert.equal(
+    run.status,
+    0,
+    `镜像漂移（修复：node .toolkit/scripts/sync-mirror.mjs）：\n${run.stdout}${run.stderr}`,
   )
-
-test('claude skills mirror stays byte-identical to agents skills', () => {
-  const agentsDir = resolve(starterRoot, '.agents/skills')
-  const claudeDir = resolve(starterRoot, '.claude/skills')
-  const agentsFiles = collectSkillFiles(agentsDir).sort()
-  const claudeFiles = collectSkillFiles(claudeDir).sort()
-  assert.deepEqual(
-    claudeFiles,
-    agentsFiles,
-    '.claude/skills 与 .agents/skills 相对文件集合不一致（镜像出现增删或漏复制）',
-  )
-  for (const relativePath of agentsFiles) {
-    const agentsContent = readFileSync(resolve(agentsDir, relativePath), 'utf8').replaceAll('\r', '')
-    const claudeContent = readFileSync(resolve(claudeDir, relativePath), 'utf8').replaceAll('\r', '')
-    assert.equal(
-      claudeContent,
-      agentsContent,
-      `.claude/skills/${relativePath} 与 .agents/skills/${relativePath} 去除 \\r 后内容不一致（镜像漂移）`,
-    )
-  }
+  const mirrored = readFileSync(resolve(root, '.claude/skills/project-workflow/SKILL.md'), 'utf8')
+  assert.match(mirrored, /AUTO-GENERATED from \.agents\/skills\/project-workflow\. DO NOT EDIT/)
+  const source = readFileSync(resolve(root, '.agents/skills/project-workflow/SKILL.md'), 'utf8')
+  assert.ok(!source.includes('AUTO-GENERATED'), '人工源 .agents/skills 不应带 AUTO-GENERATED 头')
 })

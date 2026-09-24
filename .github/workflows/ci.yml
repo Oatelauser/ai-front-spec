@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test scripts/lib/*.test.mjs
+      - run: node .toolkit/scripts/check-ai-guidance.mjs --root . --strict
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: gate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 断言 tag 与 toolkit.json version 一致
+        run: |
+          VERSION=$(node -p "require('./toolkit.json').version")
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "tag $GITHUB_REF_NAME 与 toolkit.json version $VERSION 不一致" >&2
+            exit 1
+          fi
+      - name: 干净副本（含三连校验）
+        run: node scripts/build-starter.mjs --target dist-starter
+      - name: 打包 release zip
+        run: |
+          VERSION=$(node -p "require('./toolkit.json').version")
+          cd dist-starter && zip -r "../ai-front-spec-v$VERSION.zip" .
+      - name: 发布 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(node -p "require('./toolkit.json').version")
+          gh release create "$GITHUB_REF_NAME" "ai-front-spec-v$VERSION.zip" --generate-notes

@@ -1,17 +1,27 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "kind": "frontend-project-starter",
   "name": "codex-frontend-toolkit",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "starter": {
-    "sourceRoot": "resources",
-    "copyContentsToProjectRoot": true,
-    "runtime": ["AGENTS.md", "CLAUDE.md", "docs", ".agents", ".claude", ".codex"]
+    "runtime": ["AGENTS.md", "CLAUDE.md", "README.md", "docs", ".agents", ".claude", ".toolkit", "LICENSE", "NOTICE"]
   },
+  "distExcludes": ["scripts", "toolkit.json", "docs/wayfinder", ".serena", "CONTRIBUTING.md", ".git"],
+  "skipIfExists": [
+    ".toolkit/profile-state.json",
+    "docs/PROJECT_PROFILE.md",
+    "docs/rules/AI_COMPONENT_CATALOG.md",
+    "docs/rules/AI_FRONTEND_TASK.md",
+    "docs/rules/AI_TASK_CONTRACT.md",
+    "docs/rules/AI_PROJECT_STANDARDS.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "README.md"
+  ],
   "profiles": {
-    "generic": "resources/.codex/templates/project-profile.generic.md",
-    "react": "resources/.codex/templates/project-profile.react.md",
-    "vue": "resources/.codex/templates/project-profile.vue.md"
+    "generic": ".agents/skills/project-profile/templates/project-profile.generic.md",
+    "react": ".agents/skills/project-profile/templates/project-profile.react.md",
+    "vue": ".agents/skills/project-profile/templates/project-profile.vue.md"
   },
   "profileTarget": "docs/PROJECT_PROFILE.md",
   "internal": {
@@ -24,16 +34,23 @@
     "project-workflow",
     "project-profile",
     "frontend-task",
-    "codex-capability-setup",
     "mobile-ux-optimizer",
     "apple-design",
     "gsap-core",
     "gsap-performance",
     "gsap-timeline",
-    "figma",
     "tinypng-compress",
     "playwright",
     "compatibility-testing",
-    "karpathy-guidelines"
+    "karpathy-guidelines",
+    "api-design",
+    "frontend-design",
+    "frontend-design-direction",
+    "product-design",
+    "react-best-practices",
+    "security-review",
+    "taste-skill",
+    "tdd-workflow",
+    "web-design-guidelines"
   ]
 }

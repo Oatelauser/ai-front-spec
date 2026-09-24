@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "taskId": "<task-id>",
+  "taskType": "new-page",
+  "taskStatus": "draft",
+  "currentStage": "inspect",
+  "sourceStatus": {},
+  "plan": {
+    "revision": 0,
+    "fingerprint": null,
+    "confirmation": "not-required"
+  },
+  "stages": {},
+  "overrides": []
+}

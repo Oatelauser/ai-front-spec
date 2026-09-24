@@ -1,83 +1,110 @@
-import { cp, mkdtemp, readFile, rm, stat } from 'node:fs/promises'
-import { existsSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
+#!/usr/bin/env node
+// 打包器/安装器（票 10）：空目标 = 干净副本 + 三连校验；现有项目 = 覆盖安装三类契约。
+// 干净副本：复制 distExcludes 以外的全部文件 → ①结构完整性 ②check-ai-guidance --strict ③sync-mirror --check。
+// 覆盖安装：①普通文件覆盖 ②skipIfExists 命中且已存在 → 跳过并打印 ③distExcludes 不落地；结尾打印清单。
+import { copyFile, mkdir, readdir, readFile } from 'node:fs/promises'
+import { existsSync, readdirSync, statSync } from 'node:fs'
+import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { spawnSync } from 'node:child_process'
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const manifestPath = resolve(repositoryRoot, 'toolkit.json')
-const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
-const sourceRoot = resolve(repositoryRoot, manifest.starter.sourceRoot)
+const manifest = JSON.parse(await readFile(join(repositoryRoot, 'toolkit.json'), 'utf8'))
+const distExcludes = manifest.distExcludes ?? []
+const skipIfExists = new Set(manifest.skipIfExists ?? [])
 
-const args = new Set(process.argv.slice(2))
-const targetArgument = process.argv.slice(2).find((value, index, values) => value === '--target' && values[index + 1])
-const targetRoot = targetArgument ? resolve(process.cwd(), process.argv[process.argv.indexOf('--target') + 1]) : null
-
-const expectedSkills = new Set([
-  'project-workflow',
-  'project-profile',
-  'frontend-task',
-  'codex-capability-setup',
-  'mobile-ux-optimizer',
-  'apple-design',
-  'gsap-core',
-  'gsap-performance',
-  'gsap-timeline',
-  'figma',
-  'tinypng-compress',
-  'playwright',
-  'compatibility-testing',
-  'karpathy-guidelines',
-])
-const requiredPaths = [
-  'AGENTS.md',
-  'CLAUDE.md',
-  'docs/PROJECT_PROFILE.md',
-  '.codex/manifest.json',
-  '.codex/profile-state.json',
-  '.codex/ai-guidance.config.mjs',
-  '.agents/skills/project-workflow/SKILL.md',
-  '.agents/skills/project-profile/SKILL.md',
-  '.agents/skills/frontend-task/SKILL.md',
-  '.agents/skills/codex-capability-setup/SKILL.md',
-  '.agents/skills/mobile-ux-optimizer/SKILL.md',
-  '.agents/skills/apple-design/SKILL.md',
-  '.agents/skills/gsap-core/SKILL.md',
-  '.agents/skills/gsap-performance/SKILL.md',
-  '.agents/skills/gsap-timeline/SKILL.md',
-  '.agents/skills/figma/SKILL.md',
-  '.agents/skills/tinypng-compress/SKILL.md',
-  '.agents/skills/playwright/SKILL.md',
-  '.agents/skills/compatibility-testing/SKILL.md',
-  '.agents/skills/karpathy-guidelines/SKILL.md',
-]
-
-const errors = []
-if (manifest.kind !== 'frontend-project-starter' || manifest.starter.sourceRoot !== 'resources') {
-  errors.push('resources/toolkit.json must point to resources as the only distributable source')
+let targetDir = null
+for (let i = 2; i < process.argv.length; i++) {
+  if (process.argv[i] === '--target') targetDir = process.argv[++i]
+  else if (process.argv[i].startsWith('--target=')) targetDir = process.argv[i].slice('--target='.length)
 }
-for (const relativePath of requiredPaths) {
-  if (!existsSync(resolve(sourceRoot, relativePath))) errors.push(`Starter is missing ${relativePath}`)
+const checkOnly = process.argv.includes('--check')
+
+async function collectFiles(dir, base = dir, out = []) {
+  for (const entry of await readdir(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name)
+    if (entry.isDirectory()) await collectFiles(full, base, out)
+    else out.push(relative(base, full).split('\\').join('/'))
+  }
+  return out
 }
-const skillRoot = resolve(sourceRoot, '.agents/skills')
-if (existsSync(skillRoot)) {
-  const entries = await (await import('node:fs/promises')).readdir(skillRoot, { withFileTypes: true })
-  for (const entry of entries) {
-    if (entry.isDirectory() && !expectedSkills.has(entry.name)) {
-      errors.push(`Starter contains unexpected project Skill: ${entry.name}`)
+
+const isExcluded = (rel) => distExcludes.some((ex) => rel === ex || rel.startsWith(ex + '/'))
+
+// 结构完整性：manifest.skills 逐个有 SKILL.md、runtime 逐项存在、磁盘无未登记技能。
+function integrityErrors(root) {
+  const errors = []
+  const skillsDir = join(root, '.agents', 'skills')
+  for (const skill of manifest.skills) {
+    if (!existsSync(join(skillsDir, skill, 'SKILL.md'))) errors.push(`技能缺 SKILL.md：${skill}`)
+  }
+  for (const entry of manifest.starter.runtime) {
+    if (!existsSync(join(root, entry))) errors.push(`starter.runtime 项缺失：${entry}`)
+  }
+  if (existsSync(skillsDir)) {
+    for (const name of readdirSync(skillsDir)) {
+      if (!statSync(join(skillsDir, name)).isDirectory()) continue
+      if (!existsSync(join(skillsDir, name, 'SKILL.md'))) continue
+      if (!manifest.skills.includes(name)) errors.push(`manifest 未登记的技能：${name}`)
     }
   }
-}
-if (existsSync(resolve(sourceRoot, '.agents/skills/bootstrap-project'))) {
-  errors.push('Starter must not contain bootstrap-project')
+  return errors
 }
 
-if (errors.length) {
-  console.error(errors.map(error => `- ${error}`).join('\n'))
-  process.exitCode = 1
-} else if (args.has('--check') || !targetRoot) {
-  console.log(`Starter validated: ${sourceRoot}`)
-} else {
-  await stat(sourceRoot)
-  await cp(sourceRoot, targetRoot, { recursive: true, errorOnExist: false, force: false })
-  console.log(`Starter copied from ${sourceRoot} to ${targetRoot}`)
+function fail(label, errors) {
+  console.error(`build-starter: ${label}`)
+  errors.forEach((line) => console.error(`- ${line}`))
+  process.exit(1)
 }
+
+if (checkOnly) {
+  const errors = integrityErrors(repositoryRoot)
+  if (errors.length) fail('--check 结构完整性失败', errors)
+  console.log(`build-starter --check: 结构完整（${manifest.skills.length} 技能）`)
+  process.exit(0)
+}
+
+if (!targetDir) {
+  console.error('用法：node scripts/build-starter.mjs --target <目录> | --check')
+  process.exit(2)
+}
+
+await mkdir(targetDir, { recursive: true })
+const overlay = (await readdir(targetDir)).length > 0
+const copied = []
+const skipped = []
+
+for (const rel of await collectFiles(repositoryRoot)) {
+  if (isExcluded(rel)) continue
+  const dest = join(targetDir, rel)
+  if (overlay && skipIfExists.has(rel) && existsSync(dest)) {
+    skipped.push(rel)
+    continue
+  }
+  await mkdir(dirname(dest), { recursive: true })
+  await copyFile(join(repositoryRoot, rel), dest)
+  copied.push(rel)
+}
+
+if (overlay) {
+  console.log(`覆盖安装完成：写入 ${copied.length} 文件，跳过 ${skipped.length} 文件（skipIfExists 命中且已存在）`)
+  skipped.forEach((rel) => console.log(`  跳过：${rel}`))
+  console.log(`  未落地（distExcludes）：${distExcludes.join(', ')}`)
+  process.exit(0)
+}
+
+// 干净副本：三连校验（票 10）。
+const errors = integrityErrors(targetDir)
+if (errors.length) fail('三连校验①结构完整性失败', errors)
+
+const run = (label, args) => {
+  const result = spawnSync('node', args, { stdio: 'inherit' })
+  if (result.status !== 0) {
+    console.error(`build-starter: 三连校验${label}失败`)
+    process.exit(1)
+  }
+}
+run('②check-ai-guidance --strict', [join(targetDir, '.toolkit', 'scripts', 'check-ai-guidance.mjs'), '--root', targetDir, '--strict'])
+run('③sync-mirror --check', [join(targetDir, '.toolkit', 'scripts', 'sync-mirror.mjs'), '--check'])
+
+console.log(`干净副本完成：${copied.length} 文件 → ${targetDir}（三连校验通过）`)
