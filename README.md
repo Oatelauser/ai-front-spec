@@ -33,7 +33,7 @@ node .toolkit/scripts/sync-mirror.mjs --check
 
 ### 安装后下一步
 
-校验通过后，新项目从 `$project-profile` 开始初始化画像（见第 3 节）；已有业务代码的项目运行 `$project-profile update` 对齐现状，画像中的质量命令必须对齐你 `package.json` 的真实脚本名，不要沿用模板示例值。覆盖安装跳过的 `AGENTS.md`/`CLAUDE.md`/`README.md` 保持你的版本，Starter 的入口指引不会自动接入；需要接入时参照源仓库同名文件手工合并。
+校验通过后，新项目从 `$project-profile` 开始初始化画像（见第 3 节）；已有业务代码的项目运行 `$project-profile update` 对齐现状，画像中的质量命令必须对齐你 `package.json` 的真实脚本名，不要沿用模板示例值。画像初始化时必须确认支持端（`deliveryTargets`：桌面浏览器、移动端 H5、WebView 等），它决定页面任务适用哪些规则，未确认前 AI 不得猜测。若项目测试框架会扫描全目录（如 Vitest 默认包含所有 `*.test.*`），把 `.agents/` 与 `.claude/` 加入 exclude——技能包内的模板测试文件不是项目测试。覆盖安装跳过的 `AGENTS.md`/`CLAUDE.md`/`README.md` 保持你的版本，Starter 的入口指引不会自动接入；需要接入时参照源仓库同名文件手工合并。
 
 ## 2. 命令总览
 

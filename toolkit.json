@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "kind": "frontend-project-starter",
-  "name": "codex-frontend-toolkit",
+  "name": "ai-front-spec",
   "version": "6.0.0",
   "starter": {
     "runtime": ["AGENTS.md", "CLAUDE.md", "README.md", "docs", ".agents", ".claude", ".toolkit", "LICENSE", "NOTICE"]
