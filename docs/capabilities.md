@@ -16,7 +16,7 @@
 
 自研 5 项：`project-workflow`、`project-profile`、`frontend-task`、`tinypng-compress`、`karpathy-guidelines`。
 
-Vendored 19 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。唯一直接修改上游文件的例外：`web-design-guidelines`（离线本地化，见 `NOTICE` 修改列）。许可与修改记录见仓库根 `NOTICE`；更新方式为从「上游」列取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
+Vendored 19 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。许可与修改记录见仓库根 `NOTICE`；更新方式为从「上游」列取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
 
 | 技能（目录） | 上游 | 本仓说明 |
 | --- | --- | --- |
@@ -24,7 +24,7 @@ Vendored 19 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | `frontend-design` | github.com/anthropics/skills | 2026-09-23 快照，Apache-2.0（目录内 LICENSE.txt） |
 | `taste-skill` | github.com/leonxlnx/taste-skill | 2026-09-23 快照，MIT；frontmatter 实名 `design-taste-frontend` |
 | `grill-me` / `grilling` / `prototype` | claude-plugins-official/mattpocock-skills 1.2.3 | 2026-09-25 快照，MIT；grill-me（入口）与 grilling（协议）按上游依赖结构原样入库，零修改；prototype 支持无视觉参照新页面的方向原型硬门槛 |
-| `web-design-guidelines` | github.com/vercel-labs/agent-skills（内容源 vercel-labs/web-interface-guidelines） | 规则全文已连带 `command.md` 本地化，SKILL.md 改指本地 |
+| `web-design-guidelines` | github.com/vercel-labs/agent-skills（内容源 vercel-labs/web-interface-guidelines） | SKILL.md verbatim：在线按上游机制拉最新规则；`command.md` 为内容源规则快照（附加文件），离线/WebFetch 失败时按 task-routing 指示回退使用 |
 | `react-best-practices` | github.com/vercel-labs/agent-skills | 2026-09-23 快照；frontmatter 实名 `vercel-react-best-practices` |
 | `product-design` | OpenAI `product-design` 插件 v0.1.52 本机快照（无公开源码仓） | 整包 vendor，顶层薄路由自写；部分子技能（如 image-to-code）依赖 OpenAI 宿主能力，其他宿主仅方法论与测量/清册部分可用；许可状态见 NOTICE——用户已特赦公开分发（2026-09-24） |
 | `gsap-core` / `gsap-performance` / `gsap-timeline` | github.com/greensock/gsap-skills | 经 elms-h5 技能包（20260917）迁入 |

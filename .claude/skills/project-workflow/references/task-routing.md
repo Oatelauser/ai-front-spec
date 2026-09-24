@@ -14,7 +14,7 @@
 | 从截图或选定视觉稿忠实实现 | `$frontend-task`（screenshot-workflow，全宿主主路径）；宿主有 OpenAI 运行时可叠用 `$product-design`（子技能 image-to-code）加速，边界见其顶层 SKILL.md | 视觉源决定布局，项目组件、可访问性和工程规则决定实现方式 |
 | 创建或更新可编辑 Figma 页面 | `$figma:figma-use` + `$figma:figma-generate-design` | 写 Figma 前必须先加载 figma-use；没有文件时先用 `$figma:figma-create-new-file` |
 | 从 Figma 实现代码 | `$figma:figma-design-to-code` | 先获取 design context；返回代码只作参考，必须适配项目技术栈与组件系统 |
-| UI/流程审计 | `$product-design`（子技能 audit）+ `$web-design-guidelines` | 前者检查流程证据，后者检查代码、可访问性和 Web 规范 |
+| UI/流程审计 | `$product-design`（子技能 audit）+ `$web-design-guidelines` | 前者检查流程证据，后者检查代码、可访问性和 Web 规范；后者在线按其 SKILL.md 拉最新规则，离线或 WebFetch 失败时回退读其目录内附加快照 `command.md` |
 | React 性能或包体优化 | `$vercel-react-best-practices` | 先测量后优化；构建规则仍以项目文档为准 |
 | OpenAPI、请求、身份或权限 | `$api-design` + `$security-review` | 普通字段调整可只用项目 Skill；涉及信任边界时必须安全审查 |
 | 页面真实验收 | `$browser:control-in-app-browser` | 本地页面优先 Browser，不用 Computer Use 代替浏览器验证 |

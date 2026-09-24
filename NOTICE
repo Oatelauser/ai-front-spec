@@ -11,7 +11,7 @@ ai-front-spec 按 MIT 许可发布（LICENSE）。
 | tdd-workflow / api-design / security-review / frontend-design-direction | github.com/affaan-m/everything-claude-code | 2026-09-23 | MIT（仓库级） | 无 |
 | frontend-design | github.com/anthropics/skills | 2026-09-23 | Apache-2.0（目录内 LICENSE.txt） | 无 |
 | taste-skill | github.com/leonxlnx/taste-skill | 2026-09-23 | MIT（仓库级） | 无 |
-| web-design-guidelines | github.com/vercel-labs/agent-skills（内容源 github.com/vercel-labs/web-interface-guidelines） | 2026-09-23 | MIT | SKILL.md 改指本地 command.md（原运行时拉取） |
+| web-design-guidelines | github.com/vercel-labs/agent-skills（内容源 github.com/vercel-labs/web-interface-guidelines） | 2026-09-23 | MIT | 无修改：SKILL.md verbatim（在线拉最新规则）；附加快照 `command.md` 来自内容源仓库，作离线回退，路由层（task-routing）指示其使用时机 |
 | react-best-practices | github.com/vercel-labs/agent-skills | 2026-09-23 | MIT（frontmatter 声明，仓库无 LICENSE 文件） | 无 |
 | playwright | github.com/microsoft/playwright-cli | 先在库 | Apache-2.0 | 见目录内 NOTICE.txt |
 | gsap-core / gsap-performance / gsap-timeline | github.com/greensock/gsap-skills | 2026-09-17（elms-h5 包） | MIT © 2026 GreenSock | 无 |
