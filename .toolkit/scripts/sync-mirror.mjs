@@ -27,7 +27,7 @@ async function collectFiles(dir, base = dir, out = []) {
 }
 
 function withHeader(text, skill) {
-  const lines = text.split('\n')
+  const lines = text.split(/\r?\n/)
   if (lines[0] !== '---') return text
   const close = lines.indexOf('---', 1)
   if (close === -1) return text
@@ -35,11 +35,19 @@ function withHeader(text, skill) {
   return lines.join('\n')
 }
 
+// 行尾全程归一：vendored 源可能带 CRLF、检出环境各异；镜像统一 LF，比较前双方 normalize。
+const normalizeEol = (text) => text.replace(/\r\n/g, '\n')
+
 async function buildExpected() {
   const expected = new Map()
   for (const relPath of await collectFiles(sourceDir)) {
-    const raw = await readFile(join(sourceDir, relPath), 'utf8')
-    expected.set(relPath, withHeader(raw, relPath.split('/')[0]))
+    // 仅 .md 走文本管道（头注入 + 行尾归一）；其余文件一律字节管道，防止 utf8 往返损坏二进制。
+    if (relPath.endsWith('.md')) {
+      const raw = await readFile(join(sourceDir, relPath), 'utf8')
+      expected.set(relPath, withHeader(normalizeEol(raw), relPath.split('/')[0]))
+    } else {
+      expected.set(relPath, await readFile(join(sourceDir, relPath)))
+    }
   }
   return expected
 }
@@ -65,8 +73,12 @@ if (checkMode) {
     }
     for (const relPath of expected.keys()) {
       if (!actualFiles.has(relPath)) continue
-      const actual = await readFile(join(mirrorDir, relPath), 'utf8')
-      if (actual !== expected.get(relPath)) drift.push(`镜像漂移：${relPath}`)
+      const expectedContent = expected.get(relPath)
+      const actual = await readFile(join(mirrorDir, relPath))
+      const equal = Buffer.isBuffer(expectedContent)
+        ? actual.equals(expectedContent)
+        : normalizeEol(actual.toString('utf8')) === expectedContent
+      if (!equal) drift.push(`镜像漂移：${relPath}`)
     }
   }
   if (drift.length) {

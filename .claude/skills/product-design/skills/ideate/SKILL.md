@@ -2,6 +2,7 @@
 name: ideate
 description: "Generate image-based alternatives, remixes, or new design directions from a Product Design brief. Use when the user asks for design variants, visual exploration, remixes, or image-generated approaches from provided context."
 ---
+<!-- AUTO-GENERATED from .agents/skills/product-design. DO NOT EDIT. Run: node .toolkit/scripts/sync-mirror.mjs -->
 
 # Ideate
 

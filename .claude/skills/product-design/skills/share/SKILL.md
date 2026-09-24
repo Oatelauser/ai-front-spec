@@ -2,6 +2,7 @@
 name: share
 description: "Share a runnable prototype using the user's preferred deployment tool."
 ---
+<!-- AUTO-GENERATED from .agents/skills/product-design. DO NOT EDIT. Run: node .toolkit/scripts/sync-mirror.mjs -->
 
 # Share
 

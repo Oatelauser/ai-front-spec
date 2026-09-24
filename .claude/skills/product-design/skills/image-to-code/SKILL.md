@@ -2,6 +2,7 @@
 name: image-to-code
 description: "Implement a selected image, screenshot, mockup, or Image Gen reference as a faithful, responsive frontend."
 ---
+<!-- AUTO-GENERATED from .agents/skills/product-design. DO NOT EDIT. Run: node .toolkit/scripts/sync-mirror.mjs -->
 
 # Image to Code
 

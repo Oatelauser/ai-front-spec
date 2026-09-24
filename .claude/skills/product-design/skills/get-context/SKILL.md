@@ -2,6 +2,7 @@
 name: get-context
 description: "Mandatory design-brief gate for clarifying the product and outcome. Use before ideation, image-to-code builds, redesigns, or product UI work to clarify missing product information and play back the brief before proceeding."
 ---
+<!-- AUTO-GENERATED from .agents/skills/product-design. DO NOT EDIT. Run: node .toolkit/scripts/sync-mirror.mjs -->
 
 # Get Context
 

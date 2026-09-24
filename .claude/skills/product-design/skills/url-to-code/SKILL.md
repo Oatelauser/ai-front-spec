@@ -2,6 +2,7 @@
 name: url-to-code
 description: "Clone a live URL as a runnable frontend-only local app."
 ---
+<!-- AUTO-GENERATED from .agents/skills/product-design. DO NOT EDIT. Run: node .toolkit/scripts/sync-mirror.mjs -->
 
 # URL To Code
 

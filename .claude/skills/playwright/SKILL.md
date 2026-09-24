@@ -2,6 +2,7 @@
 name: "playwright"
 description: "Use when the task requires automating a real browser from the terminal (navigation, form filling, snapshots, screenshots, data extraction, UI-flow debugging) via `playwright-cli` or the bundled wrapper script."
 ---
+<!-- AUTO-GENERATED from .agents/skills/playwright. DO NOT EDIT. Run: node .toolkit/scripts/sync-mirror.mjs -->
 
 
 # Playwright CLI Skill
