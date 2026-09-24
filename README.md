@@ -11,6 +11,8 @@
 
 ### 安装
 
+要求 Node ≥ 20（CI 以 22 验证）。
+
 ```bash
 node scripts/build-starter.mjs --target ./my-project
 ```

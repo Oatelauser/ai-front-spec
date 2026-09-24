@@ -8,8 +8,10 @@
   },
   "distExcludes": ["scripts", "toolkit.json", "docs/wayfinder", ".serena", "CONTRIBUTING.md", ".git", ".github", ".gitignore", ".gitattributes"],
   "skipIfExists": [
+    ".toolkit/manifest.json",
     ".toolkit/profile-state.json",
     "docs/PROJECT_PROFILE.md",
+    "docs/rules/FRONTEND_CONVENTIONS.md",
     "docs/rules/AI_COMPONENT_CATALOG.md",
     "docs/rules/AI_FRONTEND_TASK.md",
     "docs/rules/AI_TASK_CONTRACT.md",

@@ -2,7 +2,7 @@
 // 打包器/安装器（票 10）：空目标 = 干净副本 + 三连校验；现有项目 = 覆盖安装三类契约。
 // 干净副本：复制 distExcludes 以外的全部文件 → ①结构完整性 ②check-ai-guidance --strict ③sync-mirror --check。
 // 覆盖安装：①普通文件覆盖 ②skipIfExists 命中且已存在 → 跳过并打印 ③distExcludes 不落地；结尾打印清单。
-import { copyFile, mkdir, readdir, readFile } from 'node:fs/promises'
+import { copyFile, mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import { existsSync, readdirSync, statSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -84,6 +84,18 @@ for (const rel of await collectFiles(repositoryRoot)) {
   await mkdir(dirname(dest), { recursive: true })
   await copyFile(join(repositoryRoot, rel), dest)
   copied.push(rel)
+}
+
+// 安装事实：写入 starterVersion（升级可检测）；overlay 下读取既有 manifest，只补版本不碰用户状态字段。
+{
+  const manifestPath = join(targetDir, '.toolkit', 'manifest.json')
+  let installed = {}
+  try { installed = JSON.parse(await readFile(manifestPath, 'utf8')) } catch {}
+  const previous = installed.starterVersion ?? null
+  installed.starterVersion = manifest.version
+  await mkdir(dirname(manifestPath), { recursive: true })
+  await writeFile(manifestPath, JSON.stringify(installed, null, 2) + '\n', 'utf8')
+  if (overlay) console.log(previous && previous !== manifest.version ? `  Starter 升级：${previous} → ${manifest.version}` : `  Starter 版本：${manifest.version}`)
 }
 
 if (overlay) {

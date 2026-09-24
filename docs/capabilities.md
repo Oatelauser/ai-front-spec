@@ -25,7 +25,7 @@ Vendored 16 项（许可与修改记录见仓库根 `NOTICE`；更新方式一�
 | `taste-skill` | github.com/leonxlnx/taste-skill | 2026-09-23 快照，MIT；frontmatter 实名 `design-taste-frontend` |
 | `web-design-guidelines` | github.com/vercel-labs/agent-skills（内容源 vercel-labs/web-interface-guidelines） | 规则全文已连带 `command.md` 本地化，SKILL.md 改指本地 |
 | `react-best-practices` | github.com/vercel-labs/agent-skills | 2026-09-23 快照；frontmatter 实名 `vercel-react-best-practices` |
-| `product-design` | OpenAI `product-design` 插件 v0.1.52 本机快照（无公开源码仓） | 整包 vendor，顶层薄路由自写；部分子技能（如 image-to-code）依赖 OpenAI 宿主能力，其他宿主仅方法论与测量/清册部分可用；许可状态见 NOTICE，公开发布前需重审 |
+| `product-design` | OpenAI `product-design` 插件 v0.1.52 本机快照（无公开源码仓） | 整包 vendor，顶层薄路由自写；部分子技能（如 image-to-code）依赖 OpenAI 宿主能力，其他宿主仅方法论与测量/清册部分可用；许可状态见 NOTICE——用户已特赦公开分发（2026-09-24） |
 | `gsap-core` / `gsap-performance` / `gsap-timeline` | github.com/greensock/gsap-skills | 经 elms-h5 技能包（20260917）迁入 |
 | `apple-design` | github.com/emilkowalski/skills | 同上；上游已迭代，本仓为早期快照 |
 | `compatibility-testing` | github.com/proffesor-for-testing/agentic-qe | 同上 |
