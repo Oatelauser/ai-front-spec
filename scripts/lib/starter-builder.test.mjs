@@ -16,7 +16,7 @@ test('干净副本：distExcludes 不落地，skills 全数随发，副本内三
   try {
     const run = build(target)
     assert.equal(run.status, 0, run.stdout + run.stderr)
-    for (const excluded of ['scripts', 'toolkit.json', 'docs/wayfinder', 'CONTRIBUTING.md', '.serena']) {
+    for (const excluded of ['scripts', 'toolkit.json', 'docs/wayfinder', 'CONTRIBUTING.md', '.serena', '.github', '.gitignore', '.gitattributes']) {
       assert.equal(existsSync(join(target, excluded)), false, `${excluded} 不应随发`)
     }
     const manifest = JSON.parse(await readFile(join(target, '.toolkit/manifest.json'), 'utf8'))

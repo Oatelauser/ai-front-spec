@@ -11,7 +11,7 @@ const starterRoot = root
 
 test('starter root is the distribution root and contains all profile candidates', () => {
   assert.equal(toolkit.kind, 'frontend-project-starter')
-  assert.deepEqual(toolkit.distExcludes, ['scripts', 'toolkit.json', 'docs/wayfinder', '.serena', 'CONTRIBUTING.md', '.git'])
+  assert.deepEqual(toolkit.distExcludes, ['scripts', 'toolkit.json', 'docs/wayfinder', '.serena', 'CONTRIBUTING.md', '.git', '.github', '.gitignore', '.gitattributes'])
   assert.deepEqual(Object.keys(toolkit.profiles).sort(), ['generic', 'react', 'vue'])
   for (const profilePath of Object.values(toolkit.profiles)) {
     assert.equal(existsSync(resolve(root, profilePath)), true, profilePath)

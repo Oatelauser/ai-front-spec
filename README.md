@@ -18,7 +18,7 @@ node scripts/build-starter.mjs --target ./my-project
 - 目标为**空目录** → 干净副本：除开发件外全量复制，并自动跑三连校验（结构 / AI 指引 / 镜像一致）。
 - 目标**已有项目** → 覆盖安装：普通文件覆盖；`AGENTS.md`、`CLAUDE.md`、`README.md`、画像与规则草稿已存在时跳过（清单见 `toolkit.json` 的 `skipIfExists`，结束打印跳过项）。
 
-> 直接 git clone 本仓库得到的是开发形态（含 `scripts/`、`docs/wayfinder/`、`CONTRIBUTING.md`），这些开发件不会随安装进入业务项目。也可手工复制仓库根内容（不含上述开发件与 `.serena/`），注意保留隐藏目录 `.agents/`、`.claude/`、`.toolkit/`。
+> 直接 git clone 本仓库得到的是开发形态（含 `scripts/`、`docs/wayfinder/`、`CONTRIBUTING.md`），这些开发件不会随安装进入业务项目。也可手工复制仓库根内容（不含上述开发件与 `.serena/`），注意保留隐藏目录 `.agents/`、`.claude/`、`.toolkit/`。把 Starter 提交进自己的 Git 仓库时，建议在项目 `.gitattributes` 加一行 `*.png binary`，避免行尾转换损坏技能内置图片。
 
 ### 验证
 

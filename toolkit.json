@@ -2,11 +2,11 @@
   "schemaVersion": 3,
   "kind": "frontend-project-starter",
   "name": "ai-front-spec",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "starter": {
     "runtime": ["AGENTS.md", "CLAUDE.md", "README.md", "docs", ".agents", ".claude", ".toolkit", "LICENSE", "NOTICE"]
   },
-  "distExcludes": ["scripts", "toolkit.json", "docs/wayfinder", ".serena", "CONTRIBUTING.md", ".git"],
+  "distExcludes": ["scripts", "toolkit.json", "docs/wayfinder", ".serena", "CONTRIBUTING.md", ".git", ".github", ".gitignore", ".gitattributes"],
   "skipIfExists": [
     ".toolkit/profile-state.json",
     "docs/PROJECT_PROFILE.md",
