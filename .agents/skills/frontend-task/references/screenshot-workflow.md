@@ -2,7 +2,7 @@
 
 适用：从截图、选定视觉稿实现页面，或按参考图调整已有区域。只有线框结构时使用 [原型流程](prototype-workflow.md)；Figma节点可读时按 [来源路由](source-routing.md) 判断是否组合。任务规模、产物路径和确认规则遵循 [共用契约](common-workflow.md)。
 
-使用内置 `$product-design`（子技能 image-to-code）读取视觉参考；项目工程事实仍来自 [画像](../../../../docs/PROJECT_PROFILE.md)、[前端约定](../../../../docs/rules/FRONTEND_CONVENTIONS.md) 和 [组件目录](../../../../docs/rules/AI_COMPONENT_CATALOG.md)。忠实还原任务不启动无关设计探索。
+本流程即视觉复刻主路径，全宿主可用：代理视觉读图 + 像素测量。宿主具备 OpenAI 运行时（Codex + 官方插件）时可叠用内置 `$product-design`（子技能 image-to-code）加速，其宿主能力边界见该技能顶层 SKILL.md。项目工程事实仍来自 [画像](../../../../docs/PROJECT_PROFILE.md)、[前端约定](../../../../docs/rules/FRONTEND_CONVENTIONS.md) 和 [组件目录](../../../../docs/rules/AI_COMPONENT_CATALOG.md)。忠实还原任务不启动无关设计探索。
 
 ## 1. 核实图片与目标范围
 

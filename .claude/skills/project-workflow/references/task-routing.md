@@ -10,8 +10,8 @@
 | --- | --- | --- |
 | 前端页面、组件、多端或前端接口任务 | `$frontend-task` + 本矩阵适用的最小专项能力 | 读取来源流程及验收矩阵；已从 frontend-task 进入时不递归重启 |
 | 普通功能、缺陷修复、状态规则 | `$tdd-workflow` | 先复现或写失败测试；不自动启用 Product Design |
-| 无定稿视觉源的新页面或重新设计 | `$product-design`（内置整包，子技能 index）+ `$frontend-design-direction`，实现阶段再用 `$frontend-design` | 沿用用户已确认方向；未决定且影响实现的视觉选择先提出方案确认 |
-| 从截图或选定视觉稿忠实实现 | `$product-design`（子技能 image-to-code） | 视觉源决定布局，项目组件、可访问性和工程规则决定实现方式 |
+| 无定稿视觉源的新页面或重新设计 | `$product-design`（内置整包，子技能 index，宿主能力边界见其顶层 SKILL.md）+ `$prototype`（2–3 个方向原型，经用户选定）+ `$frontend-design-direction`，实现阶段再用 `$frontend-design` | 无视觉参照的新页面必须原型经用户确认后实现（见 requirement-workflow 第 3 节硬门槛）；沿用用户已确认方向 |
+| 从截图或选定视觉稿忠实实现 | `$frontend-task`（screenshot-workflow，全宿主主路径）；宿主有 OpenAI 运行时可叠用 `$product-design`（子技能 image-to-code）加速，边界见其顶层 SKILL.md | 视觉源决定布局，项目组件、可访问性和工程规则决定实现方式 |
 | 创建或更新可编辑 Figma 页面 | `$figma:figma-use` + `$figma:figma-generate-design` | 写 Figma 前必须先加载 figma-use；没有文件时先用 `$figma:figma-create-new-file` |
 | 从 Figma 实现代码 | `$figma:figma-design-to-code` | 先获取 design context；返回代码只作参考，必须适配项目技术栈与组件系统 |
 | UI/流程审计 | `$product-design`（子技能 audit）+ `$web-design-guidelines` | 前者检查流程证据，后者检查代码、可访问性和 Web 规范 |

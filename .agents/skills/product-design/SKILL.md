@@ -27,3 +27,17 @@ description: Product Design toolkit (vendored snapshot v0.1.52) — design explo
 ## 与官方插件的关系
 
 装有官方 `product-design@openai-api-curated` 插件的 Codex 宿主可直接用命名空间调用（如 `$product-design:index`），以插件版为准；本内置包服务于无插件宿主（含 Claude Code 镜像路径），任务路由见 `project-workflow/references/task-routing.md`。许可状态与再分发边界见仓库根 `NOTICE`。
+
+## 宿主能力边界（先判宿主再选子技能）
+
+vendor 拷贝的是指令文本，不是 OpenAI 宿主运行时服务。调用子技能前按下表判定本宿主可用面；无对应能力时走「等价路径」完成同等目标，不得宣称已使用该子技能。
+
+判定方法：以当前会话实际可发现的能力为准——能发现 `sites-preview` 工具或 `$product-design:index` 命名空间（官方插件在宿主注册的标志）即视为具备 OpenAI 运行时；探测不到即走等价路径，不凭宿主名称或模型记忆猜测。
+
+| 子技能 | 依赖的宿主服务 | 无该能力时的等价路径 |
+| --- | --- | --- |
+| `image-to-code` / `url-to-code` | `sites-preview` 预览、cloud browser（`terminal.local`）验收、Sites 部署（ChatGPT Work Mode 运行时） | `$frontend-task` 的 [screenshot-workflow](../../frontend-task/references/screenshot-workflow.md)：代理视觉读图 + 像素测量 + 画像/组件目录实现（已实证等效复刻） |
+| `ideate` | OpenAI Image Gen 图像生成 | 参考站/关键词 + `taste-skill` 或 `frontend-design` 出方向，原型变体页承载 |
+| `design-qa` | ChatGPT Work Mode 云浏览器验收分支 | 本地浏览器（`playwright`）截图 + 代理视觉比对源图与渲染实现 |
+| `index` | 路由与 Browser Choice 判定全宿主可用；其 Work Mode 分支按上表边界执行 | — |
+| `share` / `get-context` / `research` / `audit` / `user-context` | 无特殊宿主依赖（方法论 + 本地脚本） | 全宿主直接使用 |

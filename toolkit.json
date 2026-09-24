@@ -2,7 +2,7 @@
   "schemaVersion": 3,
   "kind": "frontend-project-starter",
   "name": "ai-front-spec",
-  "version": "6.0.1",
+  "version": "6.1.0",
   "starter": {
     "runtime": ["AGENTS.md", "CLAUDE.md", "README.md", "docs", ".agents", ".claude", ".toolkit", "LICENSE", "NOTICE"]
   },
@@ -48,7 +48,9 @@
     "api-design",
     "frontend-design",
     "frontend-design-direction",
+    "grill-me",
     "product-design",
+    "prototype",
     "react-best-practices",
     "security-review",
     "taste-skill",
