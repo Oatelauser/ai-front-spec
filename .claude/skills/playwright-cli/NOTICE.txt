@@ -2,7 +2,8 @@ Source declaration (no modifications to upstream files):
 
 - Repository: github.com/microsoft/playwright-cli
 - Path: skills/playwright-cli
-- Snapshot: 2026-09-25 (see toolkit.json vendored["playwright-cli"].sha)
+- Snapshot: 2026-09-25, upstream commit 74354ecc (= tag v0.1.21 = npm tool
+  @playwright/cli 0.1.21; skill/tool version pairing)
 - License: Apache License 2.0 © Microsoft Corporation (see LICENSE.txt)
 
 Additive files only (not present upstream): agents/openai.yaml (Codex host
