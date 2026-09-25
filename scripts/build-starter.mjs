@@ -100,7 +100,29 @@ for (const rel of await collectFiles(repositoryRoot)) {
 
 if (overlay) {
   console.log(`覆盖安装完成：写入 ${copied.length} 文件，跳过 ${skipped.length} 文件（skipIfExists 命中且已存在）`)
-  skipped.forEach((rel) => console.log(`  跳过：${rel}`))
+  // 跳过文件区分「已定制」与「未定制」：未定制的与新版 stock 一致，可放心手工采用新版。
+  for (const rel of skipped) {
+    const [stockText, userText] = await Promise.all([
+      readFile(join(repositoryRoot, rel), 'utf8').catch(() => null),
+      readFile(join(targetDir, rel), 'utf8').catch(() => null),
+    ])
+    if (stockText === null || userText === null) { console.log(`  跳过：${rel}`); continue }
+    const norm = (t) => t.replace(/\r\n/g, '\n').split('\n')
+    const [a, b] = [norm(stockText), norm(userText)]
+    const diff = a.filter((line) => !b.includes(line)).length + b.filter((line) => !a.includes(line)).length
+    console.log(diff === 0 ? `  跳过：${rel}（与新版一致，未定制）` : `  跳过：${rel}（与新版有 ${diff} 行差异，已定制）`)
+  }
+  // 退役技能检测：目标里存在而新版名册没有的技能目录（如 playwright → playwright-cli 改名后的旧目录），提示手工清理。
+  const skillsDir = join(targetDir, '.agents', 'skills')
+  if (existsSync(skillsDir)) {
+    const retired = readdirSync(skillsDir, { withFileTypes: true })
+      .filter((e) => e.isDirectory() && existsSync(join(skillsDir, e.name, 'SKILL.md')) && !manifest.skills.includes(e.name))
+      .map((e) => e.name)
+    if (retired.length) {
+      console.log(`  ⚠ 检测到未登记技能目录（可能是升级退役物）：${retired.join(', ')}`)
+      console.log('    建议确认后手工删除 .agents/skills/<名> 与 .claude/skills/<名>，再运行 node .toolkit/scripts/sync-mirror.mjs 重建镜像')
+    }
+  }
   console.log(`  未落地（distExcludes）：${distExcludes.join(', ')}`)
   process.exit(0)
 }

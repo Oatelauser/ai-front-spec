@@ -229,6 +229,36 @@ description: >-
     )
   })
 
+  it('接受 deliveryTargets 的 unsupported 状态（与模板词表对齐）', () => {
+    const state = {
+      schemaVersion: 1,
+      status: 'initialized',
+      templateSelection: { status: 'pending', selected: null, candidates: ['generic', 'react', 'vue'] },
+      maturity: { status: 'unformed', confidence: 'low', evidence: [], assessedAt: null },
+      componentCatalog: { status: 'initialized', unresolved: [], evidence: [], lastUpdatedAt: null },
+      deliveryTargets: {
+        browserWeb: { status: 'pending', value: null },
+        mobileH5: { status: 'pending', value: null },
+        tabletWeb: { status: 'pending', value: null },
+        webview: { status: 'pending', value: null },
+        pwa: { status: 'unsupported', value: null },
+        multiPlatform: { status: 'pending', value: null, derived: true },
+      },
+      proposal: { path: '.toolkit/profile-proposal.json', status: 'none', proposalId: null },
+      fields: {},
+      evidence: [],
+      unresolved: [],
+    }
+    const errors = collectGuidanceErrors({
+      config: { ...config, projectRecords: { profile: '.toolkit/profile-state.json' } },
+      files: { ...validFiles, '.toolkit/profile-state.json': JSON.stringify(state) },
+    })
+    assert.deepEqual(
+      errors.filter((error) => error.code === 'PE016' && error.message.includes('deliveryTargets')),
+      [],
+    )
+  })
+
   it('拒绝文档引用不存在的包脚本', () => {
     const errors = validateDocumentedPackageScripts({
       config,

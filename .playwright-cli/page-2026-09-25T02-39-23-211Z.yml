@@ -1,0 +1,198 @@
+- generic [ref=e5]:
+  - banner [ref=e6]:
+    - generic [ref=e7]:
+      - generic [ref=e11]: 晴天
+      - time [ref=e12]: 2026-09-25 10:39:22
+    - generic [aria-hidden]:
+      - heading [level=1]: AI经营驾驶舱
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]: 切换驾驶舱场景
+        - combobox "切换驾驶舱场景" [ref=e16] [cursor=pointer]:
+          - option "AI经营驾驶舱" [selected]
+          - option "AI研发驾驶舱"
+          - option "AI服务驾驶舱"
+      - button "进入全屏" [ref=e17] [cursor=pointer]
+  - region "核心指标" [ref=e20]:
+    - article [ref=e21]:
+      - heading "活跃员工" [level=3] [ref=e25]
+      - generic [ref=e26]:
+        - strong [ref=e32]: 1,842
+        - generic [ref=e33]:
+          - generic [ref=e34]: 较上期
+          - generic [ref=e35]:
+            - text: 8.6%
+            - generic [ref=e37]: 上升
+    - article [ref=e39]:
+      - heading "调用次数(万)" [level=3] [ref=e43]
+      - generic [ref=e44]:
+        - strong [ref=e49]: 12,560
+        - generic [ref=e50]:
+          - generic [ref=e51]: 较上期
+          - generic [ref=e52]:
+            - text: 12.3%
+            - generic [ref=e54]: 上升
+    - article [ref=e56]:
+      - heading "Token消耗(亿)" [level=3] [ref=e60]
+      - generic [ref=e61]:
+        - strong [ref=e66]: "12.56"
+        - generic [ref=e67]:
+          - generic [ref=e68]: 较上期
+          - generic [ref=e69]:
+            - text: 15.7%
+            - generic [ref=e71]: 上升
+    - article [ref=e73]:
+      - heading "人均节省时长/天(小时)" [level=3] [ref=e77]
+      - generic [ref=e78]:
+        - strong [ref=e83]: "4.32"
+        - generic [ref=e84]:
+          - generic [ref=e85]: 较上期
+          - generic [ref=e86]:
+            - text: 6.8%
+            - generic [ref=e88]: 上升
+    - article [ref=e90]:
+      - heading "运营成本 / 当月(万)" [level=3] [ref=e94]
+      - generic [ref=e95]:
+        - strong [ref=e105]: "368"
+        - generic [ref=e106]:
+          - generic [ref=e107]: 较上期
+          - generic [ref=e108]:
+            - text: 12.3%
+            - generic [ref=e110]: 下降
+    - article [ref=e112]:
+      - heading "运营成本 / 月均(万)" [level=3] [ref=e116]
+      - generic [ref=e117]:
+        - strong [ref=e122]: "352"
+        - generic [ref=e123]:
+          - generic [ref=e124]: 较上期
+          - generic [ref=e125]:
+            - text: 5.6%
+            - generic [ref=e127]: 下降
+    - article [ref=e129]:
+      - heading "运营成本 / 当年(万)" [level=3] [ref=e133]
+      - generic [ref=e134]:
+        - strong [ref=e140]: 4,205
+        - generic [ref=e141]:
+          - generic [ref=e142]: 较上期
+          - generic [ref=e143]:
+            - text: 10.1%
+            - generic [ref=e145]: 下降
+  - generic [ref=e147]:
+    - heading "运营趋势" [level=2] [ref=e153]
+    - generic [ref=e156]:
+      - generic [ref=e157]:
+        - generic [ref=e158]:
+          - generic [ref=e159]: 活跃员工数
+          - generic [ref=e161]: Token消耗(亿)
+        - group "时间范围" [ref=e163]:
+          - button "7天" [active] [pressed] [ref=e164] [cursor=pointer]
+          - button "30天" [ref=e165] [cursor=pointer]
+          - button "90天" [ref=e166] [cursor=pointer]
+      - img "运营趋势图：最近 7 天活跃员工数与Token消耗" [ref=e478]:
+        - generic [ref=e168] [cursor=pointer]
+  - img "AI应用成熟度总分82，产品85、研发88、测试78、运维76、销售80" [ref=e170]:
+    - generic [ref=e181]:
+      - strong [ref=e182]: "82"
+      - generic [ref=e183]: 成熟度得分
+      - generic [ref=e184]: 82/100
+    - generic [ref=e185]:
+      - strong [ref=e186]: "85"
+      - generic [ref=e187]: 产品
+    - generic [ref=e188]:
+      - strong [ref=e189]: "76"
+      - generic [ref=e190]: 运维
+    - generic [ref=e191]:
+      - strong [ref=e192]: "88"
+      - generic [ref=e193]: 研发
+    - generic [ref=e194]:
+      - strong [ref=e195]: "80"
+      - generic [ref=e196]: 销售
+    - generic [ref=e197]:
+      - strong [ref=e198]: "78"
+      - generic [ref=e199]: 测试
+  - generic [ref=e200]:
+    - heading "关键场景" [level=2] [ref=e206]
+    - list [ref=e210]:
+      - listitem [ref=e211]:
+        - paragraph [ref=e213]: 28%
+        - paragraph [ref=e218]: 知识问答
+        - paragraph [ref=e219]: 智能问答 / 知识检索
+      - listitem [ref=e220]:
+        - paragraph [ref=e222]: 22%
+        - paragraph [ref=e226]: 代码开发
+        - paragraph [ref=e227]: 辅助编码 / 程序生成
+      - listitem [ref=e228]:
+        - paragraph [ref=e230]: 18%
+        - paragraph [ref=e234]: 内容创作
+        - paragraph [ref=e235]: 文案创作 / 内容生成
+      - listitem [ref=e236]:
+        - paragraph [ref=e238]: 14%
+        - paragraph [ref=e242]: 数据分析
+        - paragraph [ref=e243]: 数据分析 / 洞察挖掘
+      - listitem [ref=e244]:
+        - paragraph [ref=e246]: 10%
+        - paragraph [ref=e252]: 流程自动化
+        - paragraph [ref=e253]: 任务自动化 / 流程编排
+      - listitem [ref=e254]:
+        - paragraph [ref=e256]: 8%
+        - paragraph [ref=e265]: 其他
+        - paragraph [ref=e266]: 其他场景 / 探索应用
+  - generic [ref=e267]:
+    - heading "价值贡献" [level=2] [ref=e273]
+    - list [ref=e277]:
+      - listitem [ref=e278]:
+        - generic [ref=e280]: 上升
+        - paragraph [ref=e285]:
+          - strong [ref=e286]: "99.99"
+          - generic [ref=e287]: "%"
+        - paragraph [ref=e288]: 节省成本
+      - listitem [ref=e298]:
+        - generic [ref=e300]: 上升
+        - paragraph [ref=e306]:
+          - strong [ref=e307]: "155"
+          - generic [ref=e308]: 万
+        - paragraph [ref=e309]: 创造价值
+      - listitem [ref=e319]:
+        - generic [ref=e321]: 上升
+        - paragraph [ref=e326]:
+          - strong [ref=e327]: "84.5"
+          - generic [ref=e328]: "%"
+        - paragraph [ref=e329]: 业务覆盖量
+      - listitem [ref=e339]:
+        - generic [ref=e341]: 上升
+        - paragraph [ref=e346]:
+          - strong [ref=e347]: "99.5"
+        - paragraph [ref=e348]: 风险拦截
+      - listitem [ref=e358]:
+        - generic [ref=e360]: 上升
+        - paragraph [ref=e365]:
+          - strong [ref=e366]: "368"
+          - generic [ref=e367]: 万
+        - paragraph [ref=e368]: ROI提升
+      - listitem [ref=e378]:
+        - generic [ref=e380]: 上升
+        - paragraph [ref=e385]:
+          - strong [ref=e386]: "218"
+          - generic [ref=e387]: 万
+        - paragraph [ref=e388]: BYOK节省成本
+  - generic [ref=e398]:
+    - heading "组织AI应用表现" [level=2] [ref=e404]
+    - list [ref=e408]:
+      - listitem [ref=e409]:
+        - generic [ref=e414]: 营销中心
+        - paragraph [ref=e418]: 85%
+      - listitem [ref=e419]:
+        - generic [ref=e425]: 研发中心
+        - paragraph [ref=e429]: 92%
+      - listitem [ref=e430]:
+        - generic [ref=e438]: 财务中心
+        - paragraph [ref=e442]: 65%
+      - listitem [ref=e443]:
+        - generic [ref=e450]: 服务中心
+        - paragraph [ref=e454]: 78%
+      - listitem [ref=e455]:
+        - generic [ref=e462]: 供应链中心
+        - paragraph [ref=e466]: 71%
+      - listitem [ref=e467]:
+        - generic [ref=e473]: 人资行政中心
+        - paragraph [ref=e477]: 60%

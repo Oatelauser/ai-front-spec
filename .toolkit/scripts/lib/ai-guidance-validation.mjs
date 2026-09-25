@@ -86,7 +86,7 @@ function validateProfileArtifacts(config, files) {
       const state = JSON.parse(stateText)
       const targets = state.deliveryTargets
       const targetNames = ['browserWeb', 'mobileH5', 'tabletWeb', 'webview', 'pwa', 'multiPlatform']
-      const statuses = ['pending', 'recommended', 'user-confirmed', 'deferred', 'conflict']
+      const statuses = ['pending', 'recommended', 'user-confirmed', 'deferred', 'conflict', 'unsupported']
       if (!targets || typeof targets !== 'object' || Array.isArray(targets)) {
         report(stateFile, 'profile-state 必须包含 deliveryTargets 对象。')
       } else {

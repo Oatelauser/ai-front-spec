@@ -33,7 +33,7 @@ node .toolkit/scripts/sync-mirror.mjs               # 4. 镜像重建
 node .toolkit/scripts/check-ai-guidance.mjs --root . --strict && node --test scripts/lib/*.test.mjs  # 5. 校验
 ```
 
-规则：升级前必看 `--diff` 评估（尤其涉及行为约定变化时须实测，如浏览器技能跑真实页面）；`NOTICE` 快照日期同步更新；全部通过后提交并发版。无 repo 的 ★ 条目（插件快照）从对应插件缓存重新快照覆盖，再走 4-5 步。
+规则：升级前必看 `--diff` 评估（尤其涉及行为约定变化时须实测，如浏览器技能跑真实页面）；`NOTICE` 快照日期同步更新；全部通过后提交并发版。无 repo 的 ★ 条目（插件快照）从对应插件缓存重新快照覆盖，再走 4-5 步。老安装判读：项目 `.toolkit/manifest.json` 无 `starterVersion` 字段 = v6.0.x 之前的安装，对照源仓 Release 升级后即有版本锚点；升级若涉及技能改名，安装器会提示退役目录，按提示成对删除后重建镜像。
 
 ## 1. 快速接入
 
