@@ -443,7 +443,8 @@ describe('validateDeadReferences 死引用执法', () => {
       writeFileSync(join(deadRoot, 'docs/consumer.md'),
         '随发文件引用开发件 `toolkit.json` 应报 PE019。非路径形态：`镜像目录不存在：.claude/skills` 与 `/g` 不报。\n')
       writeFileSync(join(deadRoot, '.agents/skills/demo/usage.md'),
-        '包内脚本 `scripts/run.cjs` 豁免；`scripts/absent.cjs` 报 PE019。\n')
+        '包内脚本 `scripts/run.cjs` 豁免；`scripts/absent.cjs` 报 PE019。\n' +
+        'Call the Skill tool with "ghost-dep" 应报依赖缺失；Call the Skill tool with demo 命中名册不报。\n')
       writeFileSync(join(deadRoot, '.toolkit/scripts/tool.mjs'),
         'export const good = \'docs/PROJECT_PROFILE.md\'\nexport const bad = \'./missing-lib.mjs\'\n')
       writeFileSync(join(deadRoot, '.claude/skills/mirror.md'), '`$mirror-nope` 与 `.toolkit/nope.mjs`\n')
@@ -465,6 +466,11 @@ describe('validateDeadReferences 死引用执法', () => {
       assert.ok(messages('docs/consumer.md').some((m) => m.startsWith('PE019')))
       assert.deepEqual(messages('README.md'), [])
       assert.ok(messages('.agents/skills/demo/usage.md').some((m) => m.startsWith('PE019') && m.includes('absent.cjs')))
+      assert.ok(messages('.agents/skills/demo/usage.md').some((m) => m.startsWith('PE018') && m.includes('ghost-dep')))
+      assert.ok(!messages('.agents/skills/demo/usage.md').some((m) => m.includes('with demo') && m.startsWith('PE018') && !m.includes('ghost')))
+      const externalErrors = validateDeadReferences(deadRoot, { externalSkills: ['ghost-dep'] })
+      assert.ok(!externalErrors.some((error) => error.file === '.agents/skills/demo/usage.md' && error.message.includes('ghost-dep')),
+        'externalSkills 登记后依赖缺失应放行')
       assert.ok(!messages('.agents/skills/demo/usage.md').some((m) => m.includes('run.cjs')))
       assert.ok(messages('.toolkit/scripts/tool.mjs').some((m) => m.startsWith('PE017') && m.includes('missing-lib.mjs')))
       assert.ok(!messages('.toolkit/scripts/tool.mjs').some((m) => m.includes('PROJECT_PROFILE')))

@@ -695,6 +695,8 @@ export function validateDeadReferences(root, config = {}) {
   const errors = []
   const distExcludes = readDistExcludes(root)
   const roster = collectSkillRoster(root)
+  const external = new Set(config.externalSkills ?? [])
+  const knownSkills = (name) => roster.has(name) || external.has(name)
 
   for (const rel of collectDeadRefFiles(root)) {
     const content = stripFencedBlocks(readFileSync(resolve(root, rel), 'utf8'))
@@ -793,7 +795,7 @@ export function validateDeadReferences(root, config = {}) {
     if (/\.(md|ya?ml)$/.test(rel)) {
       for (const match of content.matchAll(/\$([a-z][\w-]*)(:)?/g)) {
         const [, name, namespaced] = match
-        if (namespaced || DEAD_REF_SKILL_EXEMPTIONS.has(name) || roster.has(name)) continue
+        if (namespaced || DEAD_REF_SKILL_EXEMPTIONS.has(name) || knownSkills(name)) continue
         errors.push(
           diagnostic(
             'PE018',
@@ -805,13 +807,25 @@ export function validateDeadReferences(root, config = {}) {
       }
       for (const match of content.matchAll(/`\/([a-z][\w-]*)`/g)) {
         if (!match[1].includes('-')) continue // `/g`、`/plan` 等正则/命令片段排除；技能名均含连字符
-        if (DEAD_REF_SKILL_EXEMPTIONS.has(match[1]) || roster.has(match[1])) continue
+        if (DEAD_REF_SKILL_EXEMPTIONS.has(match[1]) || knownSkills(match[1])) continue
         errors.push(
           diagnostic(
             'PE018',
             rel,
             `技能引用未命中内置名册：/${match[1]}`,
             '改为 .agents/skills/*/SKILL.md frontmatter name，或使用命名空间/插件引用。',
+          ),
+        )
+      }
+      // ③+ 跨技能调用惯用语（"Call the Skill tool with X"）：X 必须命中名册或外部声明（全局/插件提供）。
+      for (const match of content.matchAll(/Call the Skill tool with ["'`]?([a-z][\w-]*)/gi)) {
+        if (DEAD_REF_SKILL_EXEMPTIONS.has(match[1]) || knownSkills(match[1])) continue
+        errors.push(
+          diagnostic(
+            'PE018',
+            rel,
+            `技能调用依赖未命中：${match[1]}`,
+            '补齐被依赖技能，或在 .toolkit/ai-guidance.config.mjs 的 externalSkills 登记为全局/插件提供。',
           ),
         )
       }

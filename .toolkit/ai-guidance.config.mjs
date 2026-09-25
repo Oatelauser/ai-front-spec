@@ -1,5 +1,6 @@
 export default {
   allowPlaceholders: true,
+  externalSkills: [],
   placeholderPattern: '<待填写(?:[：；][^>]*)?>',
   requiredFiles: [
     'AGENTS.md',

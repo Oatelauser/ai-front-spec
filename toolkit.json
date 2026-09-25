@@ -4,9 +4,29 @@
   "name": "ai-front-spec",
   "version": "6.1.1",
   "starter": {
-    "runtime": ["AGENTS.md", "CLAUDE.md", "README.md", "docs", ".agents", ".claude", ".toolkit", "LICENSE", "NOTICE"]
+    "runtime": [
+      "AGENTS.md",
+      "CLAUDE.md",
+      "README.md",
+      "docs",
+      ".agents",
+      ".claude",
+      ".toolkit",
+      "LICENSE",
+      "NOTICE"
+    ]
   },
-  "distExcludes": ["scripts", "toolkit.json", "docs/wayfinder", ".serena", "CONTRIBUTING.md", ".git", ".github", ".gitignore", ".gitattributes"],
+  "distExcludes": [
+    "scripts",
+    "toolkit.json",
+    "docs/wayfinder",
+    ".serena",
+    "CONTRIBUTING.md",
+    ".git",
+    ".github",
+    ".gitignore",
+    ".gitattributes"
+  ],
   "skipIfExists": [
     ".toolkit/manifest.json",
     ".toolkit/profile-state.json",
@@ -57,5 +77,115 @@
     "taste-skill",
     "tdd-workflow",
     "web-design-guidelines"
-  ]
+  ],
+  "vendored": {
+    "tdd-workflow": {
+      "repo": "https://github.com/affaan-m/everything-claude-code",
+      "path": null,
+      "sha": null,
+      "snapshot": "2026-09-23"
+    },
+    "api-design": {
+      "repo": "https://github.com/affaan-m/everything-claude-code",
+      "path": null,
+      "sha": null,
+      "snapshot": "2026-09-23"
+    },
+    "security-review": {
+      "repo": "https://github.com/affaan-m/everything-claude-code",
+      "path": null,
+      "sha": null,
+      "snapshot": "2026-09-23"
+    },
+    "frontend-design-direction": {
+      "repo": "https://github.com/affaan-m/everything-claude-code",
+      "path": null,
+      "sha": null,
+      "snapshot": "2026-09-23"
+    },
+    "frontend-design": {
+      "repo": "https://github.com/anthropics/skills",
+      "path": null,
+      "sha": null,
+      "snapshot": "2026-09-23"
+    },
+    "taste-skill": {
+      "repo": "https://github.com/leonxlnx/taste-skill",
+      "path": "skills/taste-skill",
+      "sha": "c184364c58658b2f131b4ae8bd3d206cabb3deee",
+      "snapshot": "2026-09-23"
+    },
+    "react-best-practices": {
+      "repo": "https://github.com/vercel-labs/agent-skills",
+      "path": "skills/react-best-practices",
+      "sha": "063bee94c3f4df8453406c830b0a7df0f2860278",
+      "snapshot": "2026-09-23"
+    },
+    "web-design-guidelines": {
+      "repo": "https://github.com/vercel-labs/agent-skills",
+      "path": "skills/web-design-guidelines",
+      "sha": "063bee94c3f4df8453406c830b0a7df0f2860278",
+      "snapshot": "2026-09-23",
+      "contentSource": {
+        "repo": "https://github.com/vercel-labs/web-interface-guidelines",
+        "file": "command.md"
+      }
+    },
+    "playwright": {
+      "repo": "https://github.com/microsoft/playwright-cli",
+      "path": "skills/playwright-cli",
+      "sha": null,
+      "snapshot": "2026-09-23"
+    },
+    "grill-me": {
+      "repo": null,
+      "source": "claude-plugins-official/mattpocock-skills 1.2.3 插件快照",
+      "snapshot": "2026-09-25"
+    },
+    "grilling": {
+      "repo": null,
+      "source": "claude-plugins-official/mattpocock-skills 1.2.3 插件快照",
+      "snapshot": "2026-09-25"
+    },
+    "prototype": {
+      "repo": null,
+      "source": "claude-plugins-official/mattpocock-skills 1.2.3 插件快照",
+      "snapshot": "2026-09-25"
+    },
+    "product-design": {
+      "repo": null,
+      "source": "OpenAI product-design 插件 v0.1.52 本机快照",
+      "snapshot": "2026-09-23"
+    },
+    "gsap-core": {
+      "repo": null,
+      "source": "elms-h5 技能包 20260917（上游 github.com/greensock/gsap-skills）",
+      "snapshot": "2026-09-17"
+    },
+    "gsap-performance": {
+      "repo": null,
+      "source": "elms-h5 技能包 20260917（上游 github.com/greensock/gsap-skills）",
+      "snapshot": "2026-09-17"
+    },
+    "gsap-timeline": {
+      "repo": null,
+      "source": "elms-h5 技能包 20260917（上游 github.com/greensock/gsap-skills）",
+      "snapshot": "2026-09-17"
+    },
+    "apple-design": {
+      "repo": null,
+      "source": "elms-h5 技能包 20260917（上游 github.com/emilkowalski/skills）",
+      "snapshot": "2026-09-17"
+    },
+    "compatibility-testing": {
+      "repo": null,
+      "source": "elms-h5 技能包 20260917（上游 github.com/proffesor-for-testing/agentic-qe）",
+      "snapshot": "2026-09-17"
+    },
+    "mobile-ux-optimizer": {
+      "repo": null,
+      "source": "elms-h5 技能包 20260917（上游 github.com/erichowens/some-claude-skills）",
+      "snapshot": "2026-09-17"
+    }
+  }
 }

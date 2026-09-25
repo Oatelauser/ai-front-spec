@@ -7,6 +7,22 @@
 | Codex | `.agents/skills/` | 唯一人工源，修改只在这里 |
 | Claude Code | `.claude/skills/` | 机器镜像，由 `sync-mirror.mjs` 自动生成，不要手改 |
 
+## 技能来源与快照版本（24 个全部内置）
+
+| 来源 | 快照 | 技能 |
+| --- | --- | --- |
+| ★ OpenAI `product-design` 插件 v0.1.52（Codex 宿主插件，无公开源码仓） | 2026-09-23 | `product-design`（整包） |
+| ★ `mattpocock-skills` 1.2.3（插件市场快照） | 2026-09-25 | `grill-me`、`grilling`、`prototype` |
+| github.com/vercel-labs/agent-skills | 2026-09-23 | `react-best-practices`、`web-design-guidelines` |
+| github.com/anthropics/skills | 2026-09-23 | `frontend-design` |
+| github.com/affaan-m/everything-claude-code | 2026-09-23 | `tdd-workflow`、`api-design`、`security-review`、`frontend-design-direction` |
+| github.com/microsoft/playwright-cli | 2026-09-23 | `playwright` |
+| github.com/leonxlnx/taste-skill | 2026-09-23 | `taste-skill` |
+| elms-h5 技能包 20260917（GitHub 上游见 capabilities §1） | 2026-09-17 | `gsap` ×3、`apple-design`、`compatibility-testing`、`mobile-ux-optimizer` |
+| 本仓自研 | — | `project-workflow`、`project-profile`、`frontend-task`、`tinypng-compress`、`karpathy-guidelines` |
+
+★ = 插件快照来源（无公开 repo，升级需重新快照）。vendored 技能与上游字节一致（零修改原则），许可与修改记录见 `NOTICE`，机器可读基线（repo/SHA/日期）见 `toolkit.json` 的 `vendored`；上游比对与升级用 `node scripts/update-vendored.mjs`。
+
 ## 1. 快速接入
 
 ### 安装
@@ -207,6 +223,7 @@ node .toolkit/scripts/sync-mirror.mjs --check
 | `.claude/skills` 与 `.agents/skills` 不一致 | 跑 `sync-mirror.mjs` 重建镜像，不手改镜像 |
 | 需要 Figma / GitHub 能力 | 见 `docs/capabilities.md` 第 2 节；Figma 无插件宿主走 MCP 直连 |
 | 想删除或覆盖文件 | 先查 Git 状态与影响；不动 `.toolkit` 状态与迁移历史 |
+| 想删本地技能，用自己的全局/插件版 | `node scripts/remove-skill.mjs <技能名>`：成对删 `.agents`/`.claude`、更新 roster、登记 `externalSkills`（校验按外部提供放行）、重建镜像，原子完成。依赖成对技能（如 grill-me↔grilling）别只删一半——校验器会拦 |
 | 验收「看起来通过」 | 区分静态检查/mock/真实联调；未验证项留在 `ACCEPTANCE.md` |
 
 ## 8. 旧版文档名称映射

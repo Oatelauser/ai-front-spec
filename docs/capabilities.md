@@ -16,7 +16,7 @@
 
 自研 5 项：`project-workflow`、`project-profile`、`frontend-task`、`tinypng-compress`、`karpathy-guidelines`。
 
-Vendored 19 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。许可与修改记录见仓库根 `NOTICE`；更新方式为从「上游」列取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
+Vendored 19 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。许可与修改记录见仓库根 `NOTICE`；机器可读基线（repo/SHA/快照日期）在仓库 toolkit.json 的 `vendored` 字段，配套升级器 `node scripts/update-vendored.mjs`（无参比对上游、`--diff` 评估变更×引用影响、`--rebaseline` 对账写基线、`--upgrade` 确认后覆盖并镜像校验）；也可从「上游」列手工取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
 
 | 技能（目录） | 上游 | 本仓说明 |
 | --- | --- | --- |
