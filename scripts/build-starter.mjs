@@ -99,6 +99,11 @@ for (const rel of await collectFiles(repositoryRoot)) {
 }
 
 if (overlay) {
+  // 源仓工作区状态检查：未提交改动会被当作 stock 拷入目标，先警告让用户甄别。
+  const dirty = run('git', ['-C', repositoryRoot, 'status', '--porcelain'])
+  if (dirty.status === 0 && dirty.stdout.trim()) {
+    console.log(`  ⚠ 源仓工作区有未提交改动（${dirty.stdout.trim().split('\n').length} 项），将按工作区现状安装；要按已发布版本安装请先提交或暂存`)
+  }
   console.log(`覆盖安装完成：写入 ${copied.length} 文件，跳过 ${skipped.length} 文件（skipIfExists 命中且已存在）`)
   // 跳过文件区分「已定制」与「未定制」：未定制的与新版 stock 一致，可放心手工采用新版。
   for (const rel of skipped) {
@@ -110,7 +115,7 @@ if (overlay) {
     const norm = (t) => t.replace(/\r\n/g, '\n').split('\n')
     const [a, b] = [norm(stockText), norm(userText)]
     const diff = a.filter((line) => !b.includes(line)).length + b.filter((line) => !a.includes(line)).length
-    console.log(diff === 0 ? `  跳过：${rel}（与新版一致，未定制）` : `  跳过：${rel}（与新版有 ${diff} 行差异，已定制）`)
+    console.log(diff === 0 ? `  跳过：${rel}（与新版一致，未定制）` : `  跳过：${rel}（与新版有 ${diff} 行差异：可能是你的定制或旧版落后；从未定制过可对照新版采纳）`)
   }
   // 退役技能检测：目标里存在而新版名册没有的技能目录（如 playwright → playwright-cli 改名后的旧目录），提示手工清理。
   const skillsDir = join(targetDir, '.agents', 'skills')
@@ -121,6 +126,19 @@ if (overlay) {
     if (retired.length) {
       console.log(`  ⚠ 检测到未登记技能目录（可能是升级退役物）：${retired.join(', ')}`)
       console.log('    建议确认后手工删除 .agents/skills/<名> 与 .claude/skills/<名>，再运行 node .toolkit/scripts/sync-mirror.mjs 重建镜像')
+    }
+  }
+  // vitest 全目录扫描提示：技能模板测试不是项目测试（README 预警过仍两度被踩，安装时主动提示）。
+  const pkgPath = join(targetDir, 'package.json')
+  if (existsSync(pkgPath)) {
+    const pkg = JSON.parse(await readFile(pkgPath, 'utf8').catch(() => ({})))
+    const hasVitest = [pkg.dependencies, pkg.devDependencies].some((d) => d && 'vitest' in d)
+    if (hasVitest) {
+      const cfgFiles = ['vite.config.js', 'vite.config.mjs', 'vite.config.ts', 'vitest.config.js', 'vitest.config.mjs', 'vitest.config.ts']
+      const cfgText = (await Promise.all(cfgFiles.map((c) => readFile(join(targetDir, c), 'utf8').catch(() => '')))).join('\n')
+      if (!(cfgText.includes('.agents') && cfgText.includes('.claude'))) {
+        console.log('  ⚠ 检测到 vitest 但配置未排除 .agents/.claude：技能模板测试会被项目测试扫描，请在 vite/vitest 的 test.exclude 加入这两个目录')
+      }
     }
   }
   console.log(`  未落地（distExcludes）：${distExcludes.join(', ')}`)

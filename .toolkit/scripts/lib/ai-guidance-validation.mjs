@@ -109,6 +109,22 @@ function validateProfileArtifacts(config, files) {
           !['none', 'proposed', 'awaiting-approval', 'approved', 'archived'].includes(state.proposal.status)) {
         report(stateFile, 'profile-state.proposal 必须记录标准路径和提案状态。')
       }
+      // 双状态一致性（manifest 与 profile-state 重复记录的字段必须同步，漂移即报）。
+      const manifestText = files['.toolkit/manifest.json']
+      if (manifestText?.trim()) {
+        try {
+          const manifest = JSON.parse(manifestText)
+          if (manifest.profileStatus !== undefined && manifest.profileStatus !== state.status) {
+            report(stateFile, `manifest.profileStatus=${manifest.profileStatus} 与 profile-state.status=${state.status} 不一致。`)
+          }
+          if (manifest.componentCatalogStatus !== undefined && manifest.componentCatalogStatus !== state.componentCatalog?.status) {
+            report(stateFile, `manifest.componentCatalogStatus=${manifest.componentCatalogStatus} 与 profile-state.componentCatalog.status 不一致。`)
+          }
+          if (manifest.templateSelection?.status !== undefined && manifest.templateSelection.status !== state.templateSelection?.status) {
+            report(stateFile, 'manifest.templateSelection.status 与 profile-state.templateSelection.status 不一致。')
+          }
+        } catch { /* manifest 非法 JSON 由 PE001 等通道处理 */ }
+      }
     } catch {
       report(stateFile, 'profile-state.json 必须是有效 JSON。')
     }
