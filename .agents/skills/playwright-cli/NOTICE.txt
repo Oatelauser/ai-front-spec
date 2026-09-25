@@ -1,0 +1,11 @@
+Source declaration (no modifications to upstream files):
+
+- Repository: github.com/microsoft/playwright-cli
+- Path: skills/playwright-cli
+- Snapshot: 2026-09-25 (see toolkit.json vendored["playwright-cli"].sha)
+- License: Apache License 2.0 © Microsoft Corporation (see LICENSE.txt)
+
+Additive files only (not present upstream): agents/openai.yaml (Codex host
+metadata), assets/ (icons). The 2026-09-25 upgrade retired the previous
+adapted version (renamed dir, npx wrapper script, self-written references);
+upstream SKILL.md §Installation now covers environment fallback.

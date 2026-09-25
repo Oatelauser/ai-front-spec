@@ -16,12 +16,24 @@
 | github.com/vercel-labs/agent-skills | 2026-09-23 | `react-best-practices`、`web-design-guidelines` |
 | github.com/anthropics/skills | 2026-09-23 | `frontend-design` |
 | github.com/affaan-m/everything-claude-code | 2026-09-23 | `tdd-workflow`、`api-design`、`security-review`、`frontend-design-direction` |
-| github.com/microsoft/playwright-cli | 2026-09-23 | `playwright` |
+| github.com/microsoft/playwright-cli | 2026-09-25 | `playwright-cli` |
 | github.com/leonxlnx/taste-skill | 2026-09-23 | `taste-skill` |
 | elms-h5 技能包 20260917（GitHub 上游见 capabilities §1） | 2026-09-17 | `gsap` ×3、`apple-design`、`compatibility-testing`、`mobile-ux-optimizer` |
 | 本仓自研 | — | `project-workflow`、`project-profile`、`frontend-task`、`tinypng-compress`、`karpathy-guidelines` |
 
-★ = 插件快照来源（无公开 repo，升级需重新快照）。vendored 技能与上游字节一致（零修改原则），许可与修改记录见 `NOTICE`，机器可读基线（repo/SHA/日期）见 `toolkit.json` 的 `vendored`；上游比对与升级用 `node scripts/update-vendored.mjs`。
+★ = 插件快照来源（无公开 repo，升级需重新快照）。vendored 技能与上游字节一致（零修改原则），许可与修改记录见 `NOTICE`，机器可读基线（repo/SHA/日期）见 `toolkit.json` 的 `vendored`。
+
+### 如何升级这些技能（下次照此办理）
+
+```bash
+node scripts/update-vendored.mjs                    # 1. 检查：哪些落后于上游（✓ 最新 / ↑ 可升级 / ? 未建基线）
+node scripts/update-vendored.mjs --diff <技能名>     # 2. 评估：上游变更摘要 × 本仓引用影响，人工确认无功能损失
+node scripts/update-vendored.mjs --upgrade <技能名>  # 3. 升级：覆盖上游文件（本地附加保留），更新 SHA 基线
+node .toolkit/scripts/sync-mirror.mjs               # 4. 镜像重建
+node .toolkit/scripts/check-ai-guidance.mjs --root . --strict && node --test scripts/lib/*.test.mjs  # 5. 校验
+```
+
+规则：升级前必看 `--diff` 评估（尤其涉及行为约定变化时须实测，如浏览器技能跑真实页面）；`NOTICE` 快照日期同步更新；全部通过后提交并发版。无 repo 的 ★ 条目（插件快照）从对应插件缓存重新快照覆盖，再走 4-5 步。
 
 ## 1. 快速接入
 
@@ -121,7 +133,7 @@ node .toolkit/scripts/sync-mirror.mjs --check
 
 ### 专项技能（16 个 vendored）
 
-`tdd-workflow`、`api-design`、`security-review`、`frontend-design` 系列、`product-design` 整包、`grill-me`/`grilling`（分轮拷问：入口 + 协议）、`prototype`（一次性原型：方向变体 / 状态验证）、`gsap` ×3、`playwright`、`apple-design`、`compatibility-testing`、`mobile-ux-optimizer`、`react-best-practices`、`taste-skill`、`web-design-guidelines`——直接以 `$技能名` 调用，来源与更新方式见 [docs/capabilities.md](docs/capabilities.md)。
+`tdd-workflow`、`api-design`、`security-review`、`frontend-design` 系列、`product-design` 整包、`grill-me`/`grilling`（分轮拷问：入口 + 协议）、`prototype`（一次性原型：方向变体 / 状态验证）、`gsap` ×3、`playwright-cli`（真浏览器自动化：官方手册 + 10 份实操参考）、`apple-design`、`compatibility-testing`、`mobile-ux-optimizer`、`react-best-practices`、`taste-skill`、`web-design-guidelines`——直接以 `$技能名` 调用，来源与更新方式见 [docs/capabilities.md](docs/capabilities.md)。
 
 ## 4. 任务操作细节
 

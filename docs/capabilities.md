@@ -31,7 +31,7 @@ Vendored 19 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | `apple-design` | github.com/emilkowalski/skills | 同上；上游已迭代，本仓为早期快照 |
 | `compatibility-testing` | github.com/proffesor-for-testing/agentic-qe | 同上 |
 | `mobile-ux-optimizer` | github.com/erichowens/some-claude-skills（原仓 404，延续仓同 MIT） | 同上 |
-| `playwright` | github.com/microsoft/playwright-cli | 先在库，修改见目录内 NOTICE.txt |
+| `playwright-cli` | github.com/microsoft/playwright-cli | 2026-09-25 回归上游 verbatim（官方手册 + 10 份 references，安装兜底见其 SKILL.md §Installation）；基线 74354ecc = tag v0.1.21 = npm 工具 0.1.21 版本配对；旧改编版退役；附加仅宿主元数据/图标/许可 |
 
 内置 `product-design` 直调写作 `$product-design`（如 `$product-design` image-to-code / audit 用法见其顶层 SKILL.md 子技能地图）；装有官方插件的宿主也可用 `$product-design:index` 等命名空间直调，以插件版为准。
 

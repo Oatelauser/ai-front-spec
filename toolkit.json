@@ -2,7 +2,7 @@
   "schemaVersion": 3,
   "kind": "frontend-project-starter",
   "name": "ai-front-spec",
-  "version": "6.1.1",
+  "version": "6.2.0",
   "starter": {
     "runtime": [
       "AGENTS.md",
@@ -62,7 +62,7 @@
     "gsap-performance",
     "gsap-timeline",
     "tinypng-compress",
-    "playwright",
+    "playwright-cli",
     "compatibility-testing",
     "karpathy-guidelines",
     "api-design",
@@ -81,33 +81,33 @@
   "vendored": {
     "tdd-workflow": {
       "repo": "https://github.com/affaan-m/everything-claude-code",
-      "path": null,
-      "sha": null,
-      "snapshot": "2026-09-23"
+      "path": "skills/tdd-workflow",
+      "sha": "e482e579415fde18357cafce70f177ae19fd7f03",
+      "snapshot": "2026-09-25"
     },
     "api-design": {
       "repo": "https://github.com/affaan-m/everything-claude-code",
-      "path": null,
-      "sha": null,
+      "path": "skills/api-design",
+      "sha": "e482e579415fde18357cafce70f177ae19fd7f03",
       "snapshot": "2026-09-23"
     },
     "security-review": {
       "repo": "https://github.com/affaan-m/everything-claude-code",
-      "path": null,
-      "sha": null,
-      "snapshot": "2026-09-23"
+      "path": "skills/security-review",
+      "sha": "e482e579415fde18357cafce70f177ae19fd7f03",
+      "snapshot": "2026-09-25"
     },
     "frontend-design-direction": {
       "repo": "https://github.com/affaan-m/everything-claude-code",
-      "path": null,
-      "sha": null,
+      "path": "skills/frontend-design-direction",
+      "sha": "e482e579415fde18357cafce70f177ae19fd7f03",
       "snapshot": "2026-09-23"
     },
     "frontend-design": {
       "repo": "https://github.com/anthropics/skills",
       "path": null,
-      "sha": null,
-      "snapshot": "2026-09-23"
+      "sha": "33375500bcea98d610eb30ce10ac4e59b89c390d",
+      "snapshot": "2026-09-25"
     },
     "taste-skill": {
       "repo": "https://github.com/leonxlnx/taste-skill",
@@ -130,12 +130,6 @@
         "repo": "https://github.com/vercel-labs/web-interface-guidelines",
         "file": "command.md"
       }
-    },
-    "playwright": {
-      "repo": "https://github.com/microsoft/playwright-cli",
-      "path": "skills/playwright-cli",
-      "sha": null,
-      "snapshot": "2026-09-23"
     },
     "grill-me": {
       "repo": null,
@@ -186,6 +180,12 @@
       "repo": null,
       "source": "elms-h5 技能包 20260917（上游 github.com/erichowens/some-claude-skills）",
       "snapshot": "2026-09-17"
+    },
+    "playwright-cli": {
+      "repo": "https://github.com/microsoft/playwright-cli",
+      "path": "skills/playwright-cli",
+      "sha": "74354ecc7a43da16d91a9bc54fa8db8283a3fcf5",
+      "snapshot": "2026-09-25"
     }
   }
 }

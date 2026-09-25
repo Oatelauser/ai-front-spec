@@ -54,16 +54,22 @@ async function fetchUpstream(skill, entry) {
   const sha = run('git', ['-C', tmp, 'rev-parse', 'HEAD']).stdout.trim()
   let skillDir = entry.path ? join(tmp, entry.path) : null
   if (!skillDir || !existsSync(join(skillDir, 'SKILL.md'))) {
-    skillDir = null
-    for (const candidate of await listFiles(tmp)) {
-      if (!candidate.rel.endsWith('SKILL.md')) continue
-      const dir = dirname(candidate.full)
-      const frontmatterName = /^name:\s*(\S+)/m.exec(readFileSync(candidate.full, 'utf8'))?.[1]
-      if (frontmatterName === skill || basename(dir) === skill) { skillDir = dir; break }
-    }
-    if (!skillDir) {
-      await rm(tmp, { recursive: true, force: true })
-      return { error: `上游未找到技能目录 ${skill}（补全 toolkit.json vendored.${skill}.path 后重试）` }
+    // 上游仓库常有多份拷贝（.agents/.kiro/docs/<locale> 翻译）：优先规范布局 skills/<name>，再全库扫描兜底。
+    const canonical = join(tmp, 'skills', skill)
+    if (existsSync(join(canonical, 'SKILL.md'))) {
+      skillDir = canonical
+    } else {
+      skillDir = null
+      for (const candidate of await listFiles(tmp)) {
+        if (!candidate.rel.endsWith('SKILL.md')) continue
+        const dir = dirname(candidate.full)
+        const frontmatterName = /^name:\s*(\S+)/m.exec(readFileSync(candidate.full, 'utf8'))?.[1]
+        if (frontmatterName === skill || basename(dir) === skill) { skillDir = dir; break }
+      }
+      if (!skillDir) {
+        await rm(tmp, { recursive: true, force: true })
+        return { error: `上游未找到技能目录 ${skill}（补全 toolkit.json vendored.${skill}.path 后重试）` }
+      }
     }
   }
   return { tmp, sha, skillDir }

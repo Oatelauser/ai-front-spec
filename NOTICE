@@ -13,7 +13,7 @@ ai-front-spec 按 MIT 许可发布（LICENSE）。
 | taste-skill | github.com/leonxlnx/taste-skill | 2026-09-23 | MIT（仓库级） | 无 |
 | web-design-guidelines | github.com/vercel-labs/agent-skills（内容源 github.com/vercel-labs/web-interface-guidelines） | 2026-09-23 | MIT | 无修改：SKILL.md verbatim（在线拉最新规则）；附加快照 `command.md` 来自内容源仓库，作离线回退，路由层（task-routing）指示其使用时机 |
 | react-best-practices | github.com/vercel-labs/agent-skills | 2026-09-23 | MIT（frontmatter 声明，仓库无 LICENSE 文件） | 无 |
-| playwright | github.com/microsoft/playwright-cli | 先在库 | Apache-2.0 | 见目录内 NOTICE.txt |
+| playwright-cli | github.com/microsoft/playwright-cli | 2026-09-25 | Apache-2.0 © Microsoft | 无修改：2026-09-25 弃旧改编版（改名/wrapper/自写参考）回归上游 verbatim；基线 74354ecc = 上游 tag v0.1.21 = npm 工具 @playwright/cli 0.1.21，技能/工具版本配对；附加仅宿主元数据、图标与许可 |
 | gsap-core / gsap-performance / gsap-timeline | github.com/greensock/gsap-skills | 2026-09-17（elms-h5 包） | MIT © 2026 GreenSock | 无 |
 | compatibility-testing | github.com/proffesor-for-testing/agentic-qe | 2026-09-17（elms-h5 包） | MIT © 2025 Agentic QE Contributors | 无 |
 | mobile-ux-optimizer | github.com/erichowens/some-claude-skills（原仓已 404；延续仓 curiositech/some_claude_skills 同 MIT） | 2026-09-17（elms-h5 包） | MIT © 2025 Erich Owens | 无 |

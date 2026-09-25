@@ -1,0 +1,5 @@
+- generic [active] [ref=f1e1]:
+  - heading "playwright-cli 升级验证页" [level=1] [ref=f1e2]
+  - button "点我" [ref=f1e3]
+  - paragraph [ref=f1e4]: 初始状态
+  - textbox "输入验证" [ref=f1e5]
