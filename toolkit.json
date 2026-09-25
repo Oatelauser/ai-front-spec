@@ -2,7 +2,7 @@
   "schemaVersion": 3,
   "kind": "frontend-project-starter",
   "name": "ai-front-spec",
-  "version": "6.2.1",
+  "version": "6.3.0",
   "starter": {
     "runtime": [
       "AGENTS.md",
