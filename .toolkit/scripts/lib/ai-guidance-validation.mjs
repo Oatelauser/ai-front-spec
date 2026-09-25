@@ -53,6 +53,8 @@ export function collectGuidanceErrors({ config, files, packageJson }) {
   }
   errors.push(...validateRouting(config, files))
   errors.push(...validateCapabilityRequirements(config, files))
+  errors.push(...validateFlowContracts(config, files))
+  errors.push(...validateTemplateVocabulary(config, files))
   errors.push(...validateForbiddenPatterns(config, files))
   errors.push(...validatePlaceholders(config, files))
   errors.push(...validateProjectRecords(config, files))
@@ -75,6 +77,9 @@ export function collectGuidanceErrors({ config, files, packageJson }) {
   return errors
 }
 
+// deliveryTargets 状态词表：模板枚举与 PE016 校验共用，两侧演进必须同步（防 unsupported 式漂移）。
+const DELIVERY_STATUSES = ['pending', 'recommended', 'user-confirmed', 'deferred', 'conflict', 'unsupported']
+
 function validateProfileArtifacts(config, files) {
   const errors = []
   const report = (file, message) => errors.push(diagnostic('PE016', file, message,
@@ -86,7 +91,7 @@ function validateProfileArtifacts(config, files) {
       const state = JSON.parse(stateText)
       const targets = state.deliveryTargets
       const targetNames = ['browserWeb', 'mobileH5', 'tabletWeb', 'webview', 'pwa', 'multiPlatform']
-      const statuses = ['pending', 'recommended', 'user-confirmed', 'deferred', 'conflict', 'unsupported']
+      const statuses = DELIVERY_STATUSES
       if (!targets || typeof targets !== 'object' || Array.isArray(targets)) {
         report(stateFile, 'profile-state 必须包含 deliveryTargets 对象。')
       } else {
@@ -379,6 +384,46 @@ function validateCapabilityRequirements(config, files) {
         '补充插件精确引用或独立 Skill 的固定安装来源。',
       ),
     )
+}
+
+// 流程契约（dogfooding 实证的关键控制点）：约定文件必须携带的标记，防止后续编辑无意拆掉门槛链。
+function validateFlowContracts(config, files) {
+  return (config.flowContracts ?? []).flatMap(({ file, markers }) => {
+    const content = files[file]
+    if (content === undefined) return []
+    return (markers ?? [])
+      .filter((marker) => !content.includes(marker))
+      .map((marker) =>
+        diagnostic(
+          'PE020',
+          file,
+          `流程契约缺失标记：${marker}`,
+          '该标记是 dogfooding 实证过的流程控制点（门槛/门禁/规约），恢复或补齐后再提交。',
+        ),
+      )
+  })
+}
+
+// 模板↔校验器词表一致性：画像模板「多端适配」枚举的每个状态词必须在 PE016 词表内（unsupported 漂移教训）。
+function validateTemplateVocabulary(config, files) {
+  const statuses = DELIVERY_STATUSES
+  const errors = []
+  for (const [file, content] of Object.entries(files)) {
+    if (!/templates\/project-profile\.(generic|react|vue)\.md$/.test(file)) continue
+    for (const match of (content ?? '').matchAll(/多端适配[^\n]*<待填写：([^>]+)>/g)) {
+      for (const word of match[1].split('/').map((w) => w.trim()).filter(Boolean)) {
+        if (!statuses.includes(word)) {
+          errors.push(diagnostic(
+            'PE016',
+            file,
+            `模板端状态词「${word}」不在校验器词表（词表演进须两侧同步：模板 + validateProfileArtifacts）`,
+            '从模板删除该词，或在校验器 deliveryTargets statuses 中登记。',
+          ))
+        }
+      }
+    }
+  }
+  return errors
 }
 
 function validateForbiddenPatterns(config, files) {

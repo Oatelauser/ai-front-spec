@@ -259,6 +259,34 @@ description: >-
     )
   })
 
+  it('流程契约标记缺失报 PE020，齐备不报', () => {
+    const flowConfig = { ...config, flowContracts: [{ file: 'docs/CONTRACT.md', markers: ['硬门槛'] }] }
+    const withGate = collectGuidanceErrors({
+      config: flowConfig,
+      files: { ...validFiles, 'docs/CONTRACT.md': '……必须先产出方向原型并经用户确认（硬门槛）……' },
+    })
+    assert.deepEqual(withGate.filter((e) => e.code === 'PE020'), [])
+    const withoutGate = collectGuidanceErrors({
+      config: flowConfig,
+      files: { ...validFiles, 'docs/CONTRACT.md': '普通说明，无门槛语言。' },
+    })
+    assert.ok(withoutGate.some((e) => e.code === 'PE020' && e.message.includes('硬门槛')))
+  })
+
+  it('模板端状态词不在词表报 PE016（词表两侧同步防漂移）', () => {
+    const template = '.agents/skills/project-profile/templates/project-profile.vue.md'
+    const good = collectGuidanceErrors({
+      config,
+      files: { ...validFiles, [template]: '| 多端适配 | `<待填写：user-confirmed / unsupported>` | `<待填写>` | `<待填写>` |' },
+    })
+    assert.deepEqual(good.filter((e) => e.code === 'PE016' && e.message.includes('状态词')), [])
+    const bad = collectGuidanceErrors({
+      config,
+      files: { ...validFiles, [template]: '| 多端适配 | `<待填写：user-confirmed / bogus-state>` | `<待填写>` | `<待填写>` |' },
+    })
+    assert.ok(bad.some((e) => e.code === 'PE016' && e.message.includes('bogus-state')))
+  })
+
   it('拒绝文档引用不存在的包脚本', () => {
     const errors = validateDocumentedPackageScripts({
       config,

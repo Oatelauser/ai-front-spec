@@ -59,6 +59,28 @@ export default {
     path: 'docs/capabilities.md',
     requiredMarkers: ['figma@openai-api-curated', 'github', 'browser@openai-bundled'],
   },
+  flowContracts: [
+    {
+      file: '.agents/skills/frontend-task/references/requirement-workflow.md',
+      markers: ['硬门槛', '方向原型', '2–3', 'PLAN.md'],
+    },
+    {
+      file: '.agents/skills/project-workflow/references/task-routing.md',
+      markers: ['$prototype'],
+    },
+    {
+      file: '.agents/skills/frontend-task/references/acceptance-matrix.md',
+      markers: ['命名会话', '-s=<task-id>', 'DPR'],
+    },
+    {
+      file: 'docs/rules/FRONTEND_CONVENTIONS.md',
+      markers: ['触达', 'token'],
+    },
+    {
+      file: 'README.md',
+      markers: ['update-vendored', '--rebaseline', '--upgrade', 'sync-mirror'],
+    },
+  ],
   forbiddenPatterns: ['digital-oversight-frontend', 'atai-agent-group-digitaloversight', '$bootstrap-project'],
   projectRecords: {
     manifest: '.toolkit/manifest.json',
