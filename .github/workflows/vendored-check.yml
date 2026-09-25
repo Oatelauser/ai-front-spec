@@ -1,7 +1,7 @@
 name: vendored-check
 
-# 周度技能升级检查：update-vendored check 跑在 GitHub 干净网络，报告落 Issue（不阻塞任何门禁）。
-# 漂移 → 建/评论「vendored 技能升级待办」；全绿 → 关闭未决 Issue。网络探测失败如实进报告但不红。
+# 周度技能升级检查：update-vendored check 跑在 GitHub 干净网络（git SHA + npm 版本双通道）。
+# 报告落 Issue 并 @ 维护者；push 触发只做冒烟（验证工作流健康），不落 Issue 防刷屏。
 on:
   schedule: [{ cron: "23 3 * * 1" }]
   workflow_dispatch:
@@ -23,23 +23,24 @@ jobs:
           EXIT=$?
           cat report.txt
           echo "exit=$EXIT" >> "$GITHUB_OUTPUT"
-      - name: 报告落 Issue
+      - name: 报告落 Issue（仅定时/手动触发）
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           TITLE="📦 vendored 技能升级待办（自动检查）"
-          BODY="UTC $(date -u +%F\ %H:%M) 检查结果：
+          BODY="@Oatelauser UTC $(date -u +%F\ %H:%M) 检查结果：
           \`\`\`
           $(cat report.txt)
           \`\`\`
-          升级流程见 README「如何升级这些技能」五步（check → diff 评估 → upgrade → 镜像 → 校验发版）。"
+          升级流程见 README「如何升级这些技能」五步（check → diff 评估 → upgrade → 镜像 → 校验发版）；npm 通道（mattpocock 系）升级为手工快照流程，指引见 --upgrade 输出。"
           ISSUE=$(gh issue list --state open --search "in:title vendored 技能升级待办" --json number --jq '.[0].number')
           if [ "${{ steps.check.outputs.exit }}" = "1" ]; then
             if [ -n "$ISSUE" ]; then gh issue comment "$ISSUE" --body "$BODY"
             else gh issue create --title "$TITLE" --body "$BODY"; fi
             echo "已报告可升级项 → Issue #$ISSUE"
           elif [ -n "$ISSUE" ]; then
-            gh issue close "$ISSUE" --comment "本轮无升级项（UTC $(date -u +%F)），关闭。"
+            gh issue close "$ISSUE" --comment "@Oatelauser 本轮无升级项（UTC $(date -u +%F)），关闭。"
             echo "全绿，已关闭 Issue #$ISSUE"
           else
             echo "全绿且无未决 Issue，不动作。"

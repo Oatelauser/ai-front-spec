@@ -132,18 +132,15 @@
       }
     },
     "grill-me": {
-      "repo": null,
-      "source": "claude-plugins-official/mattpocock-skills 1.2.3 插件快照",
+      "pkg": "mattpocock-skills",
       "snapshot": "2026-09-25"
     },
     "grilling": {
-      "repo": null,
-      "source": "claude-plugins-official/mattpocock-skills 1.2.3 插件快照",
+      "pkg": "mattpocock-skills",
       "snapshot": "2026-09-25"
     },
     "prototype": {
-      "repo": null,
-      "source": "claude-plugins-official/mattpocock-skills 1.2.3 插件快照",
+      "pkg": "mattpocock-skills",
       "snapshot": "2026-09-25"
     },
     "product-design": {
@@ -186,6 +183,12 @@
       "path": "skills/playwright-cli",
       "sha": "74354ecc7a43da16d91a9bc54fa8db8283a3fcf5",
       "snapshot": "2026-09-25"
+    }
+  },
+  "packages": {
+    "mattpocock-skills": {
+      "npm": "mattpocock-skills",
+      "version": "1.2.3"
     }
   }
 }

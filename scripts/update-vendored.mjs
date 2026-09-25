@@ -115,10 +115,25 @@ function impactReport(skill) {
 const saveToolkit = async () => await writeFile(toolkitPath, JSON.stringify(toolkit, null, 2) + '\n', 'utf8')
 
 if (mode === 'check') {
-  console.log('vendored 上游检查（SHA 基线制）：\n')
+  console.log('vendored 上游检查（git SHA / npm 版本双通道）：\n')
   let drift = 0
+  const reportedPkgs = new Set()
   for (const [skill, entry] of Object.entries(vendored)) {
-    if (!entry.repo) { console.log(`  · ${skill}：${entry.source}（无公开 repo，手工升级）`); continue }
+    // npm 通道：共享包基线（toolkit.packages），同包只报一次
+    if (entry.pkg) {
+      const pkg = toolkit.packages?.[entry.pkg]
+      if (!pkg?.npm) { console.log(`  ! ${skill}：引用包 ${entry.pkg} 未登记 npm 通道`); continue }
+      if (reportedPkgs.has(entry.pkg)) continue
+      reportedPkgs.add(entry.pkg)
+      const skills = Object.entries(vendored).filter(([, e]) => e.pkg === entry.pkg).map(([s]) => s)
+      const view = run('npm', ['view', pkg.npm, 'version'])
+      if (view.status !== 0) { console.log(`  ! ${entry.pkg}：npm registry 不可达`); continue }
+      const latest = view.stdout.trim()
+      if (latest === pkg.version) console.log(`  ✓ ${entry.pkg} ${pkg.version}（覆盖：${skills.join('、')}）`)
+      else { console.log(`  ↑ ${entry.pkg}：${pkg.version} → ${latest}（覆盖：${skills.join('、')}；升级指引：--upgrade ${skills[0]}）`); drift++ }
+      continue
+    }
+    if (!entry.repo) { console.log(`  · ${skill}：${entry.source ?? '本地包来源'}（无公开 repo，手工升级）`); continue }
     const head = run('git', ['ls-remote', entry.repo, 'HEAD'])
     if (head.status !== 0) { console.log(`  ! ${skill}：无法探测上游（网络/代理）`); continue }
     const remote = head.stdout.split('\t')[0]
@@ -136,7 +151,15 @@ if (mode === 'diff' || mode === 'rebaseline' || mode === 'upgrade') {
   const names = target === 'all' ? Object.keys(vendored) : [target]
   for (const skill of names) {
     const entry = vendored[skill]
-    if (!entry.repo) { console.log(`· ${skill}：${entry.source}（无 repo，${mode} 不适用）`); continue }
+    if (entry.pkg) {
+      const pkg = toolkit.packages?.[entry.pkg]
+      console.log(`· ${skill}：npm 通道（${entry.pkg} 基线 ${pkg?.version ?? '?'}）。升级为手工快照流程：`)
+      console.log(`  1. 宿主插件市场更新 ${entry.pkg} 后，取本机缓存新版本目录（如 ~/.claude/plugins/cache/claude-plugins-official/${entry.pkg}/<新版本>/）`)
+      console.log(`  2. 覆盖拷贝对应技能目录到 .agents/skills/（同包技能：${Object.entries(vendored).filter(([, e]) => e.pkg === entry.pkg).map(([s]) => s).join('、')}）`)
+      console.log('  3. 更新 toolkit.json packages.<包>.version → 跑 node .toolkit/scripts/sync-mirror.mjs → strict + tests → 发版')
+      continue
+    }
+    if (!entry.repo) { console.log(`· ${skill}：${entry.source ?? '本地包来源'}（无 repo，${mode} 不适用）`); continue }
     const result = await compareWithUpstream(skill, entry)
     if (result.error) { console.log(`! ${skill}：${result.error}`); continue }
     console.log(`\n== ${skill} @ ${result.sha.slice(0, 8)} ==`)
