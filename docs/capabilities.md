@@ -26,7 +26,7 @@ Vendored 19 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | `grill-me` / `grilling` / `prototype` | claude-plugins-official/mattpocock-skills 1.2.3 | 2026-09-25 快照，MIT；grill-me（入口）与 grilling（协议）按上游依赖结构原样入库，零修改；prototype 支持无视觉参照新页面的方向原型硬门槛 |
 | `web-design-guidelines` | github.com/vercel-labs/agent-skills（内容源 vercel-labs/web-interface-guidelines） | SKILL.md verbatim：在线按上游机制拉最新规则；`command.md` 为内容源规则快照（附加文件），离线/WebFetch 失败时按 task-routing 指示回退使用 |
 | `react-best-practices` | github.com/vercel-labs/agent-skills | 2026-09-23 快照；frontmatter 实名 `vercel-react-best-practices` |
-| `product-design` | OpenAI `product-design` 插件 v0.1.52 本机快照（无公开源码仓） | 整包 vendor，顶层薄路由自写；部分子技能（如 image-to-code）依赖 OpenAI 宿主能力，其他宿主仅方法论与测量/清册部分可用；许可状态见 NOTICE——用户已特赦公开分发（2026-09-24） |
+| `product-design` | OpenAI `product-design` 插件 v0.1.52 本机快照（无公开源码仓） | 整包 vendor，顶层薄路由自写；部分子技能（如 image-to-code）依赖 OpenAI 宿主能力，其他宿主仅方法论与测量/清册部分可用；许可状态见 NOTICE——用户已特赦公开分发（2026-09-24 裁定，2026-09-25 复核改无限期·非商用） |
 | `gsap-core` / `gsap-performance` / `gsap-timeline` | github.com/greensock/gsap-skills | 经 elms-h5 技能包（20260917）迁入 |
 | `apple-design` | github.com/emilkowalski/skills | 同上；上游已迭代，本仓为早期快照 |
 | `compatibility-testing` | github.com/proffesor-for-testing/agentic-qe | 同上 |

@@ -1,0 +1,46 @@
+name: vendored-check
+
+# 周度技能升级检查：update-vendored check 跑在 GitHub 干净网络，报告落 Issue（不阻塞任何门禁）。
+# 漂移 → 建/评论「vendored 技能升级待办」；全绿 → 关闭未决 Issue。网络探测失败如实进报告但不红。
+on:
+  schedule: [{ cron: "23 3 * * 1" }]
+  workflow_dispatch:
+  push: { branches: [main] }
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions: { issues: write }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: 运行升级检查
+        id: check
+        run: |
+          set +e
+          node scripts/update-vendored.mjs check > report.txt
+          EXIT=$?
+          cat report.txt
+          echo "exit=$EXIT" >> "$GITHUB_OUTPUT"
+      - name: 报告落 Issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TITLE="📦 vendored 技能升级待办（自动检查）"
+          BODY="UTC $(date -u +%F\ %H:%M) 检查结果：
+          \`\`\`
+          $(cat report.txt)
+          \`\`\`
+          升级流程见 README「如何升级这些技能」五步（check → diff 评估 → upgrade → 镜像 → 校验发版）。"
+          ISSUE=$(gh issue list --state open --search "in:title vendored 技能升级待办" --json number --jq '.[0].number')
+          if [ "${{ steps.check.outputs.exit }}" = "1" ]; then
+            if [ -n "$ISSUE" ]; then gh issue comment "$ISSUE" --body "$BODY"
+            else gh issue create --title "$TITLE" --body "$BODY"; fi
+            echo "已报告可升级项 → Issue #$ISSUE"
+          elif [ -n "$ISSUE" ]; then
+            gh issue close "$ISSUE" --comment "本轮无升级项（UTC $(date -u +%F)），关闭。"
+            echo "全绿，已关闭 Issue #$ISSUE"
+          else
+            echo "全绿且无未决 Issue，不动作。"
+          fi
