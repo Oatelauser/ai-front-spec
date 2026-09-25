@@ -28,6 +28,13 @@ if (!toolkit.skills.includes(name)) {
   console.error(`remove-skill: ${name} 不在 toolkit.json roster 中`)
   process.exit(2)
 }
+// 先读 frontmatter 名：目录名与实名可能不同（如 taste-skill 实名 design-taste-frontend），
+// externalSkills 需同时登记两者，校验器按实名匹配引用才放行。
+const skillMd = join(root, '.agents', 'skills', name, 'SKILL.md')
+const frontmatterName = existsSync(skillMd)
+  ? (/^name:\s*(\S+)/m.exec(readFileSync(skillMd, 'utf8'))?.[1] ?? null)
+  : null
+const externalNames = [...new Set([name, frontmatterName].filter(Boolean))]
 for (const dir of [join(root, '.agents', 'skills', name), join(root, '.claude', 'skills', name)]) {
   if (existsSync(dir)) await rm(dir, { recursive: true, force: true })
 }
@@ -39,12 +46,11 @@ if (!purge) {
   const config = readFileSync(configPath, 'utf8')
   const rewritten = config.replace(/externalSkills:\s*\[[^\]]*\]/, (m) => {
     const current = m.slice(m.indexOf('[') + 1, m.lastIndexOf(']')).split(',').map((s) => s.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean)
-    if (current.includes(name)) return m
-    current.push(name)
+    for (const n of externalNames) if (!current.includes(n)) current.push(n)
     return `externalSkills: [${current.map((s) => `'${s}'`).join(', ')}]`
   })
   await writeFile(configPath, rewritten, 'utf8')
-  console.log(`remove-skill: ${name} 已登记 externalSkills（运行时由全局/插件提供）`)
+  console.log(`remove-skill: externalSkills 已登记 ${externalNames.join('、')}（运行时由全局/插件提供）`)
 } else {
   console.log(`remove-skill: ${name} 彻底移除（未登记外部提供）`)
 }
