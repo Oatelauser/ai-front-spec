@@ -100,7 +100,7 @@ for (const rel of await collectFiles(repositoryRoot)) {
 
 if (overlay) {
   // 源仓工作区状态检查：未提交改动会被当作 stock 拷入目标，先警告让用户甄别。
-  const dirty = run('git', ['-C', repositoryRoot, 'status', '--porcelain'])
+  const dirty = spawnSync('git', ['-C', repositoryRoot, 'status', '--porcelain'], { encoding: 'utf8' })
   if (dirty.status === 0 && dirty.stdout.trim()) {
     console.log(`  ⚠ 源仓工作区有未提交改动（${dirty.stdout.trim().split('\n').length} 项），将按工作区现状安装；要按已发布版本安装请先提交或暂存`)
   }

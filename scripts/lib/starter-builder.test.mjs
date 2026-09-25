@@ -55,7 +55,7 @@ test('覆盖安装：skipIfExists 命中即跳过，普通文件照常写入', a
     assert.ok(run.stdout.includes('0.0.0 →'), '升级打印应包含旧→新版本：\n' + run.stdout)
     assert.ok(existsSync(join(target, 'LICENSE')), '非 skipIfExists 文件应写入')
     assert.ok(run.stdout.includes('跳过'), '跳过清单应打印：\n' + run.stdout)
-    assert.ok(run.stdout.includes('已定制'), '跳过文件与新版有差异时应标注已定制：\n' + run.stdout)
+    assert.ok(run.stdout.includes('与新版有') && run.stdout.includes('差异'), '跳过文件与新版有差异时应标注差异与采纳指引：\n' + run.stdout)
     assert.ok(run.stdout.includes('retired-demo') && run.stdout.includes('退役'), '未登记技能目录应提示退役：\n' + run.stdout)
   } finally {
     await rm(target, { recursive: true, force: true })
