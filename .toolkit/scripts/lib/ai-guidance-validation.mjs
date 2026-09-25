@@ -730,7 +730,7 @@ const DEAD_REF_FILE_EXEMPTIONS = [
 // 运行态产物：init 生成前不存在，文档引用合法。
 const DEAD_REF_SKIP_PATHS = new Set(['.toolkit/profile-proposal.json'])
 // ④ 豁免：README 自述双形态与剔除清单属分发说明（票 10 I4），其余随发文件禁引开发件路径。
-const DIST_SELF_REFERENCE_DOCS = new Set(['README.md'])
+const DIST_SELF_REFERENCE_DOCS = new Set(['README.md', 'README.en.md'])
 // 消费者侧没有 toolkit.json 时回退内置默认（G10）。
 const DEFAULT_DIST_EXCLUDES = ['scripts', 'toolkit.json', 'docs/wayfinder', '.serena', 'CONTRIBUTING.md', '.git']
 // 锚定前缀不含 scripts/：vendored 技能包内 `scripts/...` 是包相对路径，按仓根执法必误报（G6「结构性排除 vendored 误报」）。
@@ -909,7 +909,7 @@ function collectSkillRoster(root) {
 // 扫描面（G7）：根四件 + docs/**/*.md + .agents/skills 层 md/yaml/json + .toolkit mjs/json；镜像与 wayfinder 豁免。
 function collectDeadRefFiles(root) {
   const files = []
-  for (const name of ['AGENTS.md', 'CLAUDE.md', 'README.md', 'CONTRIBUTING.md']) {
+  for (const name of ['AGENTS.md', 'CLAUDE.md', 'README.md', 'README.en.md', 'CONTRIBUTING.md']) {
     if (existsSync(resolve(root, name))) files.push(name)
   }
   const walk = (dirRel, fileFilter) => {

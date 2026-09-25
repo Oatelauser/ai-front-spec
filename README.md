@@ -1,4 +1,5 @@
 # ai-front-spec —— 前端项目 AI 规则 Starter
+**中文** | [English](README.en.md)
 
 「拷贝即用、零外部下载」的前端项目规则与工作流模板：**24 个技能全部内置**（5 自研 + 19 vendored，清单见 [docs/capabilities.md](docs/capabilities.md)），复制进项目即可被 Codex 与 Claude Code 双宿主发现，无需联网安装。它不是业务应用，也不替你创建框架、路由或接口。
 
