@@ -10,6 +10,7 @@ import {
   collectGuidanceErrors,
   parseSkillFrontmatter,
   validateDeadReferences,
+  validateTaskRecords,
   validateDocumentedPackageScripts,
   validateLocalLinks,
 } from '../../.toolkit/scripts/lib/ai-guidance-validation.mjs'
@@ -430,34 +431,53 @@ description: >-
 
 
   it('项目状态使用结构化 JSON，拒绝伪造完成或路径越界', () => {
+    // capability-state.json 注册表机器已随死配置清理移除；manifest 只记 Starter 自身事实。
     const recordConfig = { requiredFiles: [], allowPlaceholders: true,
-      projectRecords: { manifest: '.toolkit/manifest.json', capabilities: 'docs/capability-state.json' } }
-    // 瘦身后 manifest 只记 Starter 自身事实；画像/组件状态唯一事实源是 profile-state.json。
+      projectRecords: { manifest: '.toolkit/manifest.json' } }
     const manifest = { schemaVersion: 1, kind: 'project-starter', starterStatus: 'ready' }
-    const capabilities = { schemaVersion: 1, mode: 'on-demand', capabilities: [] }
-    const check = (current = manifest, capabilityRecord = capabilities, overrides = {}) =>
-      collectGuidanceErrors({ config: { ...recordConfig, ...overrides }, files: {
-        '.toolkit/manifest.json': JSON.stringify(current),
-        'docs/capability-state.json': JSON.stringify(capabilityRecord),
-      } })
+    const check = (current = manifest) =>
+      collectGuidanceErrors({ config: recordConfig, files: { '.toolkit/manifest.json': JSON.stringify(current) } })
     assert.deepEqual(check(), [])
     for (const current of [null, [], { schemaVersion: 2 },
       { ...manifest, kind: 'project-installation' }, { ...manifest, starterStatus: 'shipping' }]) {
       assert.ok(check(current).some(error => error.code === 'PE015'))
     }
-    assert.ok(check(manifest, { ...capabilities, mode: 'unknown' }).some(error => error.code === 'PE015'))
-    const skill = { id: 'fixture-skill', type: 'skill', exactReference: 'fixture-skill',
-      installed: 'yes', enabled: 'not-applicable', connected: 'not-applicable', discoverable: 'yes',
-      taskUsable: 'yes', installability: 'not-applicable', evidence: ['fixture-evidence'], blockers: [] }
-    assert.deepEqual(check(manifest, { ...capabilities, capabilities: [skill] }), [])
-    for (const entries of [[{ ...skill, evidence: [] }], [{ ...skill, discoverable: 'new-session-required' }],
-      [{ ...skill, enabled: true }], [skill, skill], [null]]) {
-      assert.ok(check(manifest, { ...capabilities, capabilities: entries })
-        .some(error => error.code === 'PE015'))
+    assert.ok(collectGuidanceErrors({ config: recordConfig, files: { '.toolkit/manifest.json': '{invalid' } })
+      .every(error => error.code === 'PE015'))
+  })
+})
+
+describe('validateTaskRecords 任务状态执法（PE021）', () => {
+  it('真实形态通过，越界词表与结构报错，模板豁免', () => {
+    const root = mkdtempSync(join(tmpdir(), 'task-records-'))
+    try {
+      mkdirSync(join(root, 'docs/tasks/real/templates'), { recursive: true })
+      mkdirSync(join(root, 'docs/tasks/bad'), { recursive: true })
+      const real = {
+        schemaVersion: 1, taskId: 't', taskType: 'incremental', taskStatus: 'done', currentStage: 'report',
+        sourceStatus: { 'screenshot:x': 'analyzed' },
+        plan: { revision: 1, fingerprint: 'f', confirmation: 'self-confirmed-with-record (D1 reversible)' },
+        stages: { inspect: { status: 'done', lastRun: '2026-09-25', notes: 'ok' } },
+        overrides: [{ id: 'O1', missingFact: 'm', impact: 'i', assumption: 'a', userDecision: 'u', followUp: 'f' }],
+      }
+      writeFileSync(join(root, 'docs/tasks/real/STATE.json'), JSON.stringify(real))
+      const bad = {
+        ...real, taskStatus: 'completed', taskType: 'refactor-x', currentStage: 'deploy',
+        stages: { inspect: { status: 'done', todo: true } }, overrides: [{ missingFact: 'm' }],
+      }
+      writeFileSync(join(root, 'docs/tasks/bad/STATE.json'), JSON.stringify(bad))
+      writeFileSync(join(root, 'docs/tasks/real/templates/STATE.json'), JSON.stringify({ taskStatus: 'whatever' }))
+      const errors = validateTaskRecords(root)
+      const of = (name) => errors.filter((e) => e.file === `docs/tasks/${name}/STATE.json`).map((e) => e.message)
+      assert.deepEqual(of('real'), [])
+      assert.deepEqual(errors.filter((e) => e.file.includes('/templates/')), [])
+      const badMsgs = of('bad')
+      for (const needle of ['taskStatus', 'taskType', 'currentStage', 'todo', 'overrides[0]']) {
+        assert.ok(badMsgs.some((m) => m.includes(needle)), `应报 ${needle}：${JSON.stringify(badMsgs)}`)
+      }
+    } finally {
+      rmSync(root, { recursive: true, force: true })
     }
-    assert.ok(collectGuidanceErrors({ config: recordConfig, files: {
-      '.toolkit/manifest.json': '{invalid', 'docs/capability-state.json': '{}',
-    } }).every(error => error.code === 'PE015'))
   })
 })
 

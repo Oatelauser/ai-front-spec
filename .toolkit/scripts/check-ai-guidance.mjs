@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import {
   collectGuidanceErrors,
   validateDeadReferences,
+  validateTaskRecords,
   validateDocumentedPackageScripts,
   validateLocalLinks,
 } from './lib/ai-guidance-validation.mjs'
@@ -71,7 +72,7 @@ try {
       files,
       packageJson,
     }),
-    ...(options.strict ? validateDeadReferences(projectRoot, config) : []),
+    ...(options.strict ? [...validateDeadReferences(projectRoot, config), ...validateTaskRecords(projectRoot)] : []),
   ]
 
   printAndExit(errors, options.format, errors.length > 0 ? 1 : 0, config.requiredFiles.length)

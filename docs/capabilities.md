@@ -62,4 +62,4 @@ Vendored 19 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | 用户现有浏览器会话 | `chrome@openai-bundled` | 当前宿主的 Chrome 控制 Skill | 仅在必须使用用户登录态时使用 |
 | 桌面应用操作 | `computer-use@openai-bundled` | 当前宿主的 Computer Use Skill | 不替代 Browser、Figma 或专用连接器 |
 
-`browser@openai-bundled` 不是公共插件安装目标。若当前宿主没有 `$browser:control-in-app-browser`，应查找宿主提供的 Browser、Chrome 或 Playwright 等价能力，把实际名称登记到 `docs/PROJECT_PROFILE.md`，不能伪造已经安装。
+`browser@openai-bundled` 不是公共插件安装目标。若当前宿主没有 `$browser:control-in-app-browser`，应查找宿主提供的 Browser、Chrome 或 Playwright 等价能力，把实际名称登记到 `docs/PROJECT_PROFILE.md`，不能伪造已经安装。能力核对以本文件散文状态机为准（缺失 → 待用户确认 → 已安装 → 已连接 → 新对话可发现 → 当前任务可用），无 JSON 注册表。

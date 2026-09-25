@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
-import { dirname, isAbsolute, relative, resolve } from 'node:path'
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path'
 
 export function parseSkillFrontmatter(content) {
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)
@@ -426,6 +426,79 @@ function validateTemplateVocabulary(config, files) {
   return errors
 }
 
+// PE021 任务状态执法：docs/tasks/**/STATE.json 的词表与结构以实战收敛集为准（四轮 dogfooding 实况锁定）。
+const TASK_STATUSES = ['draft', 'awaiting-confirmation', 'done', 'failed']
+const TASK_TYPES = ['new-page', 'incremental', 'bug-fix', 'refactor']
+const TASK_STAGES = ['inspect', 'plan', 'confirm', 'implement', 'verify', 'report']
+const TASK_STAGE_FIELDS = ['status', 'lastRun', 'notes']
+const TASK_OVERRIDE_KEYS = ['missingFact', 'impact', 'assumption', 'userDecision', 'followUp']
+
+export function validateTaskRecords(root) {
+  const errors = []
+  const tasksDir = resolve(root, 'docs', 'tasks')
+  if (!existsSync(tasksDir)) return errors
+  const checkState = (file) => {
+    const rel = relative(root, file).split('\\').join('/')
+    if (rel.includes('/templates/')) return
+    let state
+    try {
+      state = JSON.parse(readFileSync(file, 'utf8'))
+    } catch {
+      errors.push(diagnostic('PE021', rel, 'STATE.json 必须是有效 JSON。', '任务状态文件损坏；修复或重建后再验收。'))
+      return
+    }
+    if (state.schemaVersion !== 1) {
+      errors.push(diagnostic('PE021', rel, 'schemaVersion 必须为 1。', '对齐 task-state 模板。'))
+    }
+    if (!TASK_TYPES.includes(state.taskType)) {
+      errors.push(diagnostic('PE021', rel, `taskType「${state.taskType}」不在 ${TASK_TYPES.join('/')}。`, '对齐 task-state.md 词表。'))
+    }
+    if (!TASK_STATUSES.includes(state.taskStatus)) {
+      errors.push(diagnostic('PE021', rel, `taskStatus「${state.taskStatus}」不在 ${TASK_STATUSES.join('/')}（四轮实战收敛集）。`, '对齐 task-state.md 词表。'))
+    }
+    if (state.currentStage != null && !TASK_STAGES.includes(state.currentStage)) {
+      errors.push(diagnostic('PE021', rel, `currentStage「${state.currentStage}」不在六阶段集合。`, '对齐 task-state.md 词表。'))
+    }
+    for (const [source, value] of Object.entries(state.sourceStatus ?? {})) {
+      if (value !== 'analyzed') {
+        errors.push(diagnostic('PE021', rel, `sourceStatus[${source}] 值「${value}」不合法（收敛集仅 analyzed）。`, '对齐 task-state.md 词表。'))
+      }
+    }
+    const confirmation = state.plan?.confirmation
+    if (confirmation !== undefined && !['pending', 'not-required'].includes(confirmation) &&
+        !(typeof confirmation === 'string' && confirmation.startsWith('self-confirmed-with-record'))) {
+      errors.push(diagnostic('PE021', rel, `plan.confirmation「${confirmation}」不合法（pending / not-required / self-confirmed-with-record…）。`, '自证需留记录说明。'))
+    }
+    for (const [stage, record] of Object.entries(state.stages ?? {})) {
+      if (!TASK_STAGES.includes(stage)) {
+        errors.push(diagnostic('PE021', rel, `stages 键「${stage}」不在六阶段集合。`, '对齐 task-state.md 词表。'))
+      }
+      const extra = Object.keys(record ?? {}).filter((key) => !TASK_STAGE_FIELDS.includes(key))
+      if (extra.length) {
+        errors.push(diagnostic('PE021', rel, `stages.${stage} 含未定义字段：${extra.join('、')}（实战集 status/lastRun/notes）。`, '对齐 task-state.md 词表。'))
+      }
+      if (record && !TASK_STATUSES.includes(record.status)) {
+        errors.push(diagnostic('PE021', rel, `stages.${stage}.status「${record.status}」不在任务状态收敛集。`, '对齐 task-state.md 词表。'))
+      }
+    }
+    for (const [index, override] of (state.overrides ?? []).entries()) {
+      const missing = TASK_OVERRIDE_KEYS.filter((key) => !(key in (override ?? {})))
+      if (missing.length) {
+        errors.push(diagnostic('PE021', rel, `overrides[${index}] 缺五要素：${missing.join('、')}。`, 'override 必须记录 missingFact/impact/assumption/userDecision/followUp。'))
+      }
+    }
+  }
+  const walk = (dir) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name)
+      if (entry.isDirectory()) walk(full)
+      else if (entry.name === 'STATE.json') checkState(full)
+    }
+  }
+  walk(tasksDir)
+  return errors
+}
+
 function validateForbiddenPatterns(config, files) {
   const errors = []
 
@@ -497,40 +570,6 @@ function validateProjectRecords(config, files) {
       report(records.manifest, 'manifest.kind 必须是 project-starter（project-installation 分支已随状态机瘦身移除）。')
     } else if (manifest.starterStatus !== 'ready') {
       report(records.manifest, 'Starter manifest 必须记录 starterStatus: ready。')
-    }
-  }
-  const capabilities = records.capabilities ? readRecord(records.capabilities) : null
-  if (capabilities) {
-    const states = {
-      installed: ['yes', 'no', 'source-unverified', 'not-applicable', 'unknown'],
-      enabled: ['yes', 'no', 'not-applicable', 'unknown'],
-      connected: ['yes', 'no', 'not-required', 'not-applicable', 'unknown'],
-      discoverable: ['yes', 'no', 'new-session-required', 'not-applicable', 'unknown'],
-      taskUsable: ['yes', 'no', 'not-required', 'unknown'],
-      installability: ['available', 'approval-required', 'host-unsupported', 'source-unreachable',
-        'path-missing', 'not-applicable', 'unknown'],
-    }
-    if (!['on-demand', 'core', 'ui', 'react-ui', 'figma', 'github', 'full'].includes(capabilities.mode) ||
-        !Array.isArray(capabilities.capabilities)) {
-      report(records.capabilities, '能力模式或 capabilities 数组无效。')
-    } else {
-      const ids = new Set()
-      for (const item of capabilities.capabilities) {
-        if (!item || typeof item.id !== 'string' || !item.id || ids.has(item.id) ||
-            !['plugin', 'host', 'skill', 'project-skill'].includes(item.type) ||
-            !item.exactReference || !Array.isArray(item.evidence) || !Array.isArray(item.blockers) ||
-            !Object.entries(states).every(([key, values]) => values.includes(item[key]))) {
-          report(records.capabilities, '能力条目缺少精确引用、独立状态、证据/阻塞数组，或 id 重复。')
-          continue
-        }
-        ids.add(item.id)
-        if (item.taskUsable === 'yes' && (!item.evidence.length || item.blockers.length ||
-            !['yes', 'not-applicable'].includes(item.installed) ||
-            !['yes', 'not-applicable'].includes(item.enabled) ||
-            !['yes', 'not-required', 'not-applicable'].includes(item.connected) || item.discoverable !== 'yes')) {
-          report(records.capabilities, '任务可用状态缺少相应的安装、启用、连接、发现或无阻塞证据。')
-        }
-      }
     }
   }
   return errors
