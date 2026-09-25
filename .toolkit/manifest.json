@@ -1,16 +1,5 @@
 {
   "schemaVersion": 1,
   "kind": "project-starter",
-  "starterStatus": "ready",
-  "bootstrapStatus": "initialized",
-  "profileStatus": "draft",
-  "componentCatalogStatus": "draft",
-  "templateSelection": {
-    "status": "pending",
-    "candidates": ["generic", "react", "vue"],
-    "selected": null
-  },
-  "installedFiles": [],
-  "updates": "review-required",
-  "lastValidation": { "status": "not-run" }
+  "starterStatus": "ready"
 }

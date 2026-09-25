@@ -36,13 +36,12 @@ Store the machine-readable state in `.toolkit/profile-state.json`:
     "status": "none",
     "proposalId": null
   },
-  "fields": {},
   "evidence": [],
   "unresolved": []
 }
 ```
 
-Allowed profile statuses are `draft`, `initialized`, and `conflict`. Template selection is independent and may be `pending`, `user-confirmed`, `inferred-only`, or `conflict`. Maturity status is `unformed`, `existing`, or `uncertain`; confidence is `high`, `medium`, or `low`. Component-catalog status is `draft`, `initialized`, or `conflict` and is independent from profile status.
+Allowed profile statuses are `draft`, `initialized`, and `conflict`. Template selection is independent and may be `pending`, `user-confirmed`, or `conflict`. Maturity status is `unformed`, `existing`, or `uncertain`; confidence is `high`, `medium`, or `low`. Component-catalog status is `draft`, `initialized`, or `conflict` and is independent from profile status.
 
 `initialized` means required high-impact fields have confirmed evidence. It does not mean an application exists or that all optional fields are filled. `deliveryTargets` is the machine-readable source for supported browser Web, mobile H5, tablet Web, WebView, and PWA contexts; `multiPlatform` is derived from the confirmed target set and is not independently edited.
 

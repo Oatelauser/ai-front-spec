@@ -52,14 +52,14 @@ test('template selection must continue with exhaustive grilling over profile pla
   assert.match(skill, /不能.*总结|final summary|不能.*汇总/s)
 })
 
-test('starter manifest is initialized while profile completion remains pending', () => {
+test('starter manifest records only starter-owned facts; profile state lives in profile-state.json', () => {
   const manifest = JSON.parse(readFileSync(resolve(starterRoot, '.toolkit/manifest.json'), 'utf8'))
   assert.equal(manifest.starterStatus, 'ready')
-  assert.equal(manifest.bootstrapStatus, 'initialized')
-  assert.equal(manifest.profileStatus, 'draft')
-  assert.equal(manifest.templateSelection.status, 'pending')
-  assert.deepEqual(manifest.templateSelection.candidates, ['generic', 'react', 'vue'])
-  assert.equal(manifest.componentCatalogStatus, 'draft')
+  assert.equal(manifest.kind, 'project-starter')
+  // 镜像字段已退役：manifest 不得再携带画像/组件/模板状态（单一事实源 = profile-state.json）。
+  for (const legacy of ['bootstrapStatus', 'profileStatus', 'componentCatalogStatus', 'templateSelection', 'installedFiles', 'updates', 'lastValidation']) {
+    assert.equal(manifest[legacy], undefined, `manifest 不应再携带 ${legacy}`)
+  }
 })
 
 test('profile and components are separate peer commands and mutually referential without cross-completing', () => {

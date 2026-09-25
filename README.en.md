@@ -160,7 +160,7 @@ Sources support `screenshot` / `prototype` / `html` / `figma` / `api` / `require
 | `verify` | Non-production environment, test accounts, Browser | Runs real tests/types/build/Browser acceptance; distinguishes mocks from real integration |
 | `report` | Confirms delivery scope and acceptable unverified items | Summarizes evidence; unverified items must not be reported as done |
 
-`inspect` can run alone for read-only investigation; state flows `draft → planned → awaiting-confirmation → implementing → verifying → completed`, with partial completion recorded as `partially-complete`/`partially-verified`. A `draft` profile does not block low-risk work, but high-impact decisions pause it. `user_override` only relaxes gaps for the current task temporarily and must state its assumptions and risks; it cannot modify the profile or fake permissions.
+`inspect` can run alone for read-only investigation; task status converges to `draft → awaiting-confirmation → done` (failure `failed`). A `draft` profile does not block low-risk work, but high-impact decisions pause it. `user_override` only relaxes gaps for the current task temporarily and must state its assumptions and risks; it cannot modify the profile or fake permissions.
 
 ### 4.3 Key Points by Task Type
 

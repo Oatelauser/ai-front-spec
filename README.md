@@ -160,7 +160,7 @@ node .toolkit/scripts/sync-mirror.mjs --check
 | `verify` | 非生产环境、测试账号、Browser | 跑真实测试/类型/构建/Browser 验收，区分 mock 与真实联调 |
 | `report` | 确认交付范围与可接受未验证项 | 汇总证据；未验证项不得写成完成 |
 
-`inspect` 可单独用于只读调查；状态流转 `draft → planned → awaiting-confirmation → implementing → verifying → completed`，部分完成记录 `partially-complete`/`partially-verified`。画像 `draft` 不阻塞低风险工作，但高影响决定会暂停。`user_override` 只临时放宽当前任务缺口，需写明假设与风险，不能改画像或伪造权限。
+`inspect` 可单独用于只读调查；任务状态收敛为 `draft → awaiting-confirmation → done`（失败 `failed`）。画像 `draft` 不阻塞低风险工作，但高影响决定会暂停。`user_override` 只临时放宽当前任务缺口，需写明假设与风险，不能改画像或伪造权限。
 
 ### 4.3 按任务类型要点
 

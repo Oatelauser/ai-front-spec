@@ -65,7 +65,7 @@ Internal stages (`inspect`, `plan`, `confirm`, `apply`, `migrate`, `validate`) m
 
 - `update` rescans code, configuration, tests, CI, `PROJECT_PROFILE.md`, and `AI_COMPONENT_CATALOG.md`; applies only unambiguous low-impact facts, then routes changed or unresolved profile fields to the `profile` interview and component fields to the `components` interview. If both domains need work, run them in `profile → components` order. It may create missing files only after showing the proposed files and receiving confirmation.
 - `update` never changes a confirmed template choice, silently performs migration, or marks the other domain complete. It reports changed fields, preserved decisions, conflicts, deferred items, and validation results.
-- `status` is read-only. It reports maturity status/evidence/confidence, `profileStatus`, template selection, `componentCatalogStatus`, each domain's placeholders/deferred/conflicts, the last validation, and the next recommended command.
+- `status` is read-only. It reports maturity status/evidence/confidence, the profile status and template selection from `profile-state.json`, `componentCatalogStatus`, each domain's placeholders/deferred/conflicts, and the next recommended command.
 
 ## Confirmation gate
 

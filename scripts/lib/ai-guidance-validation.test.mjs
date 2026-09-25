@@ -432,10 +432,8 @@ description: >-
   it('项目状态使用结构化 JSON，拒绝伪造完成或路径越界', () => {
     const recordConfig = { requiredFiles: [], allowPlaceholders: true,
       projectRecords: { manifest: '.toolkit/manifest.json', capabilities: 'docs/capability-state.json' } }
-    const manifest = { schemaVersion: 1, kind: 'project-installation', status: 'draft',
-      toolkit: { name: 'fixture', version: '1', source: 'fixture-source' },
-      installedFiles: ['AGENTS.md'], updates: 'review-required', localResources: true,
-      deferredFields: [], initializedAt: null, lastValidation: { status: 'not-run' } }
+    // 瘦身后 manifest 只记 Starter 自身事实；画像/组件状态唯一事实源是 profile-state.json。
+    const manifest = { schemaVersion: 1, kind: 'project-starter', starterStatus: 'ready' }
     const capabilities = { schemaVersion: 1, mode: 'on-demand', capabilities: [] }
     const check = (current = manifest, capabilityRecord = capabilities, overrides = {}) =>
       collectGuidanceErrors({ config: { ...recordConfig, ...overrides }, files: {
@@ -444,19 +442,9 @@ description: >-
       } })
     assert.deepEqual(check(), [])
     for (const current of [null, [], { schemaVersion: 2 },
-      { ...manifest, status: 'initialized' }, { ...manifest, kind: 'uninitialized-toolkit' },
-      { ...manifest, toolkit: { name: 'fixture' } },
-      { ...manifest, installedFiles: ['../outside'] }, { ...manifest, installedFiles: ['a', 'a'] },
-      { ...manifest, deferredFields: [{ field: 'runtime', reason: 'unknown', impact: 'high' }] },
-      { ...manifest, lastValidation: { status: 'success' } }]) {
+      { ...manifest, kind: 'project-installation' }, { ...manifest, starterStatus: 'shipping' }]) {
       assert.ok(check(current).some(error => error.code === 'PE015'))
     }
-    const deferred = { ...manifest, deferredFields: [{ field: 'owner', reason: 'unknown', impact: 'low' }] }
-    assert.deepEqual(check(deferred), [])
-    assert.ok(check(deferred, capabilities, { allowPlaceholders: false, placeholderPattern: '<TODO>' })
-      .some(error => error.code === 'PE015'))
-    assert.deepEqual(check({ ...manifest, status: 'initialized', initializedAt: '2026-09-06T00:00:00Z',
-      lastValidation: { status: 'passed', command: 'fixture-check', at: '2026-09-06T00:00:00Z' } }), [])
     assert.ok(check(manifest, { ...capabilities, mode: 'unknown' }).some(error => error.code === 'PE015'))
     const skill = { id: 'fixture-skill', type: 'skill', exactReference: 'fixture-skill',
       installed: 'yes', enabled: 'not-applicable', connected: 'not-applicable', discoverable: 'yes',

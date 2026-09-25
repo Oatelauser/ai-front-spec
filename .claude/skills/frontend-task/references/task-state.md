@@ -32,9 +32,9 @@ Create only the files needed by the task. Visual inputs (screenshots, prototypes
 }
 ```
 
-Allowed task statuses are `draft`, `planned`, `awaiting-confirmation`, `implementing`, `partially-complete`, `verifying`, `partially-verified`, `completed`, `blocked` and `failed`. Source statuses are `unresolved`, `analyzed`, `changed`, `unavailable` and `conflict`.
+Allowed task statuses are `draft`, `awaiting-confirmation`, `done` and `failed` (the set converged from four real dogfooding runs; the legacy `planned`/`implementing`/`verifying`/`partially-*`/`blocked` words are retired). Source status is `analyzed`.
 
-Each stage record contains `status`, `inputFingerprint`, `planId`, `lastRun`, `changedFiles`, `reusedFiles`, `conflicts` and `confirmation`. Overall status is computed from stage results: unresolved high-impact decisions produce `awaiting-confirmation`; partial implementation or verification produces the corresponding partial state; any required-stage failure produces `failed`.
+Each stage record contains `status`, `lastRun` and free-form `notes` (the set actually produced by real runs). Overall status is computed from stage results: unresolved high-impact decisions produce `awaiting-confirmation`; any required-stage failure produces `failed`; successful report closure produces `done`. `plan.confirmation` records `pending`, `not-required` or the self-confirmation note actually used by the user (e.g. `self-confirmed-with-record`).
 
 The plan fingerprint covers the task goal/type, relevant source files and configuration, profile summary, source paths/URLs/versions/read evidence and plan revision. Only changes affecting the task invalidate the plan. `resume` must stop and request `inspect/plan` when the fingerprint is stale; it may continue independent stages.
 

@@ -106,24 +106,8 @@ function validateProfileArtifacts(config, files) {
         }
       }
       if (!state.proposal || state.proposal.path !== '.toolkit/profile-proposal.json' ||
-          !['none', 'proposed', 'awaiting-approval', 'approved', 'archived'].includes(state.proposal.status)) {
+          !['none', 'proposed', 'approved', 'archived'].includes(state.proposal.status)) {
         report(stateFile, 'profile-state.proposal 必须记录标准路径和提案状态。')
-      }
-      // 双状态一致性（manifest 与 profile-state 重复记录的字段必须同步，漂移即报）。
-      const manifestText = files['.toolkit/manifest.json']
-      if (manifestText?.trim()) {
-        try {
-          const manifest = JSON.parse(manifestText)
-          if (manifest.profileStatus !== undefined && manifest.profileStatus !== state.status) {
-            report(stateFile, `manifest.profileStatus=${manifest.profileStatus} 与 profile-state.status=${state.status} 不一致。`)
-          }
-          if (manifest.componentCatalogStatus !== undefined && manifest.componentCatalogStatus !== state.componentCatalog?.status) {
-            report(stateFile, `manifest.componentCatalogStatus=${manifest.componentCatalogStatus} 与 profile-state.componentCatalog.status 不一致。`)
-          }
-          if (manifest.templateSelection?.status !== undefined && manifest.templateSelection.status !== state.templateSelection?.status) {
-            report(stateFile, 'manifest.templateSelection.status 与 profile-state.templateSelection.status 不一致。')
-          }
-        } catch { /* manifest 非法 JSON 由 PE001 等通道处理 */ }
       }
     } catch {
       report(stateFile, 'profile-state.json 必须是有效 JSON。')
@@ -507,49 +491,12 @@ function validateProjectRecords(config, files) {
   }
   const manifest = readRecord(records.manifest)
   if (manifest) {
-    const validPath = path => typeof path === 'string' && path.length > 0 && !isAbsolute(path) &&
-      !path.split(/[\\/]/).includes('..')
-    if (manifest.kind === 'project-starter') {
-      if (manifest.starterStatus !== 'ready' || manifest.bootstrapStatus !== 'initialized' ||
-          !['draft', 'initialized', 'conflict'].includes(manifest.profileStatus) ||
-          !['draft', 'initialized', 'conflict'].includes(manifest.componentCatalogStatus ?? 'draft') ||
-          !['pending', 'user-confirmed', 'inferred-only', 'conflict'].includes(manifest.templateSelection?.status) ||
-          !Array.isArray(manifest.templateSelection?.candidates) ||
-          !manifest.templateSelection.candidates.includes('generic') ||
-          !manifest.templateSelection.candidates.includes('react') ||
-          !manifest.templateSelection.candidates.includes('vue')) {
-        report(records.manifest, 'Starter manifest 必须记录 ready、profileStatus、componentCatalogStatus 和完整模板选择状态。')
-      }
-      if (!Array.isArray(manifest.installedFiles) || !manifest.installedFiles.every(validPath) ||
-          new Set(manifest.installedFiles).size !== manifest.installedFiles.length) {
-        report(records.manifest, 'Starter installedFiles 必须是无重复且不越界的目标相对路径数组。')
-      }
-    } else {
-      const fields = manifest.deferredFields
-      if (manifest.kind !== 'project-installation' || !['draft', 'initialized'].includes(manifest.status) ||
-          !['review-required', 'disabled'].includes(manifest.updates) || typeof manifest.localResources !== 'boolean') {
-        report(records.manifest, '初始化记录的类型、状态、更新策略或本地资源标记无效。')
-      }
-      if (!['name', 'version', 'source'].every(key => typeof manifest.toolkit?.[key] === 'string' && manifest.toolkit[key].trim())) {
-        report(records.manifest, '初始化记录缺少工具包名称、版本或可定位来源。')
-      }
-      if (!Array.isArray(manifest.installedFiles) || !manifest.installedFiles.every(validPath) ||
-          new Set(manifest.installedFiles).size !== manifest.installedFiles.length) {
-        report(records.manifest, 'installedFiles 必须是无重复且不越界的目标相对路径数组。')
-      }
-      if (!Array.isArray(fields) || fields.some(field => !field || field.impact !== 'low' || !field.field || !field.reason)) {
-        report(records.manifest, 'deferredFields 只能记录具备字段名和原因的低影响待确认项。')
-      } else if (fields.length && (manifest.status === 'initialized' || !config.allowPlaceholders)) {
-        report(records.manifest, '仍有待确认字段，不能通过严格验收或标记 initialized。')
-      }
-      if (manifest.status === 'initialized' && (!Number.isFinite(Date.parse(manifest.initializedAt)) ||
-          !manifest.installedFiles?.length || manifest.lastValidation?.status !== 'passed' ||
-          !manifest.lastValidation.command || !Number.isFinite(Date.parse(manifest.lastValidation.at)))) {
-        report(records.manifest, 'initialized 需要实际时间、接入清单和已通过校验的命令及时间。')
-      }
-    }
-    if (!['passed', 'failed', 'not-run'].includes(manifest.lastValidation?.status)) {
-      report(records.manifest, 'lastValidation 必须记录 passed、failed 或 not-run。')
+    // manifest 只记录 Starter 自身事实（schemaVersion/kind/starterStatus[/starterVersion]）。
+    // 画像/组件/模板状态的唯一事实源是 profile-state.json：镜像字段已退役，遗留键静默忽略。
+    if (manifest.kind !== 'project-starter') {
+      report(records.manifest, 'manifest.kind 必须是 project-starter（project-installation 分支已随状态机瘦身移除）。')
+    } else if (manifest.starterStatus !== 'ready') {
+      report(records.manifest, 'Starter manifest 必须记录 starterStatus: ready。')
     }
   }
   const capabilities = records.capabilities ? readRecord(records.capabilities) : null
