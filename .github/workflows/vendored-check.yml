@@ -23,6 +23,16 @@ jobs:
           EXIT=$?
           cat report.txt
           echo "exit=$EXIT" >> "$GITHUB_OUTPUT"
+      - name: 打包离线升级包（仅有可升级项）
+        if: steps.check.outputs.exit == '1'
+        run: node scripts/update-vendored.mjs --pack bundle
+      - name: 上传离线升级包
+        if: steps.check.outputs.exit == '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: vendored-bundle-${{ github.run_number }}
+          path: bundle
+          retention-days: 90
       - name: 报告落 Issue（仅定时/手动触发）
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         env:
@@ -33,7 +43,7 @@ jobs:
           \`\`\`
           $(cat report.txt)
           \`\`\`
-          升级流程见 README「如何升级这些技能」五步（check → diff 评估 → upgrade → 镜像 → 校验发版）；npm 通道（mattpocock 系）升级为手工快照流程，指引见 --upgrade 输出。"
+          本地克隆慢/失败时用离线通道：本运行页底部 Artifacts 区下载 vendored-bundle-${{ github.run_number }}（zip，含 manifest.json），解压后执行 node scripts/update-vendored.mjs --diff --offline <解压目录> 评估、--upgrade --offline <解压目录> 应用（零克隆）。在线五步（check → diff → upgrade → 镜像 → 校验发版）见 README「如何升级这些技能」。"
           ISSUE=$(gh issue list --state open --search "in:title vendored 技能升级待办" --json number --jq '.[0].number')
           if [ "${{ steps.check.outputs.exit }}" = "1" ]; then
             if [ -n "$ISSUE" ]; then gh issue comment "$ISSUE" --body "$BODY"

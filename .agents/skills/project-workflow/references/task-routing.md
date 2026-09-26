@@ -18,6 +18,7 @@
 | React 性能或包体优化 | `$vercel-react-best-practices` | 先测量后优化；构建规则仍以项目文档为准 |
 | OpenAPI、请求、身份或权限 | `$api-design` + `$security-review` | 普通字段调整可只用项目 Skill；涉及信任边界时必须安全审查 |
 | 页面真实验收 | `$browser:control-in-app-browser` | 本地页面优先 Browser，不用 Computer Use 代替浏览器验证 |
+| 已接入接口页面的主流程 E2E（登录、权限拒绝、失败态、刷新持久化） | `$webapp-testing`（写 Python Playwright 脚本；`with_server.py` 管 dev server 生命周期，先 `--help` 再黑盒调用） | 运行时需本机 Python + playwright 包，缺失时报告不可用并回退 `$playwright-cli` 或人工浏览器验证；与上一行互补：快速目检走 Browser，可重复用例走脚本 |
 | PR、Issue 或远端代码托管操作 | GitHub 插件 | 仅在用户要求远端读取或写入时使用；本地 Git 检查不需要插件 |
 
 ## 缺失能力处理

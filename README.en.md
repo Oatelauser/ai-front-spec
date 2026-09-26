@@ -1,40 +1,28 @@
 # ai-front-spec — AI Rules Starter for Frontend Projects
+
+[![CI](https://github.com/Oatelauser/ai-front-spec/actions/workflows/ci.yml/badge.svg)](https://github.com/Oatelauser/ai-front-spec/actions/workflows/ci.yml)
+[![vendored-check](https://github.com/Oatelauser/ai-front-spec/actions/workflows/vendored-check.yml/badge.svg)](https://github.com/Oatelauser/ai-front-spec/actions/workflows/vendored-check.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Node ≥20](https://img.shields.io/badge/node-%E2%89%A5%2020-green.svg)](https://nodejs.org)
+
 [中文](README.md) | **English**
 
-A "copy-and-use, zero-external-download" template of rules and workflows for frontend projects: **all 24 skills are built in** (5 in-house + 19 vendored; see the list in [docs/capabilities.md](docs/capabilities.md)). Copy it into a project and both hosts — Codex and Claude Code — discover it, with no network installation required. It is not a business application, and it does not create frameworks, routes, or API endpoints for you.
+A rules pack for AI agents on frontend projects. Copy it into your repo and both hosts — Codex and Claude Code — immediately gain a frontend workflow that not only builds but also verifies its own work. Not a pile of marketplace plugins: a set of rules that travels with the project and gets read before every task.
+
+Find your scenario:
+
+- **Turn a screenshot or Figma file into a page**: `$frontend-task` screenshot workflow implements from the image; with the Figma plugin it reads design files directly, and Code to Canvas writes code back to the canvas.
+- **Want your work verified after it's built**: `$frontend-task verify` walks the acceptance matrix (viewport, theme, keyboard, overflow, console); `$webapp-testing` runs real main flows with Playwright (login, permission denial, failure states, refresh persistence); `$web-design-guidelines` audits code and accessibility against web guidelines.
+- **Unhappy with styling and feel**: `$apple-design` reviews motion (spring parameters, interruptibility, deceleration projection), `$compatibility-testing` covers cross-browser, `$mobile-ux-optimizer` checks mobile touch details.
+- **Afraid the AI starts coding immediately**: new pages without a visual reference must go through 2–3 direction prototypes first (`$prototype`) — you pick one before implementation; implementation plans also require your approval via `$frontend-task confirm`.
+- **Multi-target rules are hard to remember**: WebView / mobile H5 / desktop rules apply automatically based on the project profile, not on the AI's memory.
+
+Boundary: it does not write business code, scaffold frameworks, or define your APIs — it governs "how the AI gets frontend work right, and how it proves the work is done."
 
 | Host | Read path | Notes |
 | --- | --- | --- |
 | Codex | `.agents/skills/` | The only human-edited source; make changes here only |
 | Claude Code | `.claude/skills/` | Machine mirror, generated automatically by `sync-mirror.mjs`; do not edit by hand |
-
-## Skill Sources and Snapshot Versions (all 24 built in)
-
-| Source | Snapshot | Skills |
-| --- | --- | --- |
-| ★ OpenAI `product-design` plugin v0.1.52 (Codex host plugin, no public source repo) | 2026-09-23 | `product-design` (full package) |
-| ★ `mattpocock-skills` 1.2.3 (plugin marketplace snapshot) | 2026-09-25 | `grill-me`, `grilling`, `prototype` |
-| github.com/vercel-labs/agent-skills | 2026-09-23 | `react-best-practices`, `web-design-guidelines` |
-| github.com/anthropics/skills | 2026-09-23 | `frontend-design` |
-| github.com/affaan-m/everything-claude-code | 2026-09-23 | `tdd-workflow`, `api-design`, `security-review`, `frontend-design-direction` |
-| github.com/microsoft/playwright-cli | 2026-09-25 | `playwright-cli` |
-| github.com/leonxlnx/taste-skill | 2026-09-23 | `taste-skill` |
-| elms-h5 skill pack 20260917 (GitHub upstream: see capabilities §1) | 2026-09-17 | `gsap` ×3, `apple-design`, `compatibility-testing`, `mobile-ux-optimizer` |
-| In-house, this repository | — | `project-workflow`, `project-profile`, `frontend-task`, `tinypng-compress`, `karpathy-guidelines` |
-
-★ = plugin snapshot source (no public repo; upgrading requires a fresh snapshot). Vendored skills are byte-identical to upstream (zero-modification principle); licenses and modification records are in `NOTICE`, and the machine-readable baseline (repo/SHA/date) is in the `vendored` field of `toolkit.json`.
-
-### How to Upgrade These Skills (follow this procedure next time)
-
-```bash
-node scripts/update-vendored.mjs                    # 1. Check: which skills lag upstream (✓ up to date / ↑ upgradeable / ? no baseline yet)
-node scripts/update-vendored.mjs --diff <skill-name>  # 2. Assess: upstream change summary × reference impact in this repo; manually confirm no functional loss
-node scripts/update-vendored.mjs --upgrade <skill-name>  # 3. Upgrade: overwrite with upstream files (local additions preserved), update the SHA baseline
-node .toolkit/scripts/sync-mirror.mjs               # 4. Rebuild the mirror
-node .toolkit/scripts/check-ai-guidance.mjs --root . --strict && node --test scripts/lib/*.test.mjs  # 5. Validate
-```
-
-Rules: always review the `--diff` assessment before upgrading (and test on real behavior whenever a behavioral contract changes — e.g., run browser skills against a real page); update the snapshot date in `NOTICE` in sync; commit and cut a release once everything passes. ★ entries without a repo (plugin snapshots) are re-snapshotted from the corresponding plugin cache and overwritten, then steps 4-5 apply. Interpreting older installs: a project whose `.toolkit/manifest.json` has no `starterVersion` field predates v6.0.x; upgrading against the source repository's Releases gives it a version anchor. If an upgrade renames skills, the installer flags the retired directories — delete them in pairs as prompted, then rebuild the mirror.
 
 ## 1. Quick Setup
 
@@ -70,19 +58,15 @@ node .toolkit/scripts/sync-mirror.mjs --check
 
 ### Optional Plugins (on demand)
 
-The 24 built-in skills require zero installation and work out of the box. Only the external capabilities below are installed per task when needed; see section 2 of [docs/capabilities.md](docs/capabilities.md) for full details.
+Built-in skills require zero installation and work on both hosts. Only the external capabilities below are added per task; see section 2 of [docs/capabilities.md](docs/capabilities.md) for full details.
 
-**Claude Code host** (install from the `/plugin` marketplace):
+| Plugin | What it's for | Claude Code install | Codex install |
+| --- | --- | --- | --- |
+| Figma | Implement from designs, generate prototypes, write code back to canvas | `claude plugin install figma@claude-plugins-official`; fallback MCP: `claude mcp add --transport http figma https://mcp.figma.com/mcp` | `figma@openai-api-curated` (search in Plugin Management) |
+| GitHub | PRs, issues, remote repository read/write | Official GitHub MCP connector | `github` plugin, or the GitHub MCP connector |
+| Product Design | Design exploration, visual cloning, UX audit, prototyping | No install needed — the built-in full-package copy is already everything of it that works on Claude Code | `product-design` (official marketplace); unlocks OpenAI-host-dependent sub-skills such as image-to-code; the plugin version takes precedence |
 
-- **Figma**: `claude plugin install figma@claude-plugins-official`; if that fails, connect the remote MCP manually: `claude mcp add --transport http figma https://mcp.figma.com/mcp`. Reproduce designs from Figma files and write Code to Canvas prototypes back to the canvas; works with a free account.
-- **GitHub**: the official GitHub MCP connector.
-- **Product Design**: no installation needed — the Starter ships a full-package copy, which is already everything of it that works on Claude Code (sub-skills such as image-to-code depend on OpenAI host capabilities; there is no official Claude Code plugin).
-
-**Codex host** (install via Plugin Management, searching by exact reference):
-
-- **Figma**: `figma@openai-api-curated`. Same capabilities as above (read + prototype generation + Code to Canvas write-back).
-- **GitHub**: the `github` plugin, or the GitHub MCP connector — either works.
-- **Product Design**: `product-design` (official OpenAI plugin marketplace). The Starter already ships a full-package copy whose methodology works on all hosts; installing the official plugin unlocks the sub-skills that depend on OpenAI host capabilities (such as image-to-code), and the plugin version takes precedence once installed.
+Both Figma paths use the official remote MCP (OAuth); a free account suffices for reading and write-back (rate limits apply). Local Git checks do not need the GitHub plugin.
 
 ## 2. Getting Started
 
@@ -101,7 +85,7 @@ From zero to delivering the first task on a new project takes four steps:
 
 ## 3. Command Reference
 
-`$` commands are recognized by the host. The three entry skills (`project-workflow` / `project-profile` / `frontend-task`) plus 19 vendored specialist skills are all built in; see section 1 of [docs/capabilities.md](docs/capabilities.md) for the full list and sources.
+`$` commands are recognized by the host. The three entry skills plus all specialist skills are built in; see section 1 of [docs/capabilities.md](docs/capabilities.md) for the full list and sources.
 
 ### $project-profile — Project Profile and Component Catalog
 
@@ -132,9 +116,9 @@ Key points: `profile` and `components` are peers with no prescribed order; start
 
 The entry point when you are unsure which skill to use: it routes to the minimal skill and stage; see `project-workflow/references/task-routing.md` for details.
 
-### Specialist Skills (16 vendored)
+### Specialist Skills (all built in)
 
-`tdd-workflow`, `api-design`, `security-review`, the `frontend-design` series, the full `product-design` package, `grill-me`/`grilling` (grilling in rounds: entry point + protocol), `prototype` (throwaway prototypes: direction variants / state validation), `gsap` ×3, `playwright-cli` (real-browser automation: official manual + 10 hands-on references), `apple-design`, `compatibility-testing`, `mobile-ux-optimizer`, `react-best-practices`, `taste-skill`, `web-design-guidelines` — invoke directly as `$<skill-name>`; see [docs/capabilities.md](docs/capabilities.md) for sources and update procedures.
+`tdd-workflow`, `api-design`, `security-review`, the `frontend-design` series, the full `product-design` package, `grill-me`/`grilling` (grilling in rounds: entry point + protocol), `prototype` (throwaway prototypes: direction variants / state validation), `gsap` ×3, `playwright-cli` (real-browser automation: official manual + 10 hands-on references), `webapp-testing` (functional E2E for pages wired to APIs: Python Playwright scripts + dev server lifecycle management), `apple-design`, `compatibility-testing`, `mobile-ux-optimizer`, `react-best-practices`, `taste-skill`, `web-design-guidelines` — invoke directly as `$<skill-name>`; see [docs/capabilities.md](docs/capabilities.md) for sources and update procedures.
 
 ## 4. Task Operation Details
 
@@ -202,51 +186,48 @@ Complex tasks store `TASK.md`, `PLAN.md`, `STATE.json`, `ACCEPTANCE.md`, and `as
 
 Machine state files are managed by their corresponding skills; never hand-forge `initialized`, confirmation states, or acceptance success.
 
-## 6. How to Extend
+## 6. Skill Sources and Snapshot Versions
 
-Adding a new skill:
+Identical to the Chinese table in [README.md §6](README.md): 25 built-in skills, all dual-host (Codex reads `.agents/skills/`, Claude Code reads the `.claude/skills/` mirror, byte-identical — hence listed once there). Host differences:
 
-1. Write `SKILL.md` under `.agents/skills/<name>/` (frontmatter `name` must match the directory name); add `agents/openai.yaml`, `references/`, and `templates/` as needed.
-2. Rebuild the mirror with `node .toolkit/scripts/sync-mirror.mjs`.
-3. Register it in the `skills` field of `toolkit.json`; register `requiredFiles` / `additionalSkills` / `routing` in `.toolkit/ai-guidance.config.mjs` as needed.
-4. If task routing changes, update `project-workflow/references/task-routing.md`; for new sources, extend `frontend-task/references/source-routing.md`.
-5. For vendored skills, record the upstream source, snapshot, license, and modifications in `NOTICE`; add a source row to `docs/capabilities.md`.
-6. Increment `schemaVersion` when adding state fields, and keep it idempotent.
+- **Host built-ins (Codex only, not shipped in this repo)**: `browser` / `chrome` / `computer-use` (`openai-bundled`) — page acceptance, reusing the user's browser session, desktop operation. On Claude Code, page acceptance uses `$webapp-testing` or `$playwright-cli` instead.
+- **Plugins**: install sources differ per host — see the table in §1.
+- **`product-design` capability surface**: the built-in full-package copy works everywhere for methodology/audit; sub-skills like image-to-code depend on the OpenAI host (Codex + official plugin).
 
-New templates / conventions: put them in the corresponding skill's `templates/` or `docs/rules/`, and update the validation config and the file index in sync.
+### How to Upgrade These Skills (dual channel)
 
-After each extension, verify the main flow "copy → `$project-profile` → `$frontend-task inspect`" on a clean copy:
+Online (when local network is fine):
 
 ```bash
-node .toolkit/scripts/check-ai-guidance.mjs --root . --strict
-node .toolkit/scripts/sync-mirror.mjs --check
+node scripts/update-vendored.mjs                    # 1. Check: ✓ up to date / ↑ upgradeable / ? no baseline yet
+node scripts/update-vendored.mjs --diff <skill-name>  # 2. Assess: upstream change summary × reference impact
+node scripts/update-vendored.mjs --upgrade <skill-name>  # 3. Upgrade: overwrite changed files (local additions preserved), update the SHA baseline
+node .toolkit/scripts/sync-mirror.mjs               # 4. Rebuild the mirror
+node .toolkit/scripts/check-ai-guidance.mjs --root . --strict && node --test scripts/lib/*.test.mjs  # 5. Validate
 ```
 
-Strict mode failing while the profile is unconfirmed is expected; rerun and record after confirming the profile.
+Offline (when local clones are slow or failing): the weekly `vendored-check` CI packs the latest upstream content into an artifact whenever upgrades are available, with the download link attached to the issue it files —
+
+```bash
+# 1. Download vendored-bundle-<run>.zip from the issue link (Windows/macOS can pass the zip directly; on Linux, extract first and pass the directory)
+node scripts/update-vendored.mjs --diff --offline <bundle-path>     # 2. Assess using the bundle (zero clones)
+node scripts/update-vendored.mjs --upgrade --offline <bundle-path>  # 3. Upgrade using the bundle (byte-compared before overwrite)
+# Steps 4-5 are the same as the online channel
+```
+
+Rules: always review `--diff` before upgrading (test on real behavior whenever a behavioral contract changes — e.g., run browser skills against a real page); update the snapshot date in `NOTICE` in sync; commit and cut a release once everything passes. The four plugin-snapshot skills (no public repo) are re-snapshotted from the local plugin cache instead of going through these channels. `--rebaseline` reconciles: when bytes already match upstream but the baseline is missing or stale, it writes the SHA directly.
 
 ## 7. FAQ
 
 | Symptom | Remedy |
 | --- | --- |
-| Skills such as `$project-profile` not found | All 24 skills are built in; check the list in `docs/capabilities.md` and open a new session so the host rediscovers them; do not install third-party same-name substitutes |
+| Skills such as `$project-profile` not found | All 25 skills are built in; check the list in `docs/capabilities.md` and open a new session so the host rediscovers them; do not install third-party same-name substitutes |
 | Profile is `draft` or template is `pending` | Run `$project-profile` to pick templates and confirm high-impact fields; defer when unsure — never hand-fill `initialized` |
 | Task halted at `awaiting-confirmation` | Read the decision blocks in `PLAN.md`, then run `$frontend-task confirm` |
 | `resume` reports a stale fingerprint | `inspect` first and re-`plan` if needed; do not carry over the old plan |
 | AI guidance validation fails | Check the error paths and missing markers; verify the manifest and config, then rerun |
 | `.claude/skills` out of sync with `.agents/skills` | Run `sync-mirror.mjs` to rebuild the mirror; never edit the mirror by hand |
-| Need Figma / GitHub capabilities | See section 2 of `docs/capabilities.md`; on hosts without the plugin, connect Figma directly via MCP |
+| Need Figma / GitHub capabilities | See the plugin table in §1; on hosts without the plugin, connect Figma directly via MCP |
 | Want to delete or overwrite files | Check Git status and impact first; leave `.toolkit` state and migration history untouched |
-| Want to remove a local skill and use your own global/plugin version | `node scripts/remove-skill.mjs <skill-name>`: deletes `.agents`/`.claude` in pairs, updates the roster, registers `externalSkills` (validation then treats it as externally provided), and rebuilds the mirror — all atomically. For paired skills (e.g. grill-me↔grilling), never delete only one half — the validator will block it |
+| Want to remove a local skill and use your own global/plugin version | `node scripts/remove-skill.mjs <skill-name>`: deletes `.agents`/`.claude` in pairs, updates the roster, registers `externalSkills`, and rebuilds the mirror — all atomically. For paired skills (e.g. grill-me↔grilling), never delete only one half — the validator will block it |
 | Acceptance "looks like it passed" | Distinguish static checks / mocks / real integration; keep unverified items in `ACCEPTANCE.md` |
-
-## 8. Legacy Document Name Mapping
-
-| Old name | Current name |
-| --- | --- |
-| `AI_PROMPT_ENGINEERING.md` | `AI_WORKFLOW_PRINCIPLES.md` |
-| `AI_TASK_PROMPT.md` | `AI_TASK_CONTRACT.md` |
-| `AI_PAGE_PROMPT.md` | `AI_FRONTEND_TASK.md` |
-| `AI_CAPABILITY_REQUIREMENTS.md` / `CODEX_CAPABILITIES.md` | `docs/capabilities.md` |
-| `resources/` legacy container directory | The repository root is the Starter (topology flattened in 2026-09) |
-
-The mapping is kept to ease migrating older projects; new content uses the current names throughout.

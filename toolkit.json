@@ -76,7 +76,8 @@
     "security-review",
     "taste-skill",
     "tdd-workflow",
-    "web-design-guidelines"
+    "web-design-guidelines",
+    "webapp-testing"
   ],
   "vendored": {
     "tdd-workflow": {
@@ -112,7 +113,7 @@
     "taste-skill": {
       "repo": "https://github.com/leonxlnx/taste-skill",
       "path": "skills/taste-skill",
-      "sha": "c184364c58658b2f131b4ae8bd3d206cabb3deee",
+      "sha": "ce26fc25c0e5e8cab638f883de62d9a86ee5e45b",
       "snapshot": "2026-09-23"
     },
     "react-best-practices": {
@@ -149,39 +150,50 @@
       "snapshot": "2026-09-23"
     },
     "gsap-core": {
-      "repo": null,
-      "source": "elms-h5 技能包 20260917（上游 github.com/greensock/gsap-skills）",
-      "snapshot": "2026-09-17"
+      "repo": "https://github.com/greensock/gsap-skills",
+      "snapshot": "2026-09-17",
+      "sha": "aed9cfd3277740755f6bfc1155c7aa645403b760",
+      "path": "skills/gsap-core"
     },
     "gsap-performance": {
-      "repo": null,
-      "source": "elms-h5 技能包 20260917（上游 github.com/greensock/gsap-skills）",
-      "snapshot": "2026-09-17"
+      "repo": "https://github.com/greensock/gsap-skills",
+      "snapshot": "2026-09-17",
+      "sha": "aed9cfd3277740755f6bfc1155c7aa645403b760",
+      "path": "skills/gsap-performance"
     },
     "gsap-timeline": {
-      "repo": null,
-      "source": "elms-h5 技能包 20260917（上游 github.com/greensock/gsap-skills）",
-      "snapshot": "2026-09-17"
+      "repo": "https://github.com/greensock/gsap-skills",
+      "snapshot": "2026-09-17",
+      "sha": "aed9cfd3277740755f6bfc1155c7aa645403b760",
+      "path": "skills/gsap-timeline"
     },
     "apple-design": {
-      "repo": null,
-      "source": "elms-h5 技能包 20260917（上游 github.com/emilkowalski/skills）",
-      "snapshot": "2026-09-17"
+      "repo": "https://github.com/emilkowalski/skills",
+      "snapshot": "2026-09-26",
+      "sha": "d16ebe60d09a5ba2afcb7054ede9d0a10c9f6128"
     },
     "compatibility-testing": {
-      "repo": null,
-      "source": "elms-h5 技能包 20260917（上游 github.com/proffesor-for-testing/agentic-qe）",
-      "snapshot": "2026-09-17"
+      "repo": "https://github.com/proffesor-for-testing/agentic-qe",
+      "snapshot": "2026-09-17",
+      "sha": "ffc0c6a5173874070bb2d07b29e9ae2a7383ed55",
+      "path": "assets/skills/compatibility-testing"
     },
     "mobile-ux-optimizer": {
-      "repo": null,
-      "source": "elms-h5 技能包 20260917（上游 github.com/erichowens/some-claude-skills）",
-      "snapshot": "2026-09-17"
+      "repo": "https://github.com/curiositech/some_claude_skills",
+      "snapshot": "2026-09-25",
+      "sha": "6713fc7a6451c8dee5903b98cd2063ff4cbf7317",
+      "path": ".claude/skills/mobile-ux-optimizer"
     },
     "playwright-cli": {
       "repo": "https://github.com/microsoft/playwright-cli",
       "path": "skills/playwright-cli",
       "sha": "74354ecc7a43da16d91a9bc54fa8db8283a3fcf5",
+      "snapshot": "2026-09-25"
+    },
+    "webapp-testing": {
+      "repo": "https://github.com/anthropics/skills",
+      "path": "skills/webapp-testing",
+      "sha": "33375500bcea98d610eb30ce10ac4e59b89c390d",
       "snapshot": "2026-09-25"
     }
   },
