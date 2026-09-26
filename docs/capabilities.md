@@ -15,9 +15,9 @@
 
 全部技能随本 Starter 分发在 `.agents/skills/`（Codex 与 Claude Code 双宿主同源，镜像见 `.claude/skills/`，字节一致——清单只列一次，宿主差异汇总见第 4 节），复制项目后即可发现，不需要安装命令。**名称冲突时以内置版本为准**，不覆盖用户级同名 Skill。
 
-自研 5 项：`project-workflow`、`project-profile`、`frontend-task`、`tinypng-compress`、`karpathy-guidelines`。
+自研 4 项：`project-workflow`、`project-profile`、`frontend-task`、`tinypng-compress`。
 
-Vendored 20 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。许可与修改记录见仓库根 `NOTICE`；机器可读基线（repo/SHA/快照日期）在仓库 toolkit.json 的 `vendored` 字段，配套升级器 `node scripts/update-vendored.mjs`（无参比对上游、`--diff` 评估变更×引用影响、`--rebaseline` 对账写基线、`--upgrade` 确认后覆盖并镜像校验）；也可从「上游」列手工取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
+Vendored 21 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。许可与修改记录见仓库根 `NOTICE`；机器可读基线（repo/SHA/快照日期）在仓库 toolkit.json 的 `vendored` 字段，配套升级器 `node scripts/update-vendored.mjs`（无参比对上游、`--diff` 评估变更×引用影响、`--rebaseline` 对账写基线、`--upgrade` 确认后覆盖并镜像校验）；也可从「上游」列手工取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
 
 | 技能（目录） | 上游 | 本仓说明 |
 | --- | --- | --- |
@@ -25,7 +25,8 @@ Vendored 20 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | `tdd-workflow` | github.com/affaan-m/everything-claude-code | 2026-09-25 快照（同上游 e482e579 重 vendor，SKILL.md 1 行更新），MIT |
 | `frontend-design` | github.com/anthropics/skills | 2026-09-23 快照，Apache-2.0（目录内 LICENSE.txt） |
 | `taste-skill` | github.com/leonxlnx/taste-skill | 2026-09-23 快照，MIT；frontmatter 实名 `design-taste-frontend` |
-| `grill-me` / `grilling` / `prototype` | claude-plugins-official/mattpocock-skills 1.2.3 | 2026-09-25 快照，MIT；grill-me（入口）与 grilling（协议）按上游依赖结构原样入库，零修改；prototype 支持无视觉参照新页面的方向原型硬门槛 |
+| `karpathy-guidelines` | github.com/multica-ai/andrej-karpathy-skills | 2026-09-24 快照，MIT（frontmatter 声明，仓库无 LICENSE 文件）；2026-09-26 核实为 verbatim 拷贝并建基线（原"自研"标注有误；内容源为 Karpathy 公开帖，上游已注明） |
+| `grill-me` / `grilling` / `prototype` | claude-plugins-official/mattpocock-skills 1.3.0 | 2026-09-26 快照（经 CI 离线包通道升级），MIT；grill-me（入口）与 grilling（协议）按上游依赖结构原样入库，零修改；prototype 支持无视觉参照新页面的方向原型硬门槛 |
 | `web-design-guidelines` | github.com/vercel-labs/agent-skills（内容源 vercel-labs/web-interface-guidelines） | SKILL.md verbatim：在线按上游机制拉最新规则；`command.md` 为内容源规则快照（附加文件），离线/WebFetch 失败时按 task-routing 指示回退使用 |
 | `react-best-practices` | github.com/vercel-labs/agent-skills | 2026-09-23 快照；frontmatter 实名 `vercel-react-best-practices` |
 | `product-design` | OpenAI `product-design` 插件 v0.1.52 本机快照（无公开源码仓） | 整包 vendor，顶层薄路由自写；部分子技能（如 image-to-code）依赖 OpenAI 宿主能力，其他宿主仅方法论与测量/清册部分可用；许可状态见 NOTICE——用户已特赦公开分发（2026-09-24 裁定，2026-09-25 复核改无限期·非商用） |
@@ -34,7 +35,7 @@ Vendored 20 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | `compatibility-testing` | github.com/proffesor-for-testing/agentic-qe | 2026-09-17 快照，MIT；rebaseline 对账 = 上游 HEAD |
 | `mobile-ux-optimizer` | github.com/curiositech/some_claude_skills（原 erichowens/some-claude-skills 已 404，延续仓同 MIT） | 2026-09-25 快照，MIT；2026-09-25 补入延续仓新增的 `.claude-plugin/plugin.json` 后对齐上游 HEAD |
 | `playwright-cli` | github.com/microsoft/playwright-cli | 2026-09-25 回归上游 verbatim（官方手册 + 10 份 references，安装兜底见其 SKILL.md §Installation）；基线 74354ecc = tag v0.1.21 = npm 工具 0.1.21 版本配对；旧改编版退役；附加仅宿主元数据/图标/许可 |
-| `webapp-testing` | github.com/anthropics/skills | 2026-09-25 快照，Apache-2.0（目录内 LICENSE.txt）；Python Playwright 功能测试工具包（`with_server.py` 管 dev server 生命周期），服务"已接入接口页面"的主流程/失败/权限/刷新持久化 E2E（见任务路由"主流程 E2E"行）；运行时需本机 Python + playwright 包，缺失时报告不可用并回退 `$playwright-cli` 或人工浏览器验证 |
+| `webapp-testing` | github.com/anthropics/skills | 2026-09-25 快照，Apache-2.0（目录内 LICENSE.txt）；Python Playwright 功能测试工具包（`with_server.py` 管 dev server 生命周期），服务"已接入接口页面"的主流程/失败/权限/刷新持久化 E2E（见任务路由"主流程 E2E"行）；运行时需本机 Python + playwright 包，缺失时报告不可用并回退 `$playwright-cli` 或人工浏览器验证；2026-09-26 实测：Python 3.14 无 playwright 轮子的机器上，等价回退 = 临时目录 `npm i playwright-core` + `chromium.launch({ channel: 'chrome' })` 驱动系统已装 Chrome |
 
 内置 `product-design` 直调写作 `$product-design`（如 `$product-design` image-to-code / audit 用法见其顶层 SKILL.md 子技能地图）；装有官方插件的宿主也可用 `$product-design:index` 等命名空间直调，以插件版为准。
 

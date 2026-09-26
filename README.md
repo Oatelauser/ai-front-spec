@@ -190,7 +190,7 @@ Figma 双路径均走官方远程 MCP（OAuth），免费账号即可读与回�
 
 25 个内置技能全部双宿主：Codex 读 `.agents/skills/`，Claude Code 读 `.claude/skills/` 镜像，两份字节一致——所以清单只列一次。两宿主真正的差异只有两处：插件安装方式（见 §1 表）和宿主内置能力（见本节末尾）。
 
-### 自研（5）
+### 自研（4）
 
 | 技能 | 来源 | 快照 | 说明 |
 | --- | --- | --- | --- |
@@ -198,9 +198,8 @@ Figma 双路径均走官方远程 MCP（OAuth），免费账号即可读与回�
 | `project-profile` | 本仓 | — | 项目画像与组件目录的初始化、更新 |
 | `frontend-task` | 本仓 | — | 前端任务全流程（inspect → report） |
 | `tinypng-compress` | 本仓 | — | TinyPNG 批量图片压缩 CLI |
-| `karpathy-guidelines` | 本仓 | — | 防 AI 低级错误的行为准则 |
 
-### GitHub 上游 vendored（16）
+### GitHub 上游 vendored（17）
 
 零修改原则：与上游字节一致，升级 = 新快照纯覆盖。许可与修改记录见 `NOTICE`，机器可读基线（repo / SHA / 日期）见 `toolkit.json` 的 `vendored` 字段。
 
@@ -222,13 +221,14 @@ Figma 双路径均走官方远程 MCP（OAuth），免费账号即可读与回�
 | `react-best-practices` | github.com/vercel-labs/agent-skills | 2026-09-23 | React/Next.js 性能规范 |
 | `web-design-guidelines` | 同上（内容源 vercel-labs/web-interface-guidelines） | 2026-09-23 | Web 界面规范审计（在线拉最新，离线回退 `command.md`） |
 | `taste-skill` | github.com/leonxlnx/taste-skill | 2026-09-23 | 反模板化前端审美 |
+| `karpathy-guidelines` | github.com/multica-ai/andrej-karpathy-skills | 2026-09-24 | 防 AI 低级错误的行为准则（内容源为 Karpathy 公开帖） |
 
 ### 插件快照（4，无公开源码仓，升级 = 从宿主插件缓存重新快照）
 
 | 技能 | 来源 | 快照 | 说明 |
 | --- | --- | --- | --- |
 | `product-design` | OpenAI Codex 插件市场 `product-design` v0.1.52 | 2026-09-23 | 整包 vendor（顶层路由 + 子技能地图见其 SKILL.md）；image-to-code 等子能力依赖 OpenAI 宿主 |
-| `grill-me` | Claude Code 官方市场 `mattpocock-skills` 1.2.3 | 2026-09-25 | 拷问入口技能 |
+| `grill-me` | Claude Code 官方市场 `mattpocock-skills` 1.3.0 | 2026-09-26 | 拷问入口技能 |
 | `↳ grilling` | 同上 | 同上 | 拷问协议本体，`grill-me` 依赖它，两者成对不可拆 |
 | `prototype` | 同上 | 同上 | 一次性原型（方向变体 / 状态验证） |
 

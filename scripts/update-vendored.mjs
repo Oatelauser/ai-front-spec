@@ -7,7 +7,7 @@
 //   --pack <目录>  离线包生成（CI 用稳定网络）：只打包落后/未建基线技能的上游最新全量目录 + manifest.json
 //   --offline <包> 与 --diff/--rebaseline/--upgrade 组合：上游内容来自离线包（目录或 zip/tar.gz），零克隆
 // 无 repo 的条目（插件快照/本地包）只打印来源，不做网络探测。SHA 是唯一版本真相。
-import { cp, mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { copyFile, cp, mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { basename, dirname, join, relative, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
@@ -31,6 +31,8 @@ for (let i = 0; i < args.length; i++) {
 }
 
 const run = (cmd, cmdArgs, opts = {}) => spawnSync(cmd, cmdArgs, { encoding: 'utf8', ...opts })
+// Windows 上 npm 是 npm.cmd，无 shell 直接 spawn 会失败（git 是真 exe 不受影响）
+const npmRun = (npmArgs, opts = {}) => spawnSync('npm', npmArgs, { encoding: 'utf8', shell: process.platform === 'win32', ...opts })
 
 const listFiles = async (dir, base = dir, out = []) => {
   if (!existsSync(dir)) return out
@@ -105,18 +107,20 @@ async function compareWithUpstream(skill, entry) {
 }
 
 // 离线包：目录直接用；压缩包用 tar 解压（Windows/macOS 的 bsdtar 兼容 zip，GNU tar 仅 tar.gz）。
+// tar 兼容：绝对路径含冒号会被 GNU tar 当「远程主机:路径」（Windows 下 node 无 shell 时 PATH 命中 Git 的 GNU tar）——一律相对名 + cwd，参数不出现带冒号的路径。
 async function extractBundle(path) {
   if (statSync(path).isDirectory()) return path
   const tmp = await mkdtemp(join(tmpdir(), 'vbundle-'))
-  if (run('tar', ['-xf', path, '-C', tmp]).status !== 0) {
+  await copyFile(path, join(tmp, 'bundle.bin'))
+  if (run('tar', ['-xf', 'bundle.bin'], { cwd: tmp }).status !== 0) {
     await rm(tmp, { recursive: true, force: true })
     console.error(`无法解压 ${path}（支持 zip/tar.gz；Linux 下 zip 请先手动解压后传目录）`)
     process.exit(2)
   }
-  const top = join(tmp, 'manifest.json')
-  if (existsSync(top)) return tmp
-  const first = (await readdir(tmp))[0]
-  return join(tmp, first)
+  await rm(join(tmp, 'bundle.bin'), { force: true })
+  if (existsSync(join(tmp, 'manifest.json'))) return tmp
+  const first = (await readdir(tmp, { withFileTypes: true })).find((e) => e.isDirectory())
+  return join(tmp, first.name)
 }
 
 async function compareWithBundle(skill, bundleDir) {
@@ -124,6 +128,32 @@ async function compareWithBundle(skill, bundleDir) {
   const skillDir = join(bundleDir, skill)
   if (!existsSync(join(skillDir, 'SKILL.md'))) return { error: `离线包未包含技能目录 ${skill}` }
   return { ...(await compareDirs(localDir, skillDir)), localDir, skillDir, tmp: null }
+}
+
+// 破坏性升级识别：A) 改动文件的行级 diff（git 已是本脚本硬依赖，借 git diff --no-index；二进制跳过，超长截断）
+const lineDiff = (localPath, upstreamPath) => {
+  if (!isText(localPath) && !isText(upstreamPath)) return null
+  const res = run('git', ['diff', '--no-index', '--unified=1', '--', localPath, upstreamPath])
+  const lines = (res.stdout || '').split('\n').filter((l) => l !== '')
+  if (!lines.length) return null
+  return lines.slice(0, 80).join('\n') + (lines.length > 80 ? `\n  …（截断，全 diff 共 ${lines.length} 行）` : '')
+}
+// B) frontmatter 守卫：name 变了 = 所有 $调用名 断裂（机器可判定的破坏）；description 变化 = 触发匹配面变化（提示级）
+const frontmatterField = (file, field) => {
+  if (!existsSync(file)) return null
+  return new RegExp(`^${field}:\\s*(.*)$`, 'm').exec(readFileSync(file, 'utf8'))?.[1]?.trim() ?? null
+}
+const breakingCheck = (result, skill, mode) => {
+  const upName = frontmatterField(join(result.skillDir, 'SKILL.md'), 'name')
+  const localName = frontmatterField(join(result.localDir, 'SKILL.md'), 'name')
+  if (upName && localName && upName !== localName) {
+    if (mode === 'upgrade') { console.log(`  ✗ 拒升：上游 frontmatter name "${localName}" → "${upName}"，全部 $${skill} 调用会断；先重命名并更新引用再升`); return true }
+    console.log(`  ⚠ 破坏性：上游 frontmatter name "${localName}" → "${upName}"（升级即断路由引用）`)
+  }
+  if (mode === 'diff' && frontmatterField(join(result.skillDir, 'SKILL.md'), 'description') !== frontmatterField(join(result.localDir, 'SKILL.md'), 'description')) {
+    console.log('  ⚠ description 已变化（影响宿主触发匹配，属行为面变更，升后须实测）')
+  }
+  return false
 }
 
 function impactReport(skill) {
@@ -162,7 +192,7 @@ if (mode === 'check') {
       if (reportedPkgs.has(entry.pkg)) continue
       reportedPkgs.add(entry.pkg)
       const skills = Object.entries(vendored).filter(([, e]) => e.pkg === entry.pkg).map(([s]) => s)
-      const view = run('npm', ['view', pkg.npm, 'version'])
+      const view = npmRun( ['view', pkg.npm, 'version'])
       if (view.status !== 0) { console.log(`  ! ${entry.pkg}：npm registry 不可达`); continue }
       const latest = view.stdout.trim()
       if (latest === pkg.version) console.log(`  ✓ ${entry.pkg} ${pkg.version}（覆盖：${skills.join('、')}）`)
@@ -198,14 +228,14 @@ if (mode === 'pack') {
   }
   // npm 通道：版本落后才下载 tarball，展开后按 .agents/skills/<name> 布局取成员技能
   for (const [pkgName, pkg] of Object.entries(toolkit.packages ?? {})) {
-    const view = run('npm', ['view', pkg.npm, 'version'])
+    const view = npmRun( ['view', pkg.npm, 'version'])
     if (view.status !== 0) { console.log(`! ${pkgName}：npm registry 不可达`); continue }
     if (view.stdout.trim() === pkg.version) continue
     const version = view.stdout.trim()
     const tmp = await mkdtemp(join(tmpdir(), `pkg-${pkgName}-`))
-    const packed = run('npm', ['pack', `${pkg.npm}@${version}`, '--pack-destination', tmp])
+    const packed = npmRun( ['pack', `${pkg.npm}@${version}`, '--pack-destination', tmp])
     const tgz = packed.status === 0 ? readdirSync(tmp).find((f) => f.endsWith('.tgz')) : null
-    if (!tgz || run('tar', ['-xzf', join(tmp, tgz), '-C', tmp]).status !== 0) {
+    if (!tgz || run('tar', ['-xzf', tgz], { cwd: tmp }).status !== 0) {
       await rm(tmp, { recursive: true, force: true }); console.log(`! ${pkgName}：npm tarball 下载/展开失败`); continue
     }
     const bundled = []
@@ -255,6 +285,8 @@ if (mode === 'diff' || mode === 'rebaseline' || mode === 'upgrade') {
   const names = target === 'all' ? Object.keys(vendored) : [target]
   for (const skill of names) {
     const entry = vendored[skill]
+    // 离线包只装漂移技能：不在 manifest 里的条目直接跳过（不是错误）
+    if (bundleManifest && !(bundleManifest.skills?.[skill] || Object.values(bundleManifest.packages ?? {}).some((p) => (p.skills ?? []).includes(skill)))) continue
     if (entry.pkg) {
       if (!bundleManifest) {
         const pkg = toolkit.packages?.[entry.pkg]
@@ -270,7 +302,15 @@ if (mode === 'diff' || mode === 'rebaseline' || mode === 'upgrade') {
       if (result.error) { console.log(`! ${skill}：${result.error}`); continue }
       console.log(`\n== ${skill} @ npm ${pkgInfo.version} ==`)
       printReport(result)
-      if (mode === 'diff') console.log(`  引用影响：${impactReport(skill).join('、') || '无'}`)
+      if (breakingCheck(result, skill, mode)) continue
+      if (mode === 'diff') {
+        console.log(`  引用影响：${impactReport(skill).join('、') || '无'}`)
+        for (const rel of result.changed) {
+          const d = lineDiff(join(result.localDir, rel), join(result.skillDir, rel))
+          if (d === null) continue
+          console.log(`\n  -- ${rel} 行级 diff --\n${d}`)
+        }
+      }
       if (mode === 'rebaseline') {
         if (result.identical) { toolkit.packages[entry.pkg].version = pkgInfo.version; await saveToolkit(); console.log(`  ✓ npm 版本基线已写入（${pkgInfo.version}）`) }
         else console.log('  ✗ 与离线包不一致，拒写基线（先人工评估 --diff，或 --upgrade）')
@@ -291,7 +331,15 @@ if (mode === 'diff' || mode === 'rebaseline' || mode === 'upgrade') {
     if (!sha) { console.log(`! ${skill}：离线包 manifest 未登记`); continue }
     console.log(`\n== ${skill} @ ${sha.slice(0, 8)} ==`)
     printReport(result)
-    if (mode === 'diff') console.log(`  引用影响：${impactReport(skill).join('、') || '无'}`)
+    if (breakingCheck(result, skill, mode)) continue
+    if (mode === 'diff') {
+      console.log(`  引用影响：${impactReport(skill).join('、') || '无'}`)
+      for (const rel of result.changed) {
+        const d = lineDiff(join(result.localDir, rel), join(result.skillDir, rel))
+        if (d === null) continue
+        console.log(`\n  -- ${rel} 行级 diff --\n${d}`)
+      }
+    }
     if (mode === 'rebaseline') {
       if (result.identical) {
         entry.sha = sha

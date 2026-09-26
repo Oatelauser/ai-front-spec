@@ -5,4 +5,4 @@ disable-model-invocation: true
 ---
 <!-- AUTO-GENERATED from .agents/skills/grill-me. DO NOT EDIT. Run: node .toolkit/scripts/sync-mirror.mjs -->
 
-Call the Skill tool with "grilling".
+Run a `/grilling` session.

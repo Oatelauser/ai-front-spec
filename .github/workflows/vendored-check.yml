@@ -43,7 +43,7 @@ jobs:
           \`\`\`
           $(cat report.txt)
           \`\`\`
-          本地克隆慢/失败时用离线通道：本运行页底部 Artifacts 区下载 vendored-bundle-${{ github.run_number }}（zip，含 manifest.json），解压后执行 node scripts/update-vendored.mjs --diff --offline <解压目录> 评估、--upgrade --offline <解压目录> 应用（零克隆）。在线五步（check → diff → upgrade → 镜像 → 校验发版）见 README「如何升级这些技能」。"
+          本地克隆慢/失败时用离线通道：[点此打开本运行的 Artifacts 下载页](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})（页面底部 Artifacts 区）下载 vendored-bundle-${{ github.run_number }}（zip，含 manifest.json），解压后执行 node scripts/update-vendored.mjs --diff --offline <解压目录> 评估、--upgrade --offline <解压目录> 应用（零克隆）。在线五步（check → diff → upgrade → 镜像 → 校验发版）见 README「如何升级这些技能」。"
           ISSUE=$(gh issue list --state open --search "in:title vendored 技能升级待办" --json number --jq '.[0].number')
           if [ "${{ steps.check.outputs.exit }}" = "1" ]; then
             if [ -n "$ISSUE" ]; then gh issue comment "$ISSUE" --body "$BODY"

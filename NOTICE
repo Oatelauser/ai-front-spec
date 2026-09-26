@@ -12,6 +12,7 @@ ai-front-spec 按 MIT 许可发布（LICENSE）。
 | tdd-workflow | github.com/affaan-m/everything-claude-code | 2026-09-25 | MIT（仓库级） | 无（2026-09-25 重 vendor：同上游 e482e579，SKILL.md 1 行更新） |
 | frontend-design | github.com/anthropics/skills | 2026-09-23 | Apache-2.0（目录内 LICENSE.txt） | 无 |
 | taste-skill | github.com/leonxlnx/taste-skill | 2026-09-23 | MIT（仓库级） | 无 |
+| karpathy-guidelines | github.com/multica-ai/andrej-karpathy-skills | 2026-09-24 | MIT（frontmatter 声明，仓库无 LICENSE 文件） | 无（2026-09-26 核实为 verbatim 拷贝并建基线 2c606141；原"自研/本仓自撰"标注有误。内容源为 Andrej Karpathy 公开帖，上游 SKILL.md 已注明） |
 | web-design-guidelines | github.com/vercel-labs/agent-skills（内容源 github.com/vercel-labs/web-interface-guidelines） | 2026-09-23 | MIT | 无修改：SKILL.md verbatim（在线拉最新规则）；附加快照 `command.md` 来自内容源仓库，作离线回退，路由层（task-routing）指示其使用时机 |
 | react-best-practices | github.com/vercel-labs/agent-skills | 2026-09-23 | MIT（frontmatter 声明，仓库无 LICENSE 文件） | 无 |
 | playwright-cli | github.com/microsoft/playwright-cli | 2026-09-25 | Apache-2.0 © Microsoft | 无修改：2026-09-25 弃旧改编版（改名/wrapper/自写参考）回归上游 verbatim；基线 74354ecc = 上游 tag v0.1.21 = npm 工具 @playwright/cli 0.1.21，技能/工具版本配对；附加仅宿主元数据、图标与许可 |
@@ -21,13 +22,9 @@ ai-front-spec 按 MIT 许可发布（LICENSE）。
 | mobile-ux-optimizer | github.com/curiositech/some_claude_skills（延续仓；原 erichowens/some-claude-skills 已 404） | 2026-09-25 | MIT © 2025 Erich Owens | 无（2026-09-25 补入延续仓新增的 `.claude-plugin/plugin.json` 后对齐上游 HEAD） |
 | apple-design | github.com/emilkowalski/skills | 2026-09-26 | MIT © 2026 Emil Kowalski | 无（2026-09-26 对齐上游 HEAD：吸收其新增的 Initial Response 节，其余内容原快照已一致） |
 | product-design | OpenAI product-design 插件 v0.1.52 本机快照（无公开源码仓） | 2026-09-23 | 无许可文件（private:true，默认全保留）——用户特赦：2026-09-24 裁定接受公开分发，2026-09-25 复核改无限期（非商用），风险自担 | 顶层薄路由 SKILL.md 自写，2026-09-24 增补「宿主能力边界」节 |
-| grill-me / grilling / prototype | claude-plugins-official `mattpocock-skills` 1.2.3 插件快照 | 2026-09-25 | MIT © 2026 Matt Pocock | 无修改：grill-me（上游入口包装）与 grilling（协议本体）按上游依赖结构原样入库，未合并 |
+| grill-me / grilling / prototype | claude-plugins-official `mattpocock-skills` 1.3.0 插件快照 | 2026-09-26 | MIT © 2026 Matt Pocock | 无修改：grill-me（上游入口包装）与 grilling（协议本体）按上游依赖结构原样入库，未合并；2026-09-26 经 CI 离线包通道 1.2.3 → 1.3.0（编辑性变更：标点风格、调用措辞、隐式调用策略位） |
 
 在库 6 技能（gsap ×3 / apple-design / compatibility-testing / mobile-ux-optimizer）迁入链：上游 → 本仓 commit a0a5921（2026-09-17 快照经二次转发包取得）。6 项现已全部与上游 HEAD 对账对齐（mobile-ux-optimizer 2026-09-25 补入延续仓新增文件；apple-design 2026-09-26 吸收上游新增节）。
-
-## 派生说明
-
-- karpathy-guidelines（项目技能）：行为准则派生自 Andrej Karpathy 公开帖（URL 待核补），本仓自撰。
 
 ## 边界
 
