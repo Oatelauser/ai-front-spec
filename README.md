@@ -17,7 +17,7 @@
 - **怕 AI 上来就写代码**：无视觉参照的新页面强制先出 2–3 个方向原型（`$prototype`），你选定才实现；实现计划也要 `$frontend-task confirm` 过了你的批准才动
 - **多端规则怕漏**：WebView / 移动 H5 / 桌面规则按项目画像自动套用，不靠 AI 记性
 
-边界：它不写业务代码、不建框架路由、不替你定接口——它管"AI 怎么把前端活干对、干完怎么证明干对了"。
+边界：它不写业务代码、不建框架路由、不替你定接口——它管"AI 怎么把前端活干对、干完怎么证明干对了"。设计侧是双层模型：基本方向直出走 `$prototype` 硬门槛（无参照新页面先出 2–3 变体、你选定再实现），专业设计（审美驱动、多轮调整）归同仓设计 lane `$design-task`。已实现页面返工按三分判据分流：实现质量、局部替换在本仓直修；设计方向系统性变更回设计 lane 重开。视觉/文案改动前先查 `docs/design/<特性>/` 定稿，定稿存在且实现偏离才记 `DRIFT.md`。
 
 | 宿主 | 读取路径 | 说明 |
 | --- | --- | --- |
@@ -65,8 +65,9 @@ node .toolkit/scripts/sync-mirror.mjs --check
 | Figma | 读设计稿实现、原型生成、代码回写画布 | `claude plugin install figma@claude-plugins-official`；装不上走 MCP 直连：`claude mcp add --transport http figma https://mcp.figma.com/mcp` | `figma@openai-api-curated`（Plugin Management 搜索） |
 | GitHub | PR、Issue、远端仓库读写 | GitHub 官方 MCP 连接器 | `github` 插件，或 GitHub MCP 连接器 |
 | Product Design | 设计探索、视觉复刻、UX 审计、原型 | 无需安装——内置整包拷贝已是它在 Claude Code 的全部可用部分 | `product-design`（官方市场）；装后解锁 image-to-code 等依赖 OpenAI 宿主的子技能，以插件版为准 |
+| Impeccable | 确定性设计质量检查（61 条无 LLM 规则）：实现后 `detect` 自查、`critique` / `polish` 出精修清单；推荐外部能力，非内置，未安装走既有验收环路 | `npx impeccable` | 同左 |
 
-Figma 双路径均走官方远程 MCP（OAuth），免费账号即可读与回写（有频率限制）；本地 Git 检查不需要 GitHub 插件。
+Figma 双路径均走官方远程 MCP（OAuth），免费账号即可读与回写（有频率限制）；本地 Git 检查不需要 GitHub 插件。Impeccable 的编辑时拦截（写入瞬间检查）是它的核心能力，属进阶自选：需自行接入宿主配置（Claude `settings.json` / Codex `hooks.json`），接法见其官方指引——本仓安装器永不自动修改宿主配置；未安装走既有验收矩阵 + `$web-design-guidelines` 环路。
 
 ## 2. 快速入门
 
@@ -118,7 +119,7 @@ Figma 双路径均走官方远程 MCP（OAuth），免费账号即可读与回�
 
 ### 专项技能（全部内置）
 
-`tdd-workflow`、`api-design`、`security-review`、`frontend-design` 系列、`product-design` 整包、`grill-me`/`grilling`（分轮拷问：入口 + 协议）、`prototype`（一次性原型：方向变体 / 状态验证）、`gsap` ×3、`playwright-cli`（真浏览器自动化：官方手册 + 10 份实操参考）、`webapp-testing`（已接入接口页面的功能 E2E：Python Playwright 脚本 + dev server 生命周期管理）、`apple-design`、`compatibility-testing`、`mobile-ux-optimizer`、`react-best-practices`、`taste-skill`、`web-design-guidelines`——直接以 `$技能名` 调用，来源与更新方式见 [docs/capabilities.md](docs/capabilities.md)。
+`tdd-workflow`、`api-design`、`security-review`、`frontend-design` 系列、`product-design` 整包、`grill-me`/`grilling`（分轮拷问：入口 + 协议）、`prototype`（一次性原型：方向变体 / 状态验证）、`gsap` ×3、`playwright-cli`（真浏览器自动化：官方手册 + 10 份实操参考）、`webapp-testing`（已接入接口页面的功能 E2E：Python Playwright 脚本 + dev server 生命周期管理）、`apple-design`、`compatibility-testing`、`mobile-ux-optimizer`、`react-best-practices`、`taste-skill`、`web-design-guidelines`、`design-task`（专业 UI 原型设计 lane，入口级）、`ui-ux-pro-max`（本地设计决策引擎）——直接以 `$技能名` 调用，来源与更新方式见 [docs/capabilities.md](docs/capabilities.md)。
 
 ## 4. 任务操作细节
 
@@ -188,18 +189,19 @@ Figma 双路径均走官方远程 MCP（OAuth），免费账号即可读与回�
 
 ## 6. 技能来源与快照版本
 
-25 个内置技能全部双宿主：Codex 读 `.agents/skills/`，Claude Code 读 `.claude/skills/` 镜像，两份字节一致——所以清单只列一次。两宿主真正的差异只有两处：插件安装方式（见 §1 表）和宿主内置能力（见本节末尾）。
+27 个内置技能全部双宿主：Codex 读 `.agents/skills/`，Claude Code 读 `.claude/skills/` 镜像，两份字节一致——所以清单只列一次。两宿主真正的差异只有两处：插件安装方式（见 §1 表）和宿主内置能力（见本节末尾）。
 
-### 自研（4）
+### 自研（5）
 
 | 技能 | 来源 | 快照 | 说明 |
 | --- | --- | --- | --- |
 | `project-workflow` | 本仓 | — | 项目级路由入口，任务用哪个技能它说了算 |
 | `project-profile` | 本仓 | — | 项目画像与组件目录的初始化、更新 |
 | `frontend-task` | 本仓 | — | 前端任务全流程（inspect → report） |
+| `design-task` | 本仓 | — | 专业 UI 原型设计 lane（发散循环，定稿版本化归档） |
 | `tinypng-compress` | 本仓 | — | TinyPNG 批量图片压缩 CLI |
 
-### GitHub 上游 vendored（17）
+### GitHub 上游 vendored（18）
 
 零修改原则：与上游字节一致，升级 = 新快照纯覆盖。许可与修改记录见 `NOTICE`，机器可读基线（repo / SHA / 日期）见 `toolkit.json` 的 `vendored` 字段。
 
@@ -222,6 +224,7 @@ Figma 双路径均走官方远程 MCP（OAuth），免费账号即可读与回�
 | `web-design-guidelines` | 同上（内容源 vercel-labs/web-interface-guidelines） | 2026-09-23 | Web 界面规范审计（在线拉最新，离线回退 `command.md`） |
 | `taste-skill` | github.com/leonxlnx/taste-skill | 2026-09-23 | 反模板化前端审美 |
 | `karpathy-guidelines` | github.com/multica-ai/andrej-karpathy-skills | 2026-09-24 | 防 AI 低级错误的行为准则（内容源为 Karpathy 公开帖） |
+| `ui-ux-pro-max` | github.com/nextlevelbuilder/ui-ux-pro-max-skill | 2026-09-27 | 本地 CSV+BM25 设计决策引擎（布局/风格/配色/字体选型依据） |
 
 ### 插件快照（4，无公开源码仓，升级 = 从宿主插件缓存重新快照）
 
@@ -265,7 +268,7 @@ node scripts/update-vendored.mjs --upgrade --offline <包路径>  # 3. 用包升
 
 | 现象 | 处理 |
 | --- | --- |
-| 找不到 `$project-profile` 等技能 | 25 技能全内置；核对 `docs/capabilities.md` 清单，开新会话让宿主重新发现；不要装第三方同名替代 |
+| 找不到 `$project-profile` 等技能 | 27 技能全内置；核对 `docs/capabilities.md` 清单，开新会话让宿主重新发现；不要装第三方同名替代 |
 | 画像 `draft` 或模板 `pending` | 跑 `$project-profile` 选模板并确认高影响字段；不确定就 defer，不要手填 `initialized` |
 | 任务停在 `awaiting-confirmation` | 读 `PLAN.md` 决策块，跑 `$frontend-task confirm` |
 | `resume` 提示 fingerprint 过期 | 先 `inspect` 必要时重新 `plan`，不沿用旧计划 |

@@ -4,6 +4,8 @@
 中已登记的能力选择最小组合。安装来源和验证方式见
 [插件与 Skill 安装清单](../../../../docs/capabilities.md)。未登记或未安装的能力不得凭空调用。
 
+实现类任务一律遵循 `$karpathy-guidelines` 行为准则：防过度复杂、外科手术式修改、显式假设。
+
 ## 精确组合矩阵
 
 | 任务 | 组合 | 边界 |
@@ -11,15 +13,20 @@
 | 前端页面、组件、多端或前端接口任务 | `$frontend-task` + 本矩阵适用的最小专项能力 | 读取来源流程及验收矩阵；已从 frontend-task 进入时不递归重启 |
 | 普通功能、缺陷修复、状态规则 | `$tdd-workflow` | 先复现或写失败测试；不自动启用 Product Design |
 | 无定稿视觉源的新页面或重新设计 | `$product-design`（内置整包，子技能 index，宿主能力边界见其顶层 SKILL.md）+ `$prototype`（2–3 个方向原型，经用户选定）+ `$frontend-design-direction`，实现阶段再用 `$frontend-design` | 无视觉参照的新页面必须原型经用户确认后实现（见 requirement-workflow 第 3 节硬门槛）；沿用用户已确认方向 |
+| 无参照新页面在硬门槛处选设计深度 | 问一句选深度：快速方向 = `$prototype` 变体翻选；专业设计（审美驱动、多轮调整）= 设计 lane `$design-task` | 深度由用户在硬门槛处决定，不默认升级 |
 | 从截图或选定视觉稿忠实实现 | `$frontend-task`（screenshot-workflow，全宿主主路径）；宿主有 OpenAI 运行时可叠用 `$product-design`（子技能 image-to-code）加速，边界见其顶层 SKILL.md | 视觉源决定布局，项目组件、可访问性和工程规则决定实现方式 |
+| 无参考图的已开发页面样式手感微调 | 按诉求选最小项：动效 `$apple-design`；触控 `$mobile-ux-optimizer`；跨端 `$compatibility-testing`；审美方向 `$design-taste-frontend`（目录 `taste-skill`） | 判据属三分判据的「实现质量」类，本仓直修；有参考图时改走 `$frontend-task` 截图工作流（screenshot-workflow）对比循环 |
 | 创建或更新可编辑 Figma 页面 | `$figma:figma-use` + `$figma:figma-generate-design` | 写 Figma 前必须先加载 figma-use；没有文件时先用 `$figma:figma-create-new-file` |
 | 从 Figma 实现代码 | `$figma:figma-design-to-code` | 先获取 design context；返回代码只作参考，必须适配项目技术栈与组件系统 |
 | UI/流程审计 | `$product-design`（子技能 audit）+ `$web-design-guidelines` | 前者检查流程证据，后者检查代码、可访问性和 Web 规范；后者在线按其 SKILL.md 拉最新规则，离线或 WebFetch 失败时回退读其目录内附加快照 `command.md` |
 | React 性能或包体优化 | `$vercel-react-best-practices` | 先测量后优化；构建规则仍以项目文档为准 |
+| GSAP 动效实现与调优 | `$gsap-core`（tween、缓动、响应式）/ `$gsap-timeline`（多步编排）/ `$gsap-performance`（帧率与卡顿）按任务需要组合 | 实现取 core，多步编排取 timeline，性能问题取 performance；不引入第二套动画库 |
+| 已实现页面返工分流（三分判据） | 实现质量、局部替换 → 本仓 `$frontend-task` 直修；设计方向系统性变更 → 设计 lane `$design-task` 重开（含 DRIFT 反向对账） | 视觉/文案改动前先查 `docs/design/<特性>/` 定稿：定稿存在且实现偏离才记 `DRIFT.md`，无定稿不记、按普通实现质量处理 |
 | OpenAPI、请求、身份或权限 | `$api-design` + `$security-review` | 普通字段调整可只用项目 Skill；涉及信任边界时必须安全审查 |
 | 页面真实验收 | `$browser:control-in-app-browser` | 本地页面优先 Browser，不用 Computer Use 代替浏览器验证 |
 | 已接入接口页面的主流程 E2E（登录、权限拒绝、失败态、刷新持久化） | `$webapp-testing`（写 Python Playwright 脚本；`with_server.py` 管 dev server 生命周期，先 `--help` 再黑盒调用） | 运行时需本机 Python + playwright 包，缺失时报告不可用并回退 `$playwright-cli` 或人工浏览器验证；与上一行互补：快速目检走 Browser，可重复用例走脚本 |
 | PR、Issue 或远端代码托管操作 | GitHub 插件 | 仅在用户要求远端读取或写入时使用；本地 Git 检查不需要插件 |
+| 项目图片批量压缩 | `$tinypng-compress` | 有损压缩，覆盖原图前确认；压缩产出入库路径以项目约定为准 |
 
 ## 缺失能力处理
 
@@ -59,6 +66,8 @@
 - 代码：针对性测试 → 总质量门禁 → 变更审查。
 - UI：代码门禁 → 多视口/主题/交互/键盘/溢出/可访问性/控制台 → 证据报告。
 - 接口 UI：UI 路由 → 非生产真实主流程与失败 → 权限拒绝 → 刷新持久化。
+- 规范审计：`$web-design-guidelines` 发现的问题修复后，复跑同一审计确认清零。
+- Impeccable 自查：装有 impeccable 则实现后立即 `npx impeccable detect` 自查（编辑时 hook 为进阶自选，接法见 [能力安装清单](../../../../docs/capabilities.md)），未安装走既有验收矩阵 + `$web-design-guidelines` 环路。
 - 提示词或 Skill：AI 指引校验 → Skill 校验器 → 总质量门禁 → 前向试用。
 - 插件或 Skill 安装：读取依赖清单 → 检查现状 → 安装缺失项 → 新对话发现性验证 → 状态报告。
 - 外部写操作：本地验证 → 确认授权范围 → 执行动作 → 回读外部状态。

@@ -1,6 +1,6 @@
 # Figma设计转代码
 
-适用：从用户指定的Figma文件、frame或node实现本地页面与组件。创建文件、回写设计、组件库或动效编辑属于项目中的对应Figma工作流，不因读取设计而自动执行。共用边界见 [执行契约](common-workflow.md)。
+适用（实现侧，design-to-code读稿）：从用户指定的Figma文件、frame或node实现本地页面与组件。创建文件、回写设计、原型生成与Code to Canvas回写画布为设计lane侧能力（`$design-task` 复用本文档），不因读取设计而自动执行。共用边界见 [执行契约](common-workflow.md)。
 
 先读取 [项目画像](../../../../docs/PROJECT_PROFILE.md) 的框架、主题、字体、图标与目录约定，以及 [组件目录](../../../../docs/rules/AI_COMPONENT_CATALOG.md)。Figma提供设计事实，目标项目决定工程实现。
 

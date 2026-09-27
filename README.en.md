@@ -17,7 +17,7 @@ Find your scenario:
 - **Afraid the AI starts coding immediately**: new pages without a visual reference must go through 2–3 direction prototypes first (`$prototype`) — you pick one before implementation; implementation plans also require your approval via `$frontend-task confirm`.
 - **Multi-target rules are hard to remember**: WebView / mobile H5 / desktop rules apply automatically based on the project profile, not on the AI's memory.
 
-Boundary: it does not write business code, scaffold frameworks, or define your APIs — it governs "how the AI gets frontend work right, and how it proves the work is done."
+Boundary: it does not write business code, scaffold frameworks, or define your APIs — it governs "how the AI gets frontend work right, and how it proves the work is done." The design side is a two-layer model: basic direction goes straight through the `$prototype` hard gate (pages without a visual reference get 2–3 variants first; you pick one before implementation), while professional design (aesthetics-driven, iterated over multiple rounds) belongs to the in-repo design lane `$design-task`. Rework of implemented pages is triaged by a three-way test: implementation quality and local replacements are fixed in place; systematic design-direction changes reopen the design lane. Before visual or copy changes, check the finalized design under `docs/design/<feature>/`; log `DRIFT.md` only when a final design exists and the implementation has drifted from it.
 
 | Host | Read path | Notes |
 | --- | --- | --- |
@@ -65,8 +65,9 @@ Built-in skills require zero installation and work on both hosts. Only the exter
 | Figma | Implement from designs, generate prototypes, write code back to canvas | `claude plugin install figma@claude-plugins-official`; fallback MCP: `claude mcp add --transport http figma https://mcp.figma.com/mcp` | `figma@openai-api-curated` (search in Plugin Management) |
 | GitHub | PRs, issues, remote repository read/write | Official GitHub MCP connector | `github` plugin, or the GitHub MCP connector |
 | Product Design | Design exploration, visual cloning, UX audit, prototyping | No install needed — the built-in full-package copy is already everything of it that works on Claude Code | `product-design` (official marketplace); unlocks OpenAI-host-dependent sub-skills such as image-to-code; the plugin version takes precedence |
+| Impeccable | Deterministic design-quality checks (61 non-LLM rules): `detect` self-check after implementation; `critique` / `polish` produce refinement lists. A recommended external capability, not built in; without it, the existing acceptance loop applies | `npx impeccable` | Same |
 
-Both Figma paths use the official remote MCP (OAuth); a free account suffices for reading and write-back (rate limits apply). Local Git checks do not need the GitHub plugin.
+Both Figma paths use the official remote MCP (OAuth); a free account suffices for reading and write-back (rate limits apply). Local Git checks do not need the GitHub plugin. Impeccable's edit-time interception (checking at the moment of write) is its core capability and an advanced optional: wire it into your host config yourself (Claude `settings.json` / Codex `hooks.json`); see its official guide — this repo's installer never modifies host config automatically, and without it the existing acceptance matrix + `$web-design-guidelines` loop applies.
 
 ## 2. Getting Started
 
@@ -118,7 +119,7 @@ The entry point when you are unsure which skill to use: it routes to the minimal
 
 ### Specialist Skills (all built in)
 
-`tdd-workflow`, `api-design`, `security-review`, the `frontend-design` series, the full `product-design` package, `grill-me`/`grilling` (grilling in rounds: entry point + protocol), `prototype` (throwaway prototypes: direction variants / state validation), `gsap` ×3, `playwright-cli` (real-browser automation: official manual + 10 hands-on references), `webapp-testing` (functional E2E for pages wired to APIs: Python Playwright scripts + dev server lifecycle management), `apple-design`, `compatibility-testing`, `mobile-ux-optimizer`, `react-best-practices`, `taste-skill`, `web-design-guidelines` — invoke directly as `$<skill-name>`; see [docs/capabilities.md](docs/capabilities.md) for sources and update procedures.
+`tdd-workflow`, `api-design`, `security-review`, the `frontend-design` series, the full `product-design` package, `grill-me`/`grilling` (grilling in rounds: entry point + protocol), `prototype` (throwaway prototypes: direction variants / state validation), `gsap` ×3, `playwright-cli` (real-browser automation: official manual + 10 hands-on references), `webapp-testing` (functional E2E for pages wired to APIs: Python Playwright scripts + dev server lifecycle management), `apple-design`, `compatibility-testing`, `mobile-ux-optimizer`, `react-best-practices`, `taste-skill`, `web-design-guidelines`, `design-task` (professional UI prototype design lane, entry-level), `ui-ux-pro-max` (local design decision engine) — invoke directly as `$<skill-name>`; see [docs/capabilities.md](docs/capabilities.md) for sources and update procedures.
 
 ## 4. Task Operation Details
 
@@ -188,7 +189,7 @@ Machine state files are managed by their corresponding skills; never hand-forge 
 
 ## 6. Skill Sources and Snapshot Versions
 
-Identical to the Chinese table in [README.md §6](README.md): 25 built-in skills, all dual-host (Codex reads `.agents/skills/`, Claude Code reads the `.claude/skills/` mirror, byte-identical — hence listed once there). Host differences:
+Identical to the Chinese table in [README.md §6](README.md): 27 built-in skills — 5 in-house (including `design-task`, the professional UI prototype design lane with divergent loops and versioned final-design archiving), 18 vendored from GitHub upstreams (including `ui-ux-pro-max`, the local CSV+BM25 design decision engine for layout/style/color/font choices), and 4 plugin snapshots — all dual-host (Codex reads `.agents/skills/`, Claude Code reads the `.claude/skills/` mirror, byte-identical — hence listed once there). Host differences:
 
 - **Host built-ins (Codex only, not shipped in this repo)**: `browser` / `chrome` / `computer-use` (`openai-bundled`) — page acceptance, reusing the user's browser session, desktop operation. On Claude Code, page acceptance uses `$webapp-testing` or `$playwright-cli` instead.
 - **Plugins**: install sources differ per host — see the table in §1.
@@ -221,7 +222,7 @@ Rules: always review `--diff` before upgrading (test on real behavior whenever a
 
 | Symptom | Remedy |
 | --- | --- |
-| Skills such as `$project-profile` not found | All 25 skills are built in; check the list in `docs/capabilities.md` and open a new session so the host rediscovers them; do not install third-party same-name substitutes |
+| Skills such as `$project-profile` not found | All 27 skills are built in; check the list in `docs/capabilities.md` and open a new session so the host rediscovers them; do not install third-party same-name substitutes |
 | Profile is `draft` or template is `pending` | Run `$project-profile` to pick templates and confirm high-impact fields; defer when unsure — never hand-fill `initialized` |
 | Task halted at `awaiting-confirmation` | Read the decision blocks in `PLAN.md`, then run `$frontend-task confirm` |
 | `resume` reports a stale fingerprint | `inspect` first and re-`plan` if needed; do not carry over the old plan |

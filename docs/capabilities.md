@@ -6,18 +6,18 @@
 
 ## 目录
 
-1. 内置技能（25，零安装）
+1. 内置技能（27，零安装）
 2. 宿主插件（可选）
 3. 宿主内置插件核对
 4. 宿主差异总览
 
-## 1. 内置技能（25，零安装）
+## 1. 内置技能（27，零安装）
 
 全部技能随本 Starter 分发在 `.agents/skills/`（Codex 与 Claude Code 双宿主同源，镜像见 `.claude/skills/`，字节一致——清单只列一次，宿主差异汇总见第 4 节），复制项目后即可发现，不需要安装命令。**名称冲突时以内置版本为准**，不覆盖用户级同名 Skill。
 
-自研 4 项：`project-workflow`、`project-profile`、`frontend-task`、`tinypng-compress`。
+自研 5 项：`project-workflow`、`project-profile`、`frontend-task`、`design-task`（专业 UI 原型设计 lane：设计系统先行、2–3 变体发散、定稿版本化归档）、`tinypng-compress`。
 
-Vendored 21 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。许可与修改记录见仓库根 `NOTICE`；机器可读基线（repo/SHA/快照日期）在仓库 toolkit.json 的 `vendored` 字段，配套升级器 `node scripts/update-vendored.mjs`（无参比对上游、`--diff` 评估变更×引用影响、`--rebaseline` 对账写基线、`--upgrade` 确认后覆盖并镜像校验）；也可从「上游」列手工取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
+Vendored 22 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。许可与修改记录见仓库根 `NOTICE`；机器可读基线（repo/SHA/快照日期）在仓库 toolkit.json 的 `vendored` 字段，配套升级器 `node scripts/update-vendored.mjs`（无参比对上游、`--diff` 评估变更×引用影响、`--rebaseline` 对账写基线、`--upgrade` 确认后覆盖并镜像校验）；也可从「上游」列手工取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
 
 | 技能（目录） | 上游 | 本仓说明 |
 | --- | --- | --- |
@@ -36,6 +36,7 @@ Vendored 21 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | `mobile-ux-optimizer` | github.com/curiositech/some_claude_skills（原 erichowens/some-claude-skills 已 404，延续仓同 MIT） | 2026-09-25 快照，MIT；2026-09-25 补入延续仓新增的 `.claude-plugin/plugin.json` 后对齐上游 HEAD |
 | `playwright-cli` | github.com/microsoft/playwright-cli | 2026-09-25 回归上游 verbatim（官方手册 + 10 份 references，安装兜底见其 SKILL.md §Installation）；基线 74354ecc = tag v0.1.21 = npm 工具 0.1.21 版本配对；旧改编版退役；附加仅宿主元数据/图标/许可 |
 | `webapp-testing` | github.com/anthropics/skills | 2026-09-25 快照，Apache-2.0（目录内 LICENSE.txt）；Python Playwright 功能测试工具包（`with_server.py` 管 dev server 生命周期），服务"已接入接口页面"的主流程/失败/权限/刷新持久化 E2E（见任务路由"主流程 E2E"行）；运行时需本机 Python + playwright 包，缺失时报告不可用并回退 `$playwright-cli` 或人工浏览器验证；2026-09-26 实测：Python 3.14 无 playwright 轮子的机器上，等价回退 = 临时目录 `npm i playwright-core` + `chromium.launch({ channel: 'chrome' })` 驱动系统已装 Chrome |
+| `ui-ux-pro-max` | github.com/nextlevelbuilder/ui-ux-pro-max-skill | 2026-09-27 快照，MIT；本地 CSV+BM25 检索的设计决策引擎（34 布局模式/79 风格/192 配色/74 字体配对），运行时依赖本机 Python 3，缺失时报不可用并降级静态清单+LLM 选择 |
 
 内置 `product-design` 直调写作 `$product-design`（如 `$product-design` image-to-code / audit 用法见其顶层 SKILL.md 子技能地图）；装有官方插件的宿主也可用 `$product-design:index` 等命名空间直调，以插件版为准。
 
@@ -48,6 +49,7 @@ Vendored 21 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | Figma | Claude Code：`claude plugin install figma@claude-plugins-official`（插件市场）；不可用时手动 `claude mcp add --transport http figma https://mcp.figma.com/mcp`。Codex：`figma@openai-api-curated`（或当前配置的等价 marketplace） | 设计稿读取（design-to-code）、原型生成（generate-design / create-new-file）、Code to Canvas 代码回写画布 | 双宿主均走 Figma 官方远程 MCP（`mcp.figma.com/mcp`，OAuth 授权）；**免费账号即可读与回写**，不依赖 Dev Mode 付费席位；注意 Figma 免费 API 有频率限制、AI 侧额度随宿主订阅。用法见 [figma-workflow](../.agents/skills/frontend-task/references/figma-workflow.md) |
 | GitHub | Codex：`github` 插件（由当前 Plugin Management 显示的 marketplace 补全）或 GitHub MCP 连接器，两种皆可。Claude Code：GitHub 官方 MCP 连接器 | PR、Issue、远端仓库读取与写入 | 本地 Git 检查不需要插件 |
 | Product Design | Codex：`product-design`（OpenAI 官方插件市场，Plugin Management 搜索）。Claude Code：无官方插件，无需安装 | 设计探索、视觉复刻、UX 审计、原型（image-to-code 等子技能依赖 OpenAI 宿主能力） | **Starter 已内置整包 vendor 拷贝**（见第 1 节），方法论/audit/测量/清册部分全宿主可用；Codex 装官方插件解锁宿主能力依赖的子技能，装有插件后以插件版为准（`$product-design:index` 命名空间） |
+| Impeccable | 双宿主同引：`npx impeccable`（推荐外部能力，不 vendor、零仓增量） | 确定性设计质量检查：61 条无 LLM 规则，实现后 `detect` 自查、`critique` / `polish` 出精修清单 | 编辑时拦截（写入瞬间检查）是它的核心能力，属进阶自选——需自行接入宿主配置（Claude `settings.json` / Codex `hooks.json`），接法见其官方指引，本仓安装器永不自动修改宿主配置；未安装走既有验收矩阵 + `$web-design-guidelines` 环路 |
 
 安装规则：
 
@@ -70,7 +72,7 @@ Vendored 21 项，遵守**零修改原则**：vendored 目录与上游字节一�
 
 ## 4. 宿主差异总览
 
-第 1 节的 25 个内置技能两宿主字节一致（`.agents` 源 + `.claude` 镜像），无宿主差异。真正的差异只有下表三层：
+第 1 节的 27 个内置技能两宿主字节一致（`.agents` 源 + `.claude` 镜像），无宿主差异。真正的差异只有下表三层：
 
 | 差异层 | 内容 | Codex | Claude Code |
 | --- | --- | --- | --- |

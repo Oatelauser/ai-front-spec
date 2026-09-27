@@ -1,0 +1,118 @@
+---
+name: design-task
+description: 专业 UI 原型设计 lane。用于审美驱动、需要多轮调整的界面稿：设计系统先行，Stitch 或自写 HTML 出 2–3 变体，用户翻选修订，定稿归档到 docs/design/。无参照新页面在硬门槛处选「专业设计」深度时进入；快速方向原型仍走 $prototype。
+---
+
+# Design Task（设计 lane）
+
+出专业 UI 原型设计稿：审美驱动、多轮调整、定稿冻结。不写业务代码、不建框架路由，实现归 `$frontend-task`。
+
+## 1. 定位与边界
+
+双层模型，深度由用户在硬门槛处选择，agent 不猜、不默认升级：
+
+| 层 | 载体 | 适用 | 产物 |
+| --- | --- | --- | --- |
+| 基本方向直出 | `$prototype` 硬门槛 | 无参照新页面的快速方向确认 | 2–3 方向原型，选定即实现 |
+| 专业设计 | 本技能 | 审美驱动、系统性多轮调整 | 设计系统 + 带版本定稿目录 |
+
+- 入口：用户直调 `$design-task`；或 `$frontend-task` 需求流程硬门槛处问一句选深度、用户选「专业设计」。
+- 过渡期与路由边界以 [任务路由](../project-workflow/references/task-routing.md) 为准，不在此重复。
+- 形态 = 发散循环：brief → 选型依据 → 2–3 变体 → 用户翻选 → 修订多轮 → 定稿冻结。状态即文件（定稿目录 + 版本号），无状态机。
+- 本技能产物是 `$frontend-task` 的源：定稿按「选定视觉稿」（visual facts）消费，见第 6 节交接。
+
+## 2. 前置读取
+
+| 读取 | 用途 |
+| --- | --- |
+| [项目画像](../../../docs/PROJECT_PROFILE.md) | 支持端与运行环境；deliveryTargets 决定稿的视口集与 Stitch deviceType |
+| [组件目录](../../../docs/rules/AI_COMPONENT_CATALOG.md) | 出稿向既有组件靠拢；目录与画像冲突时上报，不自行改档 |
+| SYSTEM.md（设计系统规格） | 存在则继承；不存在先走第 3 节，再出稿 |
+| [WebView 移动端规则](../../../docs/rules/AI_WEBVIEW_MOBILE.md) | deliveryTargets 含 webview 或 mobileH5（user-confirmed）时：触控目标、安全区在设计期即生效 |
+
+deliveryTargets 缺失、冲突或 deferred 时交 `$project-profile update`，不猜目标端。
+
+## 3. 设计系统先行（无 SYSTEM.md 时，项目级一次）
+
+1. `$ui-ux-pro-max` 输入产品描述，产出规格：布局模式、风格、配色板、字体配对、反模式清单。其检索脚本依赖本机 Python，缺失时报不可用并降级为静态清单 + LLM 选择。
+2. 用户调整确认后冻结 SYSTEM.md（路径见第 6 节），带版本号，tokens 至少含色板、字体对、圆角、间距习惯。
+3. Stitch 可用时 `create_design_system`（customColor、字体、圆度、明暗，designMd 附规格）资产化，记 assetId；此后每张稿 `generate_screen_from_text` 一律带 designSystem=assetId。
+4. 系统升级走 `update_design_system` + 版本号；apply 后逐页回读，验证每页生效。
+5. 每次导出的 DESIGN.md 与 SYSTEM.md 对账，系统漂移必须可见、可追。
+
+系统级变更（换配色体系、字体体系）属三分判据的「设计方向系统性」：回本技能重开出新版本；已实现页面局部不跟进记 DRIFT，成批跟进另立实现任务。
+
+## 4. Stitch 工作流
+
+| 环节 | 规则 |
+| --- | --- |
+| 探测 | 实际调用 `list_projects` 判定连接，禁凭模型记忆假设可用或不可用；MCP 工具仅宿主主会话持有，子代理环境探测不到属预期——按第 8 节兜底并注明环境原因，不算 Stitch 故障 |
+| 项目 | 生成前必须 `create_project`（无项目上下文报 Requested entity was not found）；create 后立刻 `get_project`，projectId 记入 `.stitch/project.json` |
+| 出稿 | `generate_screen_from_text`：prompt=brief、designSystem=assetId、deviceType 按 deliveryTargets；资源名等调用形态按 MCP 工具自述，不凭记忆拼 |
+| 等待 | 同步超时属预期（冷启动约 2 分钟，第二张起通常即时）：超时后每 30–60s 轮询 `list_screens` 至出现，不误判失败 |
+| 变体 | `generate_variants` 单维度探索，维度枚举：COLOR_SCHEME、LAYOUT、TEXT_FONT、TEXT_CONTENT、IMAGES；每次 2–3 个；变体 ID 与最终选择原因记入 PROMPTS.md |
+| 微调 | `edit_screens` 用 scoped 提示词：单目标、指明位置、附「不修改 X」负清单；反例：「让页面更高级一点」 |
+| 回读 | **编辑持久化门**：edit 返回成功 ≠ 已持久化。编辑后必须三层回读（HTML + 截图 + 元数据）；内容未变化不得报成功 → 保留编辑前快照 → 转网页端编辑或重生成 → 回读归档并注明来源 |
+| 核对 | Stitch 会加戏（brief 写 2 卡出 3 卡、自加角标）：定稿前对照 brief 核内容漂移；渲染瑕疵（文字截断、占位残留、空图）定稿前浏览器过一遍 |
+
+## 5. 下载三层阶梯（HTML 定稿）
+
+| 层 | 做法 | 说明 |
+| --- | --- | --- |
+| ① 自动尝试 | fetch downloadUrl：显式代理（读 HTTPS_PROXY）+ redirect manual 模式 + body 校验（DOCTYPE 与页面标题）；重试约 10 次、跨分钟铺开 | 命中窗口即全自动落袋 |
+| ② Codex 宿主 | chrome@openai-bundled 复用用户浏览器会话下载 | 稳定全自动 |
+| ③ 兜底 | 响亮告知用户走网页「导出 → zip」；agent 接管解包归档 | 稳定路径，已验证 |
+
+- downloadUrl 是临时地址，只用于当次下载，不入生产代码。
+- 该端点间歇可用、不可按需复现：勿因偶发 404 判死，勿因偶发 200 判稳。
+- 迭代轮截图 URL 免认证可直接落袋，仅服务迭代比对，不作实现输入。
+
+## 6. 定稿归档
+
+```text
+.stitch/                       迭代工作区（机器生成，入 .gitignore，不进 git）
+  project.json                 projectId 等项目元数据
+  manifest.json                slug ↔ screenId ↔ route 映射
+  snapshots/                   编辑前快照与原始响应
+docs/design/system/SYSTEM.md   设计系统规格（冻结版本）
+docs/design/<特性>/vN/         定稿目录（版本递增，不覆盖旧稿）
+  code.html  DESIGN.md  screen.png  PROMPTS.md  CONTRACT.md
+```
+
+| 文件 | 内容 |
+| --- | --- |
+| code.html | Stitch 导出或 agent 自写；实现参考 |
+| DESIGN.md | 导出的设计系统规格；与 SYSTEM.md 对账 |
+| screen.png | 预览图 |
+| PROMPTS.md | 提示词链 + 元数据头：screenId、projectId、导出时间、版本、尺寸。CSS viewport 与截图像素分列，DPR 未确认记 null（780×2274 PNG ≠ 780 CSS px）；变体 ID 与选择原因同记 |
+| CONTRACT.md | 九状态裁剪版：默认、加载、空、错误、权限、未登录、部分数据、长文本、离线重试；加路由、可点控件、刷新、深链。原型没说的标「待确认」，不从截图推断业务规则 |
+
+- manifest 纪律：Screen ID 是唯一关联键，不按标题猜。
+- 冻结 gate：原始响应已存、尺寸已区分、路由映射已固定、缺口已列；装有 impeccable 时先对 code.html 跑 detect。
+- 归档一律用标准文件名，不因下载通道（官方 zip 或自动落袋）改名或另存对照包。
+
+交接给 `$frontend-task` 三行摘要：
+
+1. 定稿按「选定视觉稿」（visual facts）路由；工程、业务、行为事实仍以仓库与契约为准（四层事实源见 frontend-task）。
+2. screen.png 是验收参照不是背景图：实现必须是真实 DOM 与真实控件。
+3. code.html 是参考不是规范：不原样复制，按项目组件与约定实现。
+
+分工：Stitch 负责无参照出稿；Figma 侧（可编辑交付、Code to Canvas）按 [Figma 流程](../frontend-task/references/figma-workflow.md)。
+
+## 7. 微调判据衔接（三分判据）
+
+| 判据 | 典型情形 | 归属 |
+| --- | --- | --- |
+| 实现质量 | 间距、对齐、还原度缺陷 | `$frontend-task` 直修 |
+| 局部替换 | 换图标、改文案、单点值，不波及共享设计基准 | `$frontend-task` 直修；改前查 `docs/design/<特性>/` 定稿，存在则 DRIFT.md 记一行 |
+| 设计方向系统性 | 换布局体系、配色、字体、跨页面方向 | 本技能重开；先读 DRIFT 对账再出稿 |
+
+## 8. 兜底（Stitch 不可用）
+
+触发：探测失败、生成失败、下载全空。动作：响亮告知用户降级发生（附 Stitch MCP 配置指引，宿主能力边界见 [能力清单](../../../docs/capabilities.md)）→ agent 自写 HTML 变体：继承 SYSTEM.md 同一规格，风格不断裂；变体、翻选、定稿归档结构不变，DESIGN.md 从 SYSTEM.md 生成，screen.png 用浏览器截图（视口仿真用设备 emulate，勿用窗口 resize——Windows 最小窗宽会让名义 390 实为 501 CSS px）。不许静默降级。
+
+## 9. 护栏
+
+- 本技能 = 一份 SKILL.md + 至多一份 [设计简报模板](templates/design-brief.md)。
+- 不建脚本、状态机、模板目录；产物与状态的唯一载体是文件本身。
+- 失败模式是长成第二个 frontend-task：发现即回缩。

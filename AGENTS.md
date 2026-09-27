@@ -13,7 +13,7 @@
 - 项目画像缺失、草稿、需要迁移或存在冲突时，提示 `$project-profile`；不要把画像维护混入其他 Skill。
 - 项目技术栈、事实源、命令、权限和验收参数见 [项目画像](docs/PROJECT_PROFILE.md)。
 - 外部插件、宿主能力、独立 Skill、精确安装来源和组合验证见 [能力安装清单](docs/capabilities.md)。
-- 改动落在页面或视图组件文件（`.vue`/`.tsx`/`.jsx` 等）或全局样式、主题、构建配置（全局 CSS、设计 token、Tailwind/Vite 配置等）的任务一律使用 [页面提示词](docs/rules/AI_FRONTEND_TASK.md)，并读取 [组件目录](docs/rules/AI_COMPONENT_CATALOG.md)；判据是文件落点而非任务名或改动大小——纯文案、样式值微调、后端联调只要动了上述文件即走页面提示词（页面流程内部自设轻量档）。不改动上述文件的任务（脚本、工具、其余配置、文档、纯后端联调）使用 [任务提示词](docs/rules/AI_TASK_CONTRACT.md)。
+- 改动落在页面或视图组件文件（`.vue`/`.tsx`/`.jsx` 等）、以页面交付为目标的单文件 HTML（空项目/概念验证）或全局样式、主题、构建配置（全局 CSS、设计 token、Tailwind/Vite 配置等）的任务一律使用 [页面提示词](docs/rules/AI_FRONTEND_TASK.md)，并读取 [组件目录](docs/rules/AI_COMPONENT_CATALOG.md)；判据是文件落点而非任务名或改动大小——纯文案、样式值微调、后端联调只要动了上述文件即走页面提示词（页面流程内部自设轻量档）。不改动上述文件的任务（脚本、工具、其余配置、文档、纯后端联调）使用 [任务提示词](docs/rules/AI_TASK_CONTRACT.md)。
 - 任何前端任务在 `inspect` 前必须读取 `docs/PROJECT_PROFILE.md` 的“支持端与运行环境”、`.toolkit/profile-state.json` 的 `deliveryTargets` 和 `docs/rules/AI_COMPONENT_CATALOG.md`；`plan`、`implement`、`verify`、`report` 也必须持续读取这三份约束。
 - `deliveryTargets` 缺失、冲突或处于 `deferred` 时不得猜测目标端；组件目录与画像不一致时提示 `$project-profile update`，或记录任务级确认后再继续。
 - `deliveryTargets` 含 `webview` 或 `mobileH5` 任一为 `user-confirmed` 时，页面任务与全局样式、主题、构建配置改动额外受 [WebView 移动端规则](docs/rules/AI_WEBVIEW_MOBILE.md) 约束，并按页面声明判定生效标签集（全局改动无页面声明，按主端全集合判定）。
