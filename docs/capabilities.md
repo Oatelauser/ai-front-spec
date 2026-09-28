@@ -50,7 +50,7 @@ Vendored 24 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | Figma | Claude Code：`claude plugin install figma@claude-plugins-official`（插件市场）；不可用时手动 `claude mcp add --transport http figma https://mcp.figma.com/mcp`。Codex：`figma@openai-api-curated`（或当前配置的等价 marketplace） | 设计稿读取（design-to-code）、原型生成（generate-design / create-new-file）、Code to Canvas 代码回写画布 | 双宿主均走 Figma 官方远程 MCP（`mcp.figma.com/mcp`，OAuth 授权）；**免费账号即可读与回写**，不依赖 Dev Mode 付费席位；注意 Figma 免费 API 有频率限制、AI 侧额度随宿主订阅。用法见 [figma-workflow](../.agents/skills/frontend-task/references/figma-workflow.md) |
 | GitHub | Codex：`github` 插件（由当前 Plugin Management 显示的 marketplace 补全）或 GitHub MCP 连接器，两种皆可。Claude Code：GitHub 官方 MCP 连接器 | PR、Issue、远端仓库读取与写入 | 本地 Git 检查不需要插件 |
 | Product Design | Codex：`product-design`（OpenAI 官方插件市场，Plugin Management 搜索）。Claude Code：无官方插件，无需安装 | 设计探索、视觉复刻、UX 审计、原型（image-to-code 等子技能依赖 OpenAI 宿主能力） | **Starter 已内置整包 vendor 拷贝**（见第 1 节），方法论/audit/测量/清册部分全宿主可用；Codex 装官方插件解锁宿主能力依赖的子技能，装有插件后以插件版为准（`$product-design:index` 命名空间） |
-| Impeccable | Claude Code：`/plugin` 市场安装 impeccable（技能+引擎+agents 整包，推荐）。Codex：`npx impeccable`（同款引擎，命令全可用） | 确定性设计质量检查：61 条无 LLM 规则。已接四命令——`detect` 实现后自查、`critique` 验收轮对稿机器意见、`polish` 样式微调精修清单、`audit` 存量体检（可选）；有意不接 craft/init（双契约冲突）、live/bolder/animate（与既有技能重叠） | 编辑时拦截（写入瞬间检查）是它的核心能力，属进阶自选——Claude `settings.json` / Codex `.codex/hooks.json` 手动接，接法见其官方指引，本仓安装器永不自动修改宿主配置；未安装走既有验收矩阵 + `$web-design-guidelines` 环路 |
+| Impeccable | 双宿主统一 `npx impeccable`（2026-09-28 评估裁定：插件卸载、四命令 npx 零损失，npm 引擎 4.1.0 实测；插件含 24 命令+agents 未接入路由）；仅当需要编辑时 hook 再选装插件（`/plugin` 市场） | 确定性设计质量检查：61 条无 LLM 规则。已接四命令——`detect` 实现后自查、`critique` 验收轮对稿机器意见、`polish` 样式微调精修清单、`audit` 存量体检（可选）；有意不接 craft/init（双契约冲突）、live/bolder/animate（与既有技能重叠） | 编辑时拦截（写入瞬间检查）是它的核心能力，属进阶自选——Claude `settings.json` / Codex `.codex/hooks.json` 手动接，接法见其官方指引，本仓安装器永不自动修改宿主配置；未接 hook 走既有验收矩阵 + `$web-design-guidelines` 环路 |
 | Stitch MCP | Claude Code：`claude mcp add stitch --transport http https://stitch.googleapis.com/mcp --header "X-Goog-Api-Key: <key>" -s user`。Codex 及其他 MCP 宿主：接入同一远程端点 `https://stitch.googleapis.com/mcp`，请求头带 `X-Goog-Api-Key` | 设计 lane（`$design-task`）的云端出稿引擎：生成 / 编辑 / 变体 / 截图下载 / 设计系统资产化 | key 从 stitch.withgoogle.com → Settings → API Keys 生成（**不入库不入日志**）；可选增强——未配置时 lane 响亮降级为 agent 自写 HTML（继承 SYSTEM.md，见 design-task 第 8 节，该节"配置指引"即本行）；HTML 定稿获取走 design-task 第 5 节决策流 |
 
 安装规则：
@@ -81,7 +81,7 @@ Vendored 24 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | Figma Plugin / Figma MCP | ✅ Figma 官方插件（`figma@openai-api-curated`）<br>✅ Figma 官方 MCP | ✅ Figma 官方插件（`figma@claude-plugins-official`）<br>✅ Figma 官方 MCP |
 | GitHub Plugin / GitHub MCP | ✅ GitHub 插件<br>✅ GitHub MCP | ✅ GitHub MCP（无插件路径，能力等价） |
 | Product Design Plugin | ✅ OpenAI 官方插件（解锁 `image-to-code` 等宿主依赖子技能） | ❌ 无插件；替代：`$product-design` Skill（内置整包 vendor）<br>　`image-to-code` 场景走 `$frontend-task` Skill source=screenshot 或 `$design-task` Skill Stitch 出稿 |
-| Impeccable | ✅ npx CLI（`npx impeccable`，全命令） | ✅ Impeccable 官方插件（`/plugin` 市场，技能+引擎+agents） |
+| Impeccable | ✅ npx CLI（`npx impeccable`，全命令） | ✅ npx CLI（2026-09-28 起统一同款路径；插件仅编辑时 hook 场景可选装） |
 | Stitch MCP | ✅ Stitch MCP（`https://stitch.googleapis.com/mcp` + `X-Goog-Api-Key` 头） | ✅ Stitch MCP（同端点同头；未配置时双宿主同降级 `$design-task` Skill 自写 HTML） |
 | 本地页面验证 | ✅ 宿主内置 `browser@openai-bundled`（`$browser:control-in-app-browser`） | ❌ `$webapp-testing` Skill 或 `$playwright-cli` Skill |
 | 用户浏览器操作 | ✅ 宿主内置 `chrome@openai-bundled` | ❌ `$design-task` Skill 第 5 节决策流①（弹用户默认浏览器 + agent 监听下载目录） |

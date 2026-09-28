@@ -68,7 +68,7 @@
 - UI：代码门禁 → 多视口/主题/交互/键盘/溢出/可访问性/控制台 → 证据报告。
 - 接口 UI：UI 路由 → 非生产真实主流程与失败 → 权限拒绝 → 刷新持久化。
 - 规范审计：`$web-design-guidelines` 发现的问题修复后，复跑同一审计确认清零。
-- Impeccable（装有则用，全走 `npx`，双宿主同款；未装走既有验收矩阵 + `$web-design-guidelines` 环路）：**detect** 实现后立即自查；**critique** verify 轮对稿机器意见（截图 + 方向契约入参）；**polish** 样式手感微调的精修清单（配合场景表中样式手感行）；**audit** 存量页面批量体检（可选，一次性/周期任务）。有意不接：craft/init 方向契约（与 SYSTEM.md/CONTRACT.md 双契约冲突）、live/bolder/animate（与既有技能重叠）、插件 agents（工具链绑定）。编辑时 hook 为进阶自选，接法见 [能力安装清单](../../../../docs/capabilities.md)。
+- Impeccable（统一走 `npx`，双宿主同款；编辑时 hook 属自选，未接走既有验收矩阵 + `$web-design-guidelines` 环路）：**detect** 实现后立即自查；**critique** verify 轮对稿机器意见（截图 + 方向契约入参）；**polish** 样式手感微调的精修清单（配合场景表中样式手感行）；**audit** 存量页面批量体检（可选，一次性/周期任务）。有意不接：craft/init 方向契约（与 SYSTEM.md/CONTRACT.md 双契约冲突）、live/bolder/animate（与既有技能重叠）、插件 agents（工具链绑定）。编辑时 hook 为进阶自选，接法见 [能力安装清单](../../../../docs/capabilities.md)。
 - 提示词或 Skill：AI 指引校验 → Skill 校验器 → 总质量门禁 → 前向试用。
 - 插件或 Skill 安装：读取依赖清单 → 检查现状 → 安装缺失项 → 新对话发现性验证 → 状态报告。
 - 外部写操作：本地验证 → 确认授权范围 → 执行动作 → 回读外部状态。
