@@ -37,8 +37,8 @@ deliveryTargets 缺失、冲突或 deferred 时交 `$project-profile update`，�
 
 1. `$ui-ux-pro-max` 输入产品描述，产出规格：布局模式、风格、配色板、字体配对、反模式清单。其检索脚本依赖本机 Python，缺失时报不可用并降级为静态清单 + LLM 选择。
 2. 用户调整确认后冻结 SYSTEM.md（路径见第 6 节），带版本号，tokens 至少含色板、字体对、圆角、间距习惯。
-3. Stitch 可用时 `create_design_system`（customColor、字体、圆度、明暗，designMd 附规格）资产化，记 assetId；此后每张稿 `generate_screen_from_text` 一律带 designSystem=assetId。
-4. 系统升级走 `update_design_system` + 版本号；apply 后逐页回读，验证每页生效。
+3. Stitch 可用时 `create_design_system`（customColor、字体、圆度、明暗，designMd 附规格）资产化，记 assetId；此后每张稿 `generate_screen_from_text` 一律带 designSystem=assetId。designMd 超大（>5KB）可能撞 MCP 输出 token 上限：裁剪规格或走 REST base64 直传。
+4. 系统升级走 `update_design_system` + 版本号；apply 后逐页回读，验证每页生效。apply 的 `selectedScreenInstances` 只准 `id`+`sourceScreen`（带坐标等字段即 invalid argument）。
 5. DESIGN.md 与 SYSTEM.md 对账：走 `get_project` / `list_design_systems` 内联 `designMd`（API 恒为最新，与网页导出同源同文），不依赖 zip 导出；系统漂移必须可见、可追。
 
 系统级变更（换配色体系、字体体系）属三分判据的「设计方向系统性」：回本技能重开出新版本；已实现页面局部不跟进记 DRIFT，成批跟进另立实现任务。
@@ -49,11 +49,11 @@ deliveryTargets 缺失、冲突或 deferred 时交 `$project-profile update`，�
 | --- | --- |
 | 探测 | 实际调用 `list_projects` 判定连接，禁凭模型记忆假设可用或不可用；MCP 工具仅宿主主会话持有，子代理环境探测不到属预期——按第 8 节兜底并注明环境原因，不算 Stitch 故障 |
 | 项目 | 生成前必须 `create_project`（无项目上下文报 Requested entity was not found）；create 后立刻 `get_project`，projectId 记入 `.stitch/project.json` |
-| 出稿 | `generate_screen_from_text`：prompt=brief、designSystem=assetId、deviceType 按 deliveryTargets；资源名等调用形态按 MCP 工具自述，不凭记忆拼 |
-| 等待 | 同步超时属预期（冷启动约 2 分钟，第二张起通常即时）：超时后每 30–60s 轮询 `list_screens` 至出现，不误判失败 |
+| 出稿 | `generate_screen_from_text`：prompt=brief、designSystem=assetId、deviceType 按 deliveryTargets；资源名等调用形态按 MCP 工具自述，不凭记忆拼；生成 prompt 不带主题 token（hex/字体名），编辑 prompt 才带精确值 |
+| 等待 | 同步超时属预期（冷启动约 2 分钟，第二张起通常即时）：超时后每 30–60s 轮询 `list_screens` 至出现，不误判失败；端点可整窗死（实测 2 连超时 + 12 分钟零落屏）——约 15 分钟零屏即判端点不可用，转第 8 节兜底 |
 | 变体 | `generate_variants` 单维度探索，维度枚举：COLOR_SCHEME、LAYOUT、TEXT_FONT、TEXT_CONTENT、IMAGES；每次 2–3 个；变体 ID 与最终选择原因记入 PROMPTS.md |
-| 微调 | `edit_screens` 用 scoped 提示词：单目标、指明位置、附「不修改 X」负清单；反例：「让页面更高级一点」 |
-| 回读 | **编辑持久化门**：edit 返回成功 ≠ 已持久化。编辑后必须三层回读（HTML + 截图 + 元数据）；内容未变化不得报成功 → 保留编辑前快照 → 转网页端编辑或重生成 → 回读归档并注明来源 |
+| 微调 | 编辑优先，仅布局根本错误才重生成；`edit_screens` 用 scoped 提示词：单目标、指明位置、附「不修改 X」负清单；反例：「让页面更高级一点」 |
+| 回读 | **编辑持久化门**：edit 返回成功 ≠ 已持久化；存在第三种响应——返回澄清问题（目标不存在时反问，此时什么都没改）。判据 = get_screen 文件 ID（htmlCode/screenshot 的 files/&lt;id&gt;）变化，响应内 sessionEvent.dom_operations 仅供参考不可作证（2026-09-28 实测：成功文案+事件俱在，文件层零变化）。编辑后三层回读（HTML + 截图 + 元数据）；内容未变化不得报成功 → 保留编辑前快照 → 转网页端编辑或重生成 → 回读归档并注明来源 |
 | 核对 | Stitch 会加戏（brief 写 2 卡出 3 卡、自加角标）：定稿前对照 brief 核内容漂移；渲染瑕疵（文字截断、占位残留、空图）定稿前浏览器过一遍 |
 
 ## 5. 定稿决策流（code.html 获取）
@@ -64,11 +64,11 @@ deliveryTargets 缺失、冲突或 deferred 时交 `$project-profile update`，�
 | --- | --- | --- |
 | ⓪ 自动尝试 | fetch downloadUrl：显式代理（读 HTTPS_PROXY）+ manual redirect + body 校验（DOCTYPE 与页面标题）；静默重试约 10 次、跨分钟铺开 | 命中窗口即免问；多数时候落空，不报错 |
 | ① 询问用户 | 响亮询问："要弹出浏览器手动下载吗？" → 愿意：程序化弹**用户默认浏览器**打开 `stitch.withgoogle.com/projects/<projectId>` → 用户点「导出 → zip」（三秒，登录态在用户浏览器里）→ agent **监听下载目录**（轮询新 .zip，含 mtime 变化）→ **验明正身再收**：三件套结构 + code.html `<title>` 与目标屏一致（get_screen 元数据预取）+ DESIGN.md 与 API designMd 逐字一致——不匹配跳过继续等，歧义时询问用户 → 自动解包归档 code.html，zip 其余件丢弃（DESIGN.md 走第 3.5 条 API 更新鲜） | CLI login 同款交互模式：弹浏览器 + agent 本地守候；并发下载靠内容指纹区分，不靠猜 |
-| ② 用户拒绝登录 | 不拿 code.html，走**高清截图还原**：screen.png 拼参数 `=s1600-rp`（268KB 高清版）作为「选定视觉稿」（visual facts，`$frontend-task` 原生 `source=screenshot` 路径）+ DESIGN.md（API）+ CONTRACT.md；定稿目录 `code.html` 标记"未获取（用户选截图路径）" | 截图是一等来源，不是降级 |
+| ② 用户拒绝登录 | 不拿 code.html，走**高清截图还原**：screen.png 拼参数 `=s1600-rp`（**长边**封顶 1600——390 CSS 屏得 549×1600，268KB 网页导出同款）或 `=w{width}` 按像素宽度；裸 URL 是 CDN 缩略图（实测 176×512）不可直接用；元数据 width 为像素口径（390 CSS 屏报 780）——以此作为「选定视觉稿」（visual facts，`$frontend-task` 原生 `source=screenshot` 路径）+ DESIGN.md（API）+ CONTRACT.md；定稿目录 `code.html` 标记"未获取（用户选截图路径）" | 截图是一等来源，不是降级 |
 | ③ Stitch 整体不可用 | 按第 8 节兜底：agent 自写 HTML 变体（继承 SYSTEM.md，响亮告知） | 与本决策流独立 |
 
-- downloadUrl 是临时地址，只用于当次下载，不入生产代码。
-- 该端点间歇可用、不可按需复现：勿因偶发 404 判死，勿因偶发 200 判稳。
+- downloadUrl 是临时地址，只用于当次下载，不入生产代码；有时效，生成后尽快取，勿隔夜复用。
+- 该端点间歇可用、不可按需复现：勿因偶发 404 判死，勿因偶发 200 判稳；下载必带 `-f` 或 body 校验——无 `-f` 的 curl 在 404 时静默存 0 字节文件且退出码 0（2026-09-28 实测）。
 - Codex 宿主可加走 chrome@openai-bundled（②之前，免弹浏览器直接下载）。
 - 迭代轮截图 URL 免认证可直接落袋，仅服务迭代比对，不作实现输入。
 

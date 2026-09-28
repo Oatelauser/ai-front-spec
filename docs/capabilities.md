@@ -6,18 +6,18 @@
 
 ## 目录
 
-1. 内置技能（27，零安装）
+1. 内置技能（29，零安装）
 2. 宿主插件（可选）
 3. 宿主内置插件核对
 4. 宿主差异总览
 
-## 1. 内置技能（27，零安装）
+## 1. 内置技能（29，零安装）
 
 全部技能随本 Starter 分发在 `.agents/skills/`（Codex 与 Claude Code 双宿主同源，镜像见 `.claude/skills/`，字节一致——清单只列一次，宿主差异汇总见第 4 节），复制项目后即可发现，不需要安装命令。**名称冲突时以内置版本为准**，不覆盖用户级同名 Skill。
 
 自研 5 项：`project-workflow`、`project-profile`、`frontend-task`、`design-task`（专业 UI 原型设计 lane：设计系统先行、2–3 变体发散、定稿版本化归档）、`tinypng-compress`。
 
-Vendored 22 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。许可与修改记录见仓库根 `NOTICE`；机器可读基线（repo/SHA/快照日期）在仓库 toolkit.json 的 `vendored` 字段，配套升级器 `node scripts/update-vendored.mjs`（无参比对上游、`--diff` 评估变更×引用影响、`--rebaseline` 对账写基线、`--upgrade` 确认后覆盖并镜像校验）；也可从「上游」列手工取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
+Vendored 24 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。许可与修改记录见仓库根 `NOTICE`；机器可读基线（repo/SHA/快照日期）在仓库 toolkit.json 的 `vendored` 字段，配套升级器 `node scripts/update-vendored.mjs`（无参比对上游、`--diff` 评估变更×引用影响、`--rebaseline` 对账写基线、`--upgrade` 确认后覆盖并镜像校验）；也可从「上游」列手工取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
 
 | 技能（目录） | 上游 | 本仓说明 |
 | --- | --- | --- |
@@ -37,6 +37,7 @@ Vendored 22 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | `playwright-cli` | github.com/microsoft/playwright-cli | 2026-09-25 回归上游 verbatim（官方手册 + 10 份 references，安装兜底见其 SKILL.md §Installation）；基线 74354ecc = tag v0.1.21 = npm 工具 0.1.21 版本配对；旧改编版退役；附加仅宿主元数据/图标/许可 |
 | `webapp-testing` | github.com/anthropics/skills | 2026-09-25 快照，Apache-2.0（目录内 LICENSE.txt）；Python Playwright 功能测试工具包（`with_server.py` 管 dev server 生命周期），服务"已接入接口页面"的主流程/失败/权限/刷新持久化 E2E（见任务路由"主流程 E2E"行）；运行时需本机 Python + playwright 包，缺失时报告不可用并回退 `$playwright-cli` 或人工浏览器验证；2026-09-26 实测：Python 3.14 无 playwright 轮子的机器上，等价回退 = 临时目录 `npm i playwright-core` + `chromium.launch({ channel: 'chrome' })` 驱动系统已装 Chrome |
 | `ui-ux-pro-max` | github.com/nextlevelbuilder/ui-ux-pro-max-skill | 2026-09-27 快照，MIT；本地 CSV+BM25 检索的设计决策引擎（34 布局模式/79 风格/192 配色/74 字体配对），运行时依赖本机 Python 3，缺失时报不可用并降级静态清单+LLM 选择 |
+| `extract-static-html` / `upload-to-stitch` | github.com/google-labs-code/stitch-skills | 2026-09-28 快照，Apache-2.0；frontmatter 实名 `stitch::extract-static-html` / `stitch::upload-to-stitch`；缺口能力——运行中网页→自包含静态 HTML（Puppeteer + CSS/图片 base64 内联，认证钩子）、本地资产 / 大 DESIGN.md 上传 Stitch（>5KB 走 base64 直传 REST 绕 MCP token 上限）；与四陷阱无交集，design-task 编辑/下载纪律不受影响；官方插件其余技能经评估不采用（重叠层实测有害、实施转换层路线不符） |
 
 内置 `product-design` 直调写作 `$product-design`（如 `$product-design` image-to-code / audit 用法见其顶层 SKILL.md 子技能地图）；装有官方插件的宿主也可用 `$product-design:index` 等命名空间直调，以插件版为准。
 
@@ -73,7 +74,7 @@ Vendored 22 项，遵守**零修改原则**：vendored 目录与上游字节一�
 
 ## 4. 宿主差异总览
 
-第 1 节 27 个内置技能双宿主字节一致（`.agents` 源 + `.claude` 镜像），无差异。以下逐项对照，规则：**缺失项必附替代，不打裸 ❌**。精确安装命令见第 2 节。
+第 1 节 29 个内置技能双宿主字节一致（`.agents` 源 + `.claude` 镜像），无差异。以下逐项对照，规则：**缺失项必附替代，不打裸 ❌**。精确安装命令见第 2 节。
 
 | 能力 | Codex | Claude Code |
 | --- | --- | --- |

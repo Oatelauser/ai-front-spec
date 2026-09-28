@@ -726,9 +726,10 @@ const DEAD_REF_SKILL_EXEMPTIONS = new Set(['grill-me', 'bootstrap-project'])
 // 另登记上游断链/宿主路径（票 09 Q2 登记表）：compatibility-testing 引用未随包分发的兄弟技能与 qe-browser；
 // tdd-workflow 引用宿主 ~/.claude 路径；react-best-practices 上游 AGENTS.md 引用未随包的规则文件；
 // ui-ux-pro-max 数据/测试 JSON 含包相对标识串（@phosphor-icons/* 包名、React 及 Next.js 等风格分类标签），均非本仓路径。
+// stitch-skills 两技能（2026-09-28 vendor）SKILL.md 含上游示例 URL（/_next/image、/settings/profile 等应用路由示例），非仓内路径。
 const DEAD_REF_FILE_EXEMPTIONS = [
   /^\.agents\/skills\/product-design\//,
-  /^\.agents\/skills\/(compatibility-testing|tdd-workflow|react-best-practices|playwright-cli|ui-ux-pro-max)\//,
+  /^\.agents\/skills\/(compatibility-testing|tdd-workflow|react-best-practices|playwright-cli|ui-ux-pro-max|extract-static-html|upload-to-stitch)\//,
 ]
 // 运行态产物：init 生成前不存在，文档引用合法。
 const DEAD_REF_SKIP_PATHS = new Set(['.toolkit/profile-proposal.json'])

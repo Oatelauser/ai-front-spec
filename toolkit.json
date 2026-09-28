@@ -79,7 +79,9 @@
     "tdd-workflow",
     "web-design-guidelines",
     "webapp-testing",
-    "ui-ux-pro-max"
+    "ui-ux-pro-max",
+    "extract-static-html",
+    "upload-to-stitch"
   ],
   "vendored": {
     "tdd-workflow": {
@@ -209,6 +211,18 @@
       "path": ".claude/skills/ui-ux-pro-max",
       "sha": "09170eec67eefd46a7ae85de61b40c194020f997",
       "snapshot": "2026-09-27"
+    },
+    "extract-static-html": {
+      "repo": "https://github.com/google-labs-code/stitch-skills",
+      "path": "plugins/stitch-design/skills/extract-static-html",
+      "sha": "0337446dadde6f8c94210444e2aa9d546126480f",
+      "snapshot": "2026-09-28"
+    },
+    "upload-to-stitch": {
+      "repo": "https://github.com/google-labs-code/stitch-skills",
+      "path": "plugins/stitch-design/skills/upload-to-stitch",
+      "sha": "0337446dadde6f8c94210444e2aa9d546126480f",
+      "snapshot": "2026-09-28"
     }
   },
   "packages": {

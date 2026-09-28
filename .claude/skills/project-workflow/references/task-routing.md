@@ -18,6 +18,7 @@
 | 无参考图的已开发页面样式手感微调 | 按诉求选最小项：动效 `$apple-design`；触控 `$mobile-ux-optimizer`；跨端 `$compatibility-testing`；审美方向 `$design-taste-frontend`（目录 `taste-skill`） | 判据属三分判据的「实现质量」类，本仓直修；有参考图时改走 `$frontend-task` 截图工作流（screenshot-workflow）对比循环 |
 | 创建或更新可编辑 Figma 页面 | `$figma:figma-use` + `$figma:figma-generate-design` | 写 Figma 前必须先加载 figma-use；没有文件时先用 `$figma:figma-create-new-file` |
 | 从 Figma 实现代码 | `$figma:figma-design-to-code` | 先获取 design context；返回代码只作参考，必须适配项目技术栈与组件系统 |
+| 运行中网页静态化快照，或本地资产 / 大 DESIGN.md 上传 Stitch | `$stitch::extract-static-html`（Puppeteer 抓取 + CSS/图片 base64 内联）/ `$stitch::upload-to-stitch`（>5KB base64 直传 REST 绕 MCP token 上限）——实名带 `stitch::` 前缀，目录 `extract-static-html` / `upload-to-stitch` | 均为内置 vendored 技能（源 google-labs-code/stitch-skills）；快照与上传物只作设计素材，不改变四层事实源归属 |
 | UI/流程审计 | `$product-design`（子技能 audit）+ `$web-design-guidelines` | 前者检查流程证据，后者检查代码、可访问性和 Web 规范；后者在线按其 SKILL.md 拉最新规则，离线或 WebFetch 失败时回退读其目录内附加快照 `command.md` |
 | React 性能或包体优化 | `$vercel-react-best-practices` | 先测量后优化；构建规则仍以项目文档为准 |
 | GSAP 动效实现与调优 | `$gsap-core`（tween、缓动、响应式）/ `$gsap-timeline`（多步编排）/ `$gsap-performance`（帧率与卡顿）按任务需要组合 | 实现取 core，多步编排取 timeline，性能问题取 performance；不引入第二套动画库 |
