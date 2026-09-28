@@ -75,51 +75,13 @@ Vendored 22 项，遵守**零修改原则**：vendored 目录与上游字节一�
 
 第 1 节 27 个内置技能双宿主字节一致（`.agents` 源 + `.claude` 镜像），无差异。以下逐项对照，规则：**缺失项必附替代，不打裸 ❌**。精确安装命令见第 2 节。
 
-**Figma Plugin / Figma MCP**
-
-- Codex：
-  - ✅ Figma 官方插件（`figma@openai-api-curated`）
-  - ✅ Figma 官方 MCP
-- Claude Code：
-  - ✅ Figma 官方插件（`figma@claude-plugins-official`）
-  - ✅ Figma 官方 MCP（手动接法见第 2 节）
-
-**GitHub Plugin / GitHub MCP**
-
-- Codex：
-  - ✅ GitHub 插件
-  - ✅ GitHub MCP
-- Claude Code：
-  - ✅ GitHub MCP（无插件路径，能力等价）
-
-**Product Design Plugin**
-
-- Codex：
-  - ✅ OpenAI 官方插件（解锁 `image-to-code` 等宿主依赖子技能）
-- Claude Code：
-  - ❌ 无插件；替代：`$product-design` Skill（内置整包 vendor，方法论/audit/测量/清册）+ `image-to-code` 场景走 `$frontend-task` Skill source=screenshot 或 `$design-task` Skill Stitch 出稿
-
-**Impeccable**
-
-- Codex：
-  - ✅ npx CLI（`npx impeccable`，全命令）
-- Claude Code：
-  - ✅ Impeccable 官方插件（`/plugin` 市场，技能+引擎+agents）
-
-**Stitch MCP**
-
-- Codex：
-  - ✅ Stitch MCP（`https://stitch.googleapis.com/mcp` + `X-Goog-Api-Key` 头）
-- Claude Code：
-  - ✅ Stitch MCP（同端点同头；未配置时双宿主同降级 `$design-task` Skill 自写 HTML）
-
-**宿主内置能力（openai-bundled，不随仓库分发）**
-
-- Codex：
-  - ✅ 本地页面验证 `browser@openai-bundled`（`$browser:control-in-app-browser`）
-  - ✅ 用户浏览器操作 `chrome@openai-bundled`
-  - ✅ 桌面应用操作 `computer-use@openai-bundled`
-- Claude Code：
-  - ❌ 本地页面验证 `$webapp-testing` Skill 或 `$playwright-cli` Skill
-  - ❌ 用户浏览器操作 `$design-task` Skill 第 5 节决策流①（弹用户默认浏览器 + agent 监听下载目录）
-  - ❌ 桌面应用操作 无等价，用户人工执行，按第 3 节状态机如实记录
+| 能力 | Codex | Claude Code |
+| --- | --- | --- |
+| Figma Plugin / Figma MCP | ✅ Figma 官方插件（`figma@openai-api-curated`）<br>✅ Figma 官方 MCP | ✅ Figma 官方插件（`figma@claude-plugins-official`）<br>✅ Figma 官方 MCP |
+| GitHub Plugin / GitHub MCP | ✅ GitHub 插件<br>✅ GitHub MCP | ✅ GitHub MCP（无插件路径，能力等价） |
+| Product Design Plugin | ✅ OpenAI 官方插件（解锁 `image-to-code` 等宿主依赖子技能） | ❌ 无插件；替代：`$product-design` Skill（内置整包 vendor）<br>　`image-to-code` 场景走 `$frontend-task` Skill source=screenshot 或 `$design-task` Skill Stitch 出稿 |
+| Impeccable | ✅ npx CLI（`npx impeccable`，全命令） | ✅ Impeccable 官方插件（`/plugin` 市场，技能+引擎+agents） |
+| Stitch MCP | ✅ Stitch MCP（`https://stitch.googleapis.com/mcp` + `X-Goog-Api-Key` 头） | ✅ Stitch MCP（同端点同头；未配置时双宿主同降级 `$design-task` Skill 自写 HTML） |
+| 本地页面验证 | ✅ 宿主内置 `browser@openai-bundled`（`$browser:control-in-app-browser`） | ❌ `$webapp-testing` Skill 或 `$playwright-cli` Skill |
+| 用户浏览器操作 | ✅ 宿主内置 `chrome@openai-bundled` | ❌ `$design-task` Skill 第 5 节决策流①（弹用户默认浏览器 + agent 监听下载目录） |
+| 桌面应用操作 | ✅ 宿主内置 `computer-use@openai-bundled` | ❌ 无等价：用户人工执行，按第 3 节状态机如实记录 |
