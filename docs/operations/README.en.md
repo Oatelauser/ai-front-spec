@@ -9,6 +9,7 @@ Maintenance covers the Starter installer, editable `.agents/skills`, generated `
 | Installation and routine checks | [OPERATIONS.en.md](OPERATIONS.en.md) |
 | Bundled Skills, plugins, and host capabilities | [BUILT-IN-CAPABILITIES.en.md](BUILT-IN-CAPABILITIES.en.md) |
 | Upgrades, offline bundles, and GitHub CI | [UPGRADING.en.md](UPGRADING.en.md) |
+| Decision log with reversals and exemption list | [DECISIONS.en.md](DECISIONS.en.md) |
 
 ## Non-negotiable source rules
 

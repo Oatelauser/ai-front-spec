@@ -38,7 +38,7 @@ deliveryTargets 缺失、冲突或 deferred 时交 `$project-profile update`，�
 2. 用户调整确认后冻结 SYSTEM.md（路径见第 6 节），带版本号，tokens 至少含色板、字体对、圆角、间距习惯。
 3. Stitch 可用时 `create_design_system`（customColor、字体、圆度、明暗，designMd 附规格）资产化，记 assetId；此后每张稿 `generate_screen_from_text` 一律带 designSystem=assetId。
 4. 系统升级走 `update_design_system` + 版本号；apply 后逐页回读，验证每页生效。
-5. 每次导出的 DESIGN.md 与 SYSTEM.md 对账，系统漂移必须可见、可追。
+5. DESIGN.md 与 SYSTEM.md 对账：走 `get_project` / `list_design_systems` 内联 `designMd`（API 恒为最新，与网页导出同源同文），不依赖 zip 导出；系统漂移必须可见、可追。
 
 系统级变更（换配色体系、字体体系）属三分判据的「设计方向系统性」：回本技能重开出新版本；已实现页面局部不跟进记 DRIFT，成批跟进另立实现任务。
 
@@ -55,16 +55,20 @@ deliveryTargets 缺失、冲突或 deferred 时交 `$project-profile update`，�
 | 回读 | **编辑持久化门**：edit 返回成功 ≠ 已持久化。编辑后必须三层回读（HTML + 截图 + 元数据）；内容未变化不得报成功 → 保留编辑前快照 → 转网页端编辑或重生成 → 回读归档并注明来源 |
 | 核对 | Stitch 会加戏（brief 写 2 卡出 3 卡、自加角标）：定稿前对照 brief 核内容漂移；渲染瑕疵（文字截断、占位残留、空图）定稿前浏览器过一遍 |
 
-## 5. 下载三层阶梯（HTML 定稿）
+## 5. 定稿决策流（code.html 获取）
 
-| 层 | 做法 | 说明 |
+**前置判断——用户在场吗**：交互会话且用户应答 → 走完整决策流；**用户不在场（子代理环境、自动化运行、自测、询问超时无应答）→ 跳过①的询问，直接走②高清截图还原**，不自阻塞等待，报告注明"无人下载，已按截图路径定稿"。
+
+| 步 | 决策与动作 | 说明 |
 | --- | --- | --- |
-| ① 自动尝试 | fetch downloadUrl：显式代理（读 HTTPS_PROXY）+ redirect manual 模式 + body 校验（DOCTYPE 与页面标题）；重试约 10 次、跨分钟铺开 | 命中窗口即全自动落袋 |
-| ② Codex 宿主 | chrome@openai-bundled 复用用户浏览器会话下载 | 稳定全自动 |
-| ③ 兜底 | 响亮告知用户走网页「导出 → zip」；agent 接管解包归档 | 稳定路径，已验证 |
+| ⓪ 自动尝试 | fetch downloadUrl：显式代理（读 HTTPS_PROXY）+ manual redirect + body 校验（DOCTYPE 与页面标题）；静默重试约 10 次、跨分钟铺开 | 命中窗口即免问；多数时候落空，不报错 |
+| ① 询问用户 | 响亮询问："要弹出浏览器手动下载吗？" → 愿意：程序化弹**用户默认浏览器**打开 `stitch.withgoogle.com/projects/<projectId>` → 用户点「导出 → zip」（三秒，登录态在用户浏览器里）→ agent **监听下载目录**（轮询新 .zip，含 mtime 变化）→ **验明正身再收**：三件套结构 + code.html `<title>` 与目标屏一致（get_screen 元数据预取）+ DESIGN.md 与 API designMd 逐字一致——不匹配跳过继续等，歧义时询问用户 → 自动解包归档 code.html，zip 其余件丢弃（DESIGN.md 走第 3.5 条 API 更新鲜） | CLI login 同款交互模式：弹浏览器 + agent 本地守候；并发下载靠内容指纹区分，不靠猜 |
+| ② 用户拒绝登录 | 不拿 code.html，走**高清截图还原**：screen.png 拼参数 `=s1600-rp`（268KB 高清版）作为「选定视觉稿」（visual facts，`$frontend-task` 原生 `source=screenshot` 路径）+ DESIGN.md（API）+ CONTRACT.md；定稿目录 `code.html` 标记"未获取（用户选截图路径）" | 截图是一等来源，不是降级 |
+| ③ Stitch 整体不可用 | 按第 8 节兜底：agent 自写 HTML 变体（继承 SYSTEM.md，响亮告知） | 与本决策流独立 |
 
 - downloadUrl 是临时地址，只用于当次下载，不入生产代码。
 - 该端点间歇可用、不可按需复现：勿因偶发 404 判死，勿因偶发 200 判稳。
+- Codex 宿主可加走 chrome@openai-bundled（②之前，免弹浏览器直接下载）。
 - 迭代轮截图 URL 免认证可直接落袋，仅服务迭代比对，不作实现输入。
 
 ## 6. 定稿归档

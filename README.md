@@ -16,6 +16,7 @@
 | 把需求、截图、原型、Figma 或 HTML 做成页面 | `$frontend-task` | [Frontend Task 手册](docs/tasks/FRONTEND-TASK.md) |
 | 升级内置 Skill、插件或镜像 | `node scripts/update-vendored.mjs` | [升级与 CI](docs/operations/UPGRADING.md) |
 | 查看内置能力和外部插件 | — | [能力清单](docs/operations/BUILT-IN-CAPABILITIES.md) |
+| 设计质量确定性检查（实现自查 / 验收对稿 / 精修清单 / 存量体检） | impeccable 插件（Claude Code）或 `npx impeccable`（Codex） | [能力清单 §2](docs/capabilities.md) |
 
 ## 最短路径
 
