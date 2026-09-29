@@ -1,7 +1,11 @@
 # Codex CLI MCP 配置片段——chrome-devtools（项目 vendor 内置版）
-# 用法：并入副本的 ~/.codex/config.toml（Codex 的 MCP 配置在用户级）。
+# ⚠️ Codex 通常【不需要】本片段：宿主内置 browser@openai-bundled 已覆盖页面验收
+#    （见 capabilities §3）。仅当你需要 chrome-devtools 专属工具（如性能追踪、
+#    CPU 节流、网络模拟）时才并入 ~/.codex/config.toml。
 # 路径说明：相对路径在「本副本根启动 codex」时成立；全局配置请把 args[0] 换成
 # 本副本内的绝对路径（每个项目副本各自一份 vendor，勿跨副本引用）。
+# 2026-09-29 实测：注册成功（mcp list enabled），但 exec 会话模型侧不可见（0 工具
+# ×2 轮），根因未查——反正 Codex 有内置浏览器，不值得追。
 
 [mcp_servers.chrome-devtools]
 command = "node"
