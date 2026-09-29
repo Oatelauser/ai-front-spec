@@ -32,3 +32,5 @@ ai-front-spec 按 MIT 许可发布（LICENSE）。
 - 本仓库不对上述第三方组件再许可；任何修改均在表中或目录内 NOTICE 记录。
 - figma 官方技能因 Figma Developer Terms 未授予再分发权，不入库；
   获取与双路径接入（Codex 插件 / MCP 直连）见 docs/capabilities.md「宿主插件（可选）」。
+
+| chrome-devtools-mcp | npm chrome-devtools-mcp（googleLabs） | 2026-09-29（v1.10.1） | Apache-2.0 | 整包 vendor 至 tools/mcp/（零依赖单包，node 直启）；升级 = 新版包整目录替换提交 |
