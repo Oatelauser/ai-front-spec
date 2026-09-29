@@ -6,9 +6,10 @@
 
 | 任务 | 文档 |
 | --- | --- |
-| 安装和日常自检 | [OPERATIONS.md](OPERATIONS.md) |
+| 安装 Starter 到项目 | [INSTALL.md](INSTALL.md) |
+| 自检、改 Skill、GitHub CI 与发布 | [OPERATIONS.md](OPERATIONS.md) |
 | 内置 Skill、插件和宿主能力 | [BUILT-IN-CAPABILITIES.md](BUILT-IN-CAPABILITIES.md) |
-| 升级、离线包和 GitHub CI | [UPGRADING.md](UPGRADING.md) |
+| 升级与离线包 | [UPGRADING.md](UPGRADING.md) |
 | 全部关键决策的裁定链与豁免清单 | [DECISIONS.md](DECISIONS.md) |
 
 ## 不可违反的源规则

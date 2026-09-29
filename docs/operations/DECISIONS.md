@@ -40,3 +40,10 @@
 - Stitch HTML 端点间歇可用（同机同代理时好时坏：探针窗口 0/10 与一发命中同日并存）：定稿走 design-task §5 **刚性兜底链**——⓪ 自动重试（manual 重定向 + body 校验，交互快试/auto 铺满）→ ① 弹用户默认浏览器手动导出（仅交互模式）→ ② 高清截图还原（一等来源）→ ③ agent 自写（终点兜底）；auto 模式免问自动降级。DESIGN.md 已可由 MCP `get_project` 内联自动获取，定稿五件套唯一手动项只剩 code.html。09-29 实测新增陷阱两条已入 SKILL：`list_screens` 可与 UI 面脱钩（改 `get_project` 判定）、`create_design_system` 资产化不保真（提交后必须回读生效主题）。分发副本协议级握手已实测（31 工具，[#11 附录](https://github.com/Oatelauser/ai-front-spec/issues/11)）。
 - product-design 无公开源码仓：公开分发依用户特赦（2026-09-24 裁定，2026-09-25 复核改无限期·非商用），许可记录见仓库根 NOTICE。
 - 上游死仓/迁移（如 mobile-ux-optimizer 原仓 404 已切延续仓）：以 CI 周报（`vendored-check.yml` 定时任务）「无法探测上游」持续出现为信号，人工确认后再切换延续仓或冻结基线；无 repo 的插件快照只报告来源，不做网络探测。
+
+## 5. 仓库级裁定（非 wayfinder 票）
+
+| 日期 | 裁定 | 依据 |
+| --- | --- | --- |
+| 2026-09-29 | 删除全部英文镜像文档（9 个 `.en.md`）与双语同步单测 `readme-bilingual.test.mjs`，仓库改单语文档 | 双份维护成本高、同步易漂移；`check-ai-guidance` 对 `.en.md` 均为存在性守卫，删除零破坏（恢复路径 = git 历史） |
+| 2026-09-29 | 运维文档按读者分流：`OPERATIONS.md` 拆为 `INSTALL.md`（安装手册，使用者）+ `OPERATIONS.md`（运维手册，维护者）；GitHub CI 说明由 UPGRADING.md 移入运维手册；README 最短路径同步瘦身为纯用户导航 | 原「Starter 安装与日常运维」混合两类读者，用户被迫路过维护者内容（自检、改 Skill、CI）；`vendored-check.yml` Issue 文案死引用（指向 README 不存在的章节）一并修正 |

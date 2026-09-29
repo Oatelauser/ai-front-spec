@@ -2,15 +2,13 @@
 
 [![CI](https://github.com/Oatelauser/ai-front-spec/actions/workflows/ci.yml/badge.svg)](https://github.com/Oatelauser/ai-front-spec/actions/workflows/ci.yml) [![vendored-check](https://github.com/Oatelauser/ai-front-spec/actions/workflows/vendored-check.yml/badge.svg)](https://github.com/Oatelauser/ai-front-spec/actions/workflows/vendored-check.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Node >=20](https://img.shields.io/badge/node-%E2%89%A5%2020-green.svg)](https://nodejs.org)
 
-**中文** | [English](README.en.md)
-
 面向 Codex 和 Claude Code 的前端项目 AI 规则 Starter：把项目事实、任务路由、设计流程、实现流程和验收要求放进仓库，让智能体先读约束，再做修改，并用证据交付。
 
 ## 先选入口
 
 | 你要做什么 | 使用入口 | 详细手册 |
 | --- | --- | --- |
-| 安装 Starter 到项目 | `node scripts/build-starter.mjs --target <目录>` | [安装与运维](docs/operations/OPERATIONS.md) |
+| 安装 Starter 到项目 | `node scripts/build-starter.mjs --target <目录>` | [安装手册](docs/operations/INSTALL.md) |
 | 初始化项目画像与组件目录 | `$project-profile` | [任务总览](docs/tasks/README.md) |
 | 做专业视觉设计、多轮调整、定稿归档 | `$design-task` | [Design Task 手册](docs/tasks/DESIGN-TASK.md) |
 | 把需求、截图、原型、Figma 或 HTML 做成页面 | `$frontend-task` | [Frontend Task 手册](docs/tasks/FRONTEND-TASK.md) |
@@ -21,12 +19,9 @@
 
 ## 最短路径
 
-```bash
-node scripts/build-starter.mjs --target ./my-project
-node scripts/build-starter.mjs --check
-node .toolkit/scripts/check-ai-guidance.mjs --root . --strict
-node .toolkit/scripts/sync-mirror.mjs --check
+安装与环境要求见 [安装手册](docs/operations/INSTALL.md)；装完之后：
 
+```bash
 $frontend-task inspect
 $frontend-task plan
 $frontend-task confirm

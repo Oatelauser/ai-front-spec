@@ -62,17 +62,7 @@ node .toolkit/scripts/check-ai-guidance.mjs --root . --strict
 
 查看 根目录 manifest 的 packages 字段 与 `docs/capabilities.md`，在隔离分支更新版本；同步更新能力边界；运行测试、严格校验、镜像检查和 Starter 构建；记录兼容性与回滚方式。宿主插件未实际连接时，不能写成 Starter 内置能力。
 
-## 7. GitHub CI
-
-### `ci.yml`
-
-`main` push 和 `v*` tag 触发；Ubuntu/Windows + Node 22 运行单元测试和严格 AI guidance 校验。`v*` tag 还会检查 tag 与 根目录 manifest 的版本字段 一致，构建 `dist-starter`、打 ZIP 并创建 Release。
-
-### `vendored-check.yml`
-
-每周一 UTC 03:23、手动触发和 `main` push 触发；运行升级检查，有升级项时上传 bundle artifact，定时/手动运行会创建或更新 Issue。网络慢时下载 artifact，使用 `--offline` 评估/应用。
-
-## 8. 提交和回滚
+## 7. 提交和回滚
 
 升级提交通常包含：
 
@@ -86,6 +76,6 @@ docs/（行为或操作变化时）
 
 回滚优先恢复本次提交，再运行镜像检查和全部质量门禁。
 
-## 9. 禁止捷径
+## 8. 禁止捷径
 
 不要手改 `.claude/skills/`，不要未看 diff 就升级全部，不要声称未连接插件可用，不要提交 token/cookie/代理凭据，不要删除引用或改退出码绕过失败。
