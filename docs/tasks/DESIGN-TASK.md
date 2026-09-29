@@ -52,6 +52,8 @@ agent：v1 定稿归档 ✓（code.html / DESIGN.md / screen.png / PROMPTS.md / 
 - ✅ 好指令 = **位置 + 改什么 + 不改什么**："只改 Hero 主按钮：换成品牌主色；尺寸、文案、导航都不动"
 - ❌ 坏指令 = 模糊形容："让它高级一点"
 
+**懒得打字指位置**：直接说"我指给你看"——agent 按 `$page-annotate` 打开页面，你在页面上拖框圈选问题、点「提交」，回终端说「读」，agent 读回坐标与元素诊断后逐条修改。开启方法与双轨说明见 [内置能力清单](../operations/BUILT-IN-CAPABILITIES.md)。
+
 ## 4. 定稿之后怎么续
 
 | 你想要 | 走哪 | 说明 |

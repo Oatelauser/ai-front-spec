@@ -15,6 +15,7 @@
 | `gsap-core` / `gsap-performance` / `gsap-timeline` | GSAP 基础、性能和时间线 |
 | `tinypng-compress` | 图片压缩 |
 | `webapp-testing`（+ chrome-devtools MCP） | 浏览器自动化和真实 UI 验收 |
+| `page-annotate`（+ chrome-devtools MCP 双轨） | 页面标注反馈"指哪打哪"：用户在页面上圈选区域指认问题，agent 读回坐标与元素诊断；design-task 修订轮与 frontend-task 验收轮内建（见下节开启方法） |
 | `compatibility-testing` | 跨浏览器、平台和设备验证 |
 | `karpathy-guidelines` | 精简、可验证、避免过度实现 |
 | `api-design` | REST API 设计 |
@@ -27,6 +28,19 @@
 | `tdd-workflow` | 测试驱动开发流程 |
 | `web-design-guidelines` | Web 界面、可访问性和 UX 审查 |
 | `ui-ux-pro-max` | UI/UX 设计辅助 |
+
+## 浏览器双轨与页面标注
+
+`$page-annotate` 走 chrome-devtools MCP（项目 vendor 内置）双入口：
+
+| 轨 | 入口 | 用途 |
+| --- | --- | --- |
+| 隔离轨（默认） | `chrome-devtools` | agent 自动弹一个独立 Chrome 窗口，打开原型/dev 页给你标注，零配置 |
+| 用户轨 | `chrome-devtools-user`（`--autoConnect`） | 连接**你自己正开着的 Chrome**（真实登录页、内网系统） |
+
+**用户轨开启方法**（只需一次浏览器内操作，不用改任何配置）：在 Chrome 地址栏打开 `chrome://inspect/#remote-debugging` → 打开页面上的开关 → 首次连接时浏览器弹"允许调试连接"点允许 → 用完回到同一页面把开关关掉。开关没开时调用会明确报错提示去开（fail-loud，绝不静默换轨或自启浏览器）。
+
+**哪里用得上**：`$design-task` 修订轮（说"我指给你看"）、`$frontend-task` 验收轮（说"在页面上标一下"），或任何时刻直接说"在页面上圈一下"。标注器是只读装饰，不改动页面行为；用户轨等于真实身份，agent 在真实页面只读不写。
 
 ## 内置、vendored 与宿主插件
 

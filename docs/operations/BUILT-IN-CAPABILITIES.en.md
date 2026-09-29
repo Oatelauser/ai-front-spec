@@ -15,6 +15,7 @@ Version and commit facts live in 根目录 manifest; this table explains purpose
 | `gsap-core` / `gsap-performance` / `gsap-timeline` | GSAP API, performance, and sequencing |
 | `tinypng-compress` | Image compression |
 | `webapp-testing` (+ chrome-devtools MCP) | Browser automation and real UI verification |
+| `page-annotate` (+ chrome-devtools MCP dual lane) | "Point and shoot" page feedback: you box regions on the page to flag issues and the agent reads back coordinates with element diagnostics; built into the design-task refinement round and the frontend-task verify round (see the next section for setup) |
 | `compatibility-testing` | Cross-browser, platform, and device validation |
 | `karpathy-guidelines` | Surgical, verifiable implementation |
 | `api-design` | REST API design |
@@ -27,6 +28,19 @@ Version and commit facts live in 根目录 manifest; this table explains purpose
 | `tdd-workflow` | Test-driven workflow |
 | `web-design-guidelines` | Web UI, accessibility, and UX review |
 | `ui-ux-pro-max` | UI/UX design assistance |
+
+## Browser dual lane and page annotation
+
+`$page-annotate` uses the chrome-devtools MCP (vendored in this repo) through two entries:
+
+| Lane | Entry | Use |
+| --- | --- | --- |
+| Isolated (default) | `chrome-devtools` | The agent opens a separate Chrome window with the prototype/dev page for you to annotate — zero setup |
+| Your browser | `chrome-devtools-user` (`--autoConnect`) | Attaches to **your own running Chrome** (real logged-in pages, internal systems) |
+
+**Enabling your-browser mode** (one in-browser step, no config edits): open `chrome://inspect/#remote-debugging` in Chrome → flip the toggle on → approve the "allow debugging connection" prompt on first connect → flip the toggle off when done. If the toggle is off, calls fail loudly with a hint to enable it — never silently switching lanes or spawning a browser.
+
+**Where it shows up**: the `$design-task` refinement round (say "let me show you on the page"), the `$frontend-task` verify round (say "let me mark the page"), or anytime by saying "let me circle it on the page". The annotator is a read-only overlay and does not alter page behavior; your-browser mode means your real identity, so the agent stays read-only there.
 
 ## Bundled, vendored, and host-provided
 

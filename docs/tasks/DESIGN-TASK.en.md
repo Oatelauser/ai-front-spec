@@ -52,6 +52,8 @@ Agent: v1 finalized and archived ✓ (code.html / DESIGN.md / screen.png / PROMP
 - ✅ Good = **location + what changes + what stays**: "Only the Hero primary button: switch to brand color; keep size, copy, and navigation untouched"
 - ❌ Bad = vague adjectives: "make it feel more premium"
 
+**Prefer pointing over typing**: say "let me show you on the page" — the agent opens the page via `$page-annotate`, you drag boxes around issues and hit "Submit", then say "read" in the terminal; the agent reads back coordinates with element diagnostics and fixes each mark. Setup and dual-lane notes live in [Built-in capabilities](../operations/BUILT-IN-CAPABILITIES.en.md).
+
 ## 4. After the final version
 
 | You want | Go to | Notes |

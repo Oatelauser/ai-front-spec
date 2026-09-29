@@ -47,7 +47,7 @@ Add focused failing tests when the project stack permits, then implement real DO
 
 ### `verify`
 
-Run tests directly related to the change, then the project quality gates. Verify targets, responsive behavior, theme, interaction, keyboard, accessibility, overflow, console, and API states. In non-production, verify the real UI main flow, failure, permission, and refresh persistence when applicable.
+Run tests directly related to the change, then the project quality gates. Verify targets, responsive behavior, theme, interaction, keyboard, accessibility, overflow, console, and API states. In non-production, verify the real UI main flow, failure, permission, and refresh persistence when applicable. When reporting issues, if you would rather point than describe, say "let me mark the page" to use `$page-annotate`: you box problem areas on the page and submit, and the agent reads back coordinates with element diagnostics and fixes them one by one (see [Built-in capabilities](../operations/BUILT-IN-CAPABILITIES.en.md)).
 
 ### `report`
 

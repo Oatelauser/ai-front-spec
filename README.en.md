@@ -14,6 +14,7 @@ A frontend AI rules Starter for Codex and Claude Code. It keeps project facts, t
 | Initialize project profile and component catalog | `$project-profile` | [Task overview](docs/tasks/README.en.md) |
 | Run professional visual design and freeze a design version | `$design-task` | [Design Task guide](docs/tasks/DESIGN-TASK.en.md) |
 | Turn requirements, screenshots, prototypes, Figma, or HTML into a page | `$frontend-task` | [Frontend Task guide](docs/tasks/FRONTEND-TASK.en.md) |
+| Point at the page to flag issues ("point and shoot") | `$page-annotate` | [Built-in capabilities](docs/operations/BUILT-IN-CAPABILITIES.en.md) |
 | Upgrade bundled Skills, plugins, or mirrors | `node scripts/update-vendored.mjs` | [Upgrades and CI](docs/operations/UPGRADING.en.md) |
 | Review bundled capabilities and external plugins | — | [Capability inventory](docs/operations/BUILT-IN-CAPABILITIES.en.md) |
 | Deterministic design QA (post-impl self-check / verify critique / polish list / legacy audit) | impeccable plugin (Claude Code) or `npx impeccable` (Codex) | [Capabilities §2](docs/capabilities.md) |
