@@ -22,6 +22,7 @@
 | [浏览器能力换主](https://github.com/Oatelauser/ai-front-spec/issues/11) | playwright-cli vendored 退役；chrome-devtools MCP 项目 vendor 内置（离线、node 直启 **bin 入口** + stable 渠道）为 Claude Code 侧首选；Codex 用宿主内置 browser（chrome-devtools 为 Claude 侧专属，exec 实测模型侧不可见） | 分发验证抓出启动双重缺陷（库入口静默退出 + channel 非法值），修复后协议级复验 31 工具 |
 | [impeccable 插件卸载](https://github.com/Oatelauser/ai-front-spec/issues/11) | 四命令统一 `npx`（与插件解耦）；插件仅编辑时 hook 场景可选装 | 更新 [#3](https://github.com/Oatelauser/ai-front-spec/issues/3) 行的"可选外部登记"表述：插件常驻的 24 命令 + 5 agents 名册成本不值，四命令验证证据本就是 npx 路径 |
 | [design-task 流程修订](https://github.com/Oatelauser/ai-front-spec/issues/11) | 双模式显式声明（`auto`/交互，不做在场推断）；定稿刚性兜底链 ⓪→①→②→③；冻结循环直到满意（多轮无上限）；候选定稿不阻塞、事后审阅转正 | 盲测（零内部信息 subagent）+ 同 brief 双路径对比实测后定型；分发验证再抓 MCP 启动缺陷并修 |
+| [页面标注反馈技能](https://github.com/Oatelauser/ai-front-spec/issues/11) | 独立 skill `$page-annotate`（自研第 6 项）：注入式页面标注器 v2.6.2（区域唯一原语、吸附+Alt 滚轮爬梯、提交/读回/已读变淡、单例 destroy 升级）+ 双轨路由（隔离轨默认 / 用户轨 `chrome-devtools-user` autoConnect 四步开关、fail-loud 不静默换轨）；design-task 冻结循环与 frontend-task 验收轮按 §5 契约共用；localStorage 持久化不做（不会自动删除，用户不接受残留，草案入技能 §7 备查） | 当日 14 轮迭代实测定型（v1 元素点击→v2 区域原语；幽灵监听器事故催生 destroy 单例纪律；fixed→文档坐标、滚动跟随、就近提示等修复均有实测证据）；`--browserUrl` 对真实 profile 死路（Chrome 136 安全变更）已查证入档 |
 
 ## 3. 有意不接与豁免
 

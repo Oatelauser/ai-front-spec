@@ -3,6 +3,10 @@
     "chrome-devtools": {
       "command": "node",
       "args": ["tools/mcp/chrome-devtools-mcp/build/src/bin/chrome-devtools-mcp.js", "--channel=stable"]
+    },
+    "chrome-devtools-user": {
+      "command": "node",
+      "args": ["tools/mcp/chrome-devtools-mcp/build/src/bin/chrome-devtools-mcp.js", "--channel=stable", "--autoConnect"]
     }
   }
 }

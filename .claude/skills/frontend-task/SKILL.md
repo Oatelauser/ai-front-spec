@@ -75,7 +75,7 @@ When sources conflict, record the region/field, source A/B, impact, recommended 
 7. For API work, map UI states to request states and verify loading, empty, error, unauthorized/forbidden, disabled, success, retry, and stale-response behavior when applicable. HTTP 200 alone is not business success.
 8. For `bug-fix`, reproduce before changing code and replay the original failure plus adjacent normal paths after the fix. If the defect cannot be reproduced, report it as unconfirmed rather than complete.
 9. For `refactor`, prove external equivalence across route, behavior, data, permissions, states, and visual baseline. If equivalence is not the goal, reclassify the changed scope.
-10. Verify confirmed target types plus responsive, theme, interaction, keyboard, accessibility, overflow, console, and API states required by the profile and component catalog. Separate `visual`, `behavior`, `data`, and `engineering` completion status.
+10. Verify confirmed target types plus responsive, theme, interaction, keyboard, accessibility, overflow, console, and API states required by the profile and component catalog. Separate `visual`, `behavior`, `data`, and `engineering` completion status. When the user prefers pointing at the page over describing issues in text, run the acceptance feedback round through the `$page-annotate` contract (open the page, let the user mark regions, read back, fix, reload, re-inject).
 11. Persist complex, visual, multi-round, or resumable work under `docs/tasks/<task>/`; keep simple changes lightweight.
 
 Read `references/common-workflow.md`, `references/acceptance-matrix.md`, and `references/task-state.md` before implementation or verification.

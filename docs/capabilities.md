@@ -6,16 +6,16 @@
 
 ## 目录
 
-1. 内置技能（28，零安装）
+1. 内置技能（29，零安装）
 2. 宿主插件（可选）
 3. 宿主内置插件核对
 4. 宿主差异总览
 
-## 1. 内置技能（28，零安装）
+## 1. 内置技能（29，零安装）
 
 全部技能随本 Starter 分发在 `.agents/skills/`（Codex 与 Claude Code 双宿主同源，镜像见 `.claude/skills/`，字节一致——清单只列一次，宿主差异汇总见第 4 节），复制项目后即可发现，不需要安装命令。**名称冲突时以内置版本为准**，不覆盖用户级同名 Skill。
 
-自研 5 项：`project-workflow`、`project-profile`、`frontend-task`、`design-task`（专业 UI 原型设计 lane：设计系统先行、2–3 变体发散、定稿版本化归档）、`tinypng-compress`。
+自研 6 项：`project-workflow`、`project-profile`、`frontend-task`、`design-task`（专业 UI 原型设计 lane：设计系统先行、2–3 变体发散、定稿版本化归档）、`page-annotate`（页面标注反馈通道："指哪打哪"——用户在页面圈选区域指认问题，agent 读回坐标+元素诊断；双轨=隔离浏览器/用户 Chrome autoConnect，design-task 与 frontend-task 的微调反馈环节共用）、`tinypng-compress`。
 
 Vendored 23 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。许可与修改记录见仓库根 `NOTICE`；机器可读基线（repo/SHA/快照日期）在仓库 toolkit.json 的 `vendored` 字段，配套升级器 `node scripts/update-vendored.mjs`（无参比对上游、`--diff` 评估变更×引用影响、`--rebaseline` 对账写基线、`--upgrade` 确认后覆盖并镜像校验）；也可从「上游」列手工取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
 
