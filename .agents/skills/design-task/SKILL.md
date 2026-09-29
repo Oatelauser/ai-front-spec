@@ -38,7 +38,7 @@ deliveryTargets 缺失、冲突或 deferred 时交 `$project-profile update`，�
 
 1. `$ui-ux-pro-max` 输入产品描述，产出规格：布局模式、风格、配色板、字体配对、反模式清单。其检索脚本依赖本机 Python，缺失时报不可用并降级为静态清单 + LLM 选择。
 2. 交互模式：用户调整确认后冻结 SYSTEM.md（路径见第 6 节），带版本号，tokens 至少含色板、字体对、圆角、间距习惯；auto 模式：按选型直接冻结并标「候选·待确认」，事后审阅可改版。
-3. Stitch 可用时 `create_design_system`（customColor、字体、圆度、明暗，designMd 附规格）资产化，记 assetId；此后每张稿 `generate_screen_from_text` 一律带 designSystem=assetId。designMd 超大（>5KB）可能撞 MCP 输出 token 上限：裁剪规格或走 REST base64 直传。
+3. Stitch 可用时 `create_design_system`（customColor、字体、圆度、明暗，designMd 附规格）资产化，记 assetId；此后每张稿 `generate_screen_from_text` 一律带 designSystem=assetId。designMd 超大（>5KB）可能撞 MCP 输出 token 上限：裁剪规格或走 REST base64 直传。**资产化不保真**——提交后必须 `get_project` 回读生效主题（2026-09-29 实测：提交 teal/IBM Plex/8px，生效 Hanken Grotesk/靛蓝/4px 并自创第三字体），以生效版为准归档对账，漂移必须可见。
 4. 系统升级走 `update_design_system` + 版本号；apply 后逐页回读，验证每页生效。apply 的 `selectedScreenInstances` 只准 `id`+`sourceScreen`（带坐标等字段即 invalid argument）。
 5. DESIGN.md 与 SYSTEM.md 对账：走 `get_project` / `list_design_systems` 内联 `designMd`（API 恒为最新，与网页导出同源同文），不依赖 zip 导出；系统漂移必须可见、可追。
 
@@ -51,7 +51,7 @@ deliveryTargets 缺失、冲突或 deferred 时交 `$project-profile update`，�
 | 探测 | 实际调用 `list_projects` 判定连接，禁凭模型记忆假设可用或不可用；MCP 工具仅宿主主会话持有，子代理环境探测不到属预期——按第 8 节兜底并注明环境原因，不算 Stitch 故障 |
 | 项目 | 生成前必须 `create_project`（无项目上下文报 Requested entity was not found）；create 后立刻 `get_project`，projectId 记入 `.stitch/project.json` |
 | 出稿 | `generate_screen_from_text`：prompt=brief、designSystem=assetId、deviceType 按 deliveryTargets；资源名等调用形态按 MCP 工具自述，不凭记忆拼；生成 prompt 不带主题 token（hex/字体名），编辑 prompt 才带精确值 |
-| 等待 | 同步超时属预期（冷启动约 2 分钟，第二张起通常即时）：超时后每 30–60s 轮询 `list_screens` 至出现，不误判失败；端点可整窗死（实测 2 连超时 + 12 分钟零落屏）——约 15 分钟零屏即判端点不可用，转第 8 节兜底 |
+| 等待 | 同步超时属预期（冷启动约 2 分钟，第二张起通常即时）：超时后每 30–60s 轮询 `list_screens` 至出现，不误判失败；端点可整窗死（实测 2 连超时 + 12 分钟零落屏）——约 15 分钟零屏即判端点不可用，转第 8 节兜底；**`list_screens` 可与 UI 面脱钩**（实测屏已存在仍返回空）——轮询 2 轮空后改 `get_project` 读 screenInstances 判定，勿仅凭 list_screens 判失败 |
 | 变体 | `generate_variants` 单维度探索，维度枚举：COLOR_SCHEME、LAYOUT、TEXT_FONT、TEXT_CONTENT、IMAGES；每次 2–3 个；变体 ID 与最终选择原因记入 PROMPTS.md |
 | 微调 | 编辑优先，仅布局根本错误才重生成；`edit_screens` 用 scoped 提示词：单目标、指明位置、附「不修改 X」负清单；反例：「让页面更高级一点」 |
 | 回读 | **编辑持久化门**：edit 返回成功 ≠ 已持久化；存在第三种响应——返回澄清问题（目标不存在时反问，此时什么都没改）。判据 = get_screen 文件 ID（htmlCode/screenshot 的 files/&lt;id&gt;）变化，响应内 sessionEvent.dom_operations 仅供参考不可作证（2026-09-28 实测：成功文案+事件俱在，文件层零变化）。编辑后三层回读（HTML + 截图 + 元数据）；内容未变化不得报成功 → 保留编辑前快照 → 转网页端编辑或重生成 → 回读归档并注明来源 |
