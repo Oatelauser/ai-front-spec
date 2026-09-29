@@ -11,10 +11,14 @@
     ]
   },
   "maturity": {
-    "status": "uncertain",
-    "confidence": "low",
-    "evidence": [],
-    "assessedAt": null
+    "status": "existing",
+    "confidence": "high",
+    "assessedAt": "2026-09-29",
+    "evidence": [
+      "本仓为规则工具包 starter 本体（AGENTS.md/README），非业务应用",
+      "PROJECT_PROFILE.md 为分发模板，留白系模板语义",
+      "已承载设计/测试任务（盲测、双路径对比），任务级确认目标端运转正常"
+    ]
   },
   "componentCatalog": {
     "status": "draft",
@@ -24,28 +28,46 @@
   },
   "deliveryTargets": {
     "browserWeb": {
-      "status": "pending",
-      "value": null
+      "status": "deferred",
+      "value": null,
+      "reason": "本仓为 starter 模板仓，本文件随分发作为生成项目的档案模板；目标端由生成项目经 $project-profile init 自行确认（模板语义非缺口）",
+      "impact": "本仓自身的设计/测试任务无法使用画像级目标端，需按任务级临时确认目标端（如：桌面 Web 单端）",
+      "followUp": "若 starter 本体未来承载真实交付页面，再跑 $project-profile profile 正式定档"
     },
     "mobileH5": {
-      "status": "pending",
-      "value": null
+      "status": "deferred",
+      "value": null,
+      "reason": "本仓为 starter 模板仓，本文件随分发作为生成项目的档案模板；目标端由生成项目经 $project-profile init 自行确认（模板语义非缺口）",
+      "impact": "本仓自身的设计/测试任务无法使用画像级目标端，需按任务级临时确认目标端（如：桌面 Web 单端）",
+      "followUp": "若 starter 本体未来承载真实交付页面，再跑 $project-profile profile 正式定档"
     },
     "tabletWeb": {
-      "status": "pending",
-      "value": null
+      "status": "deferred",
+      "value": null,
+      "reason": "本仓为 starter 模板仓，本文件随分发作为生成项目的档案模板；目标端由生成项目经 $project-profile init 自行确认（模板语义非缺口）",
+      "impact": "本仓自身的设计/测试任务无法使用画像级目标端，需按任务级临时确认目标端（如：桌面 Web 单端）",
+      "followUp": "若 starter 本体未来承载真实交付页面，再跑 $project-profile profile 正式定档"
     },
     "webview": {
-      "status": "pending",
-      "value": null
+      "status": "deferred",
+      "value": null,
+      "reason": "本仓为 starter 模板仓，本文件随分发作为生成项目的档案模板；目标端由生成项目经 $project-profile init 自行确认（模板语义非缺口）",
+      "impact": "本仓自身的设计/测试任务无法使用画像级目标端，需按任务级临时确认目标端（如：桌面 Web 单端）",
+      "followUp": "若 starter 本体未来承载真实交付页面，再跑 $project-profile profile 正式定档"
     },
     "pwa": {
-      "status": "pending",
-      "value": null
+      "status": "deferred",
+      "value": null,
+      "reason": "本仓为 starter 模板仓，本文件随分发作为生成项目的档案模板；目标端由生成项目经 $project-profile init 自行确认（模板语义非缺口）",
+      "impact": "本仓自身的设计/测试任务无法使用画像级目标端，需按任务级临时确认目标端（如：桌面 Web 单端）",
+      "followUp": "若 starter 本体未来承载真实交付页面，再跑 $project-profile profile 正式定档"
     },
     "multiPlatform": {
-      "status": "pending",
+      "status": "deferred",
       "value": null,
+      "reason": "本仓为 starter 模板仓，本文件随分发作为生成项目的档案模板；目标端由生成项目经 $project-profile init 自行确认（模板语义非缺口）",
+      "impact": "本仓自身的设计/测试任务无法使用画像级目标端，需按任务级临时确认目标端（如：桌面 Web 单端）",
+      "followUp": "若 starter 本体未来承载真实交付页面，再跑 $project-profile profile 正式定档",
       "derived": true
     }
   },
@@ -55,5 +77,15 @@
     "proposalId": null
   },
   "evidence": [],
-  "unresolved": []
+  "unresolved": [
+    {
+      "field": "deliveryTargets（六端整体）",
+      "status": "deferred",
+      "reason": "本仓为 starter 模板仓，本文件随分发作为生成项目的档案模板；目标端由生成项目经 $project-profile init 自行确认（模板语义非缺口）",
+      "impact": "本仓自身的设计/测试任务无法使用画像级目标端，需按任务级临时确认目标端（如：桌面 Web 单端）",
+      "followUp": "若 starter 本体未来承载真实交付页面，再跑 $project-profile profile 正式定档",
+      "recordedAt": "2026-09-29",
+      "decidedBy": "用户裁定 B（模板态转正为有据搁置，不填 starter 专属值以防污染分发模板）"
+    }
+  ]
 }

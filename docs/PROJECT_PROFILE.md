@@ -25,6 +25,8 @@
 
 本节是项目是否适配多端 H5 的唯一项目级配置入口。`$frontend-task` 在 inspect、plan、implement、verify 和 report 阶段都必须读取本节及 `.toolkit/profile-state.json` 的 `deliveryTargets`。新项目默认推荐桌面 Web、移动端 H5 和平板响应式，但推荐值只有在用户确认后才是事实。
 
+> **本仓为 starter 本体**：本文件随分发作为生成项目的档案模板，**字段留白是模板语义而非缺口**；生成项目经 `$project-profile init` 填写。`deliveryTargets` 六端已在 `.toolkit/profile-state.json` 记为 `deferred`（含理由/影响/重开条件）——本仓自身的设计/测试任务按任务级临时确认目标端，勿将其当作未完成项上报。
+
 | 支持能力 | 状态 | 具体范围 | 证据/决策 |
 | --- | --- | --- | --- |
 | 多端适配 | `<待填写：user-confirmed / recommended / deferred / unsupported>` | `<待填写：由已确认端类型计算或说明规划>` | `<待填写>` |
