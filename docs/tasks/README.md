@@ -9,6 +9,7 @@
 | 一次性验证交互或视觉方向 | `$prototype` | 原型验证后决定是否进入开发 |
 | 专业视觉设计、多轮调整、定稿冻结 | `$design-task` | 阅读 [DESIGN-TASK.md](DESIGN-TASK.md) |
 | 从需求/截图/原型/Figma/HTML 实现页面 | `$frontend-task` | 阅读 [FRONTEND-TASK.md](FRONTEND-TASK.md) |
+| 在页面上圈选指认问题（"指哪打哪"） | `$page-annotate` | 阅读 [PAGE-ANNOTATE.md](PAGE-ANNOTATE.md) |
 | 设计稿已经定稿，需要工程实现 | `$design-task` → `$frontend-task` | 先完成视觉交接，再进入实现 |
 
 ## 通用生命周期

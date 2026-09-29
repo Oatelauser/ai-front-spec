@@ -1,21 +1,30 @@
-# 内置能力清单
+# 能力清单
 
-版本和提交事实以 根目录 manifest 为准；本表只说明用途。`根目录 manifest 的 skills 字段` 是 Starter roster，`根目录 manifest 的 vendored 字段` 记录可同步来源。
+版本和提交事实以 根目录 manifest 为准；本表只说明用途。自研能力的使用细节见 `docs/tasks/` 手册；vendored 能力的上游、许可与升级见 [能力安装清单](../capabilities.md)。
 
-## 内置 Skill
+## 自研能力（6）
+
+| Skill | 用途 | 使用手册 |
+| --- | --- | --- |
+| `frontend-task` | 前端任务全阶段流程（inspect → plan → confirm → implement → verify → report） | [FRONTEND-TASK.md](../tasks/FRONTEND-TASK.md) |
+| `design-task` | 专业 UI 设计、多轮变体和定稿交接 | [DESIGN-TASK.md](../tasks/DESIGN-TASK.md) |
+| `page-annotate` | 页面标注反馈"指哪打哪"：页面上圈选指认问题，agent 读回坐标与元素诊断后逐条修改；design-task 修订轮与 frontend-task 验收轮内建 | [PAGE-ANNOTATE.md](../tasks/PAGE-ANNOTATE.md) |
+| `project-workflow` | agent 强制工作入口：项目事实、路由、执行、验证（内部契约，入口见 AGENTS.md） | — |
+| `project-profile` | 项目画像、目标端和组件目录初始化（内部契约，入口见 AGENTS.md） | — |
+| `tinypng-compress` | 批量图片压缩（工具型，`$tinypng-compress` 直调） | — |
+
+页面标注的浏览器双轨、标注操作与场景示例随手册走：[PAGE-ANNOTATE.md](../tasks/PAGE-ANNOTATE.md)。
+
+## Vendored 内置能力（23，随包分发零安装）
+
+上游快照、许可与升级基线见 [能力安装清单](../capabilities.md)。
 
 | Skill | 用途 |
 | --- | --- |
-| `project-workflow` | 项目事实、任务路由、计划、实现、验证和交付 |
-| `project-profile` | 项目画像、目标端和组件目录 |
-| `frontend-task` | 前端任务全阶段流程 |
-| `design-task` | 专业 UI 设计、多轮变体和定稿交接 |
 | `mobile-ux-optimizer` | 移动端触摸、视口、安全区和响应式 |
 | `apple-design` | 物理感动效和可打断交互 |
 | `gsap-core` / `gsap-performance` / `gsap-timeline` | GSAP 基础、性能和时间线 |
-| `tinypng-compress` | 图片压缩 |
 | `webapp-testing`（+ chrome-devtools MCP） | 浏览器自动化和真实 UI 验收 |
-| `page-annotate`（+ chrome-devtools MCP 双轨） | 页面标注反馈"指哪打哪"：用户在页面上圈选区域指认问题，agent 读回坐标与元素诊断；design-task 修订轮与 frontend-task 验收轮内建（见下节开启方法） |
 | `compatibility-testing` | 跨浏览器、平台和设备验证 |
 | `karpathy-guidelines` | 精简、可验证、避免过度实现 |
 | `api-design` | REST API 设计 |
@@ -29,28 +38,7 @@
 | `web-design-guidelines` | Web 界面、可访问性和 UX 审查 |
 | `ui-ux-pro-max` | UI/UX 设计辅助 |
 
-## 浏览器双轨与页面标注
-
-`$page-annotate` 走 chrome-devtools MCP（项目 vendor 内置）双入口：
-
-| 轨 | 入口 | 用途 |
-| --- | --- | --- |
-| 隔离轨（默认） | `chrome-devtools` | agent 自动弹一个独立 Chrome 窗口，打开原型/dev 页给你标注，零配置 |
-| 用户轨 | `chrome-devtools-user`（`--autoConnect`） | 连接**你自己正开着的 Chrome**（真实登录页、内网系统） |
-
-**用户轨开启方法**（只需一次浏览器内操作，不用改任何配置）：在 Chrome 地址栏打开 `chrome://inspect/#remote-debugging` → 打开页面上的开关 → 首次连接时浏览器弹"允许调试连接"点允许 → 用完回到同一页面把开关关掉。开关没开时调用会明确报错提示去开（fail-loud，绝不静默换轨或自启浏览器）。
-
-**哪里用得上**：`$design-task` 修订轮（说"我指给你看"）、`$frontend-task` 验收轮（说"在页面上标一下"），或任何时刻直接说"在页面上圈一下"。标注器是只读装饰，不改动页面行为；用户轨等于真实身份，agent 在真实页面只读不写。
-
-## 内置、vendored 与宿主插件
-
-- `根目录 manifest 的 skills 字段`：Starter 分发的能力 roster。
-- `根目录 manifest 的 vendored 字段`：上游 repo、path、commit、snapshot 和内容来源。
-- `pkg` 条目：由 npm 包提供；本地插件快照不代表所有宿主都能调用。
-- `.claude/skills/`：由 `.agents/skills/` 生成，不是独立源。
-- 外部插件/MCP：只有宿主实际安装或连接成功才算可用。
-
-## 常见可选能力
+## 可选外部能力
 
 | 能力 | 用途 | 约束 |
 | --- | --- | --- |
@@ -62,4 +50,4 @@
 
 ## 选择原则
 
-先用内置能力；需要外部能力时读取 `docs/capabilities.md` 和宿主安装清单；不可用就报告缺口并走降级路径，不能假装已连接。
+先用内置能力；需要外部能力时读取 `docs/capabilities.md` 和宿主安装清单；外部插件/MCP 只有宿主实际安装或连接成功才算可用；不可用就报告缺口并走降级路径，不能假装已连接。

@@ -29,6 +29,26 @@ docs/rules/AI_FRONTEND_TASK.md
 
 ## 3. 阶段操作
 
+```mermaid
+sequenceDiagram
+    participant U as 你
+    participant A as Agent（$frontend-task）
+    participant P as 项目事实（画像/组件目录/契约）
+    U->>A: 任务 + 来源（需求/截图/Figma/HTML/API）
+    A->>P: inspect——读画像、deliveryTargets、组件目录、邻近代码
+    A->>U: 事实清单与缺口
+    A->>A: plan——组件边界、状态矩阵、API 映射、验收矩阵
+    A->>U: confirm——高影响决定（范围/目标端/接口/权限）
+    U->>A: 确认（未确认不实现）
+    A->>A: implement——先失败测试，再真实 DOM/数据/交互
+    A->>A: verify——先相关测试，再画像门禁；浏览器过验收矩阵
+    opt 反馈不想打字
+        U->>A: 「在页面上标一下」（$page-annotate）
+        A->>U: 圈选 → 读回 → 逐条修 → 刷新对照
+    end
+    A->>U: report——四维证据 + 未验证项
+```
+
 ### `inspect`
 
 确认任务类型、路由、来源版本/视口/DPR、影响模式、事实缺口、资产、组件边界和完成条件。输出事实清单与来源责任。
@@ -47,7 +67,7 @@ docs/rules/AI_FRONTEND_TASK.md
 
 ### `verify`
 
-先跑改动直接相关测试，再跑项目画像质量门禁。验证目标端、响应式、主题、交互、键盘、无障碍、溢出、控制台和接口状态；非生产环境用真实 UI 验证主流程、失败、权限和刷新持久化。反馈问题时不想用文字描述位置，说"在页面上标一下"走 `$page-annotate`：你在页面上圈选问题区域提交，agent 读回坐标与元素诊断后逐条修复（见 [内置能力清单](../operations/BUILT-IN-CAPABILITIES.md)）。
+先跑改动直接相关测试，再跑项目画像质量门禁。验证目标端、响应式、主题、交互、键盘、无障碍、溢出、控制台和接口状态；非生产环境用真实 UI 验证主流程、失败、权限和刷新持久化。反馈问题时不想用文字描述位置，说"在页面上标一下"走 `$page-annotate`：你在页面上圈选问题区域提交，agent 读回坐标与元素诊断后逐条修复（见 [Page Annotate 使用指南](PAGE-ANNOTATE.md)）。
 
 ### `report`
 
@@ -88,27 +108,41 @@ $frontend-task report
 
 ## 6. 场景操作
 
+每节先给「你这么说」的提示词示例（照抄改词就能用），再给 agent 侧要点。
+
 ### 新页面
+
+> 你这么说：`$frontend-task inspect --source=requirement --type=new-page`——「会员中心加一个积分明细页，需求见 docs/req.md，先看现状」
 
 先确定流程、状态、路由、接口、权限、目标端和组件边界。无视觉参照时，快速方向走 `$prototype`，专业设计走 `$design-task`；定稿确认后实现。
 
 ### 截图还原
 
+> 你这么说：`$frontend-task inspect --source=screenshot --type=new-page`——「照 assets/login.png 还原登录页，原始视口和 DPR 别动」
+
 保留原始尺寸、CSS viewport、DPR、浏览器和状态，建立资产清单，实现真实 DOM，并在相同视口截图比较；不要只按像素堆绝对定位。
 
 ### Stitch 原型
+
+> 你这么说：`$frontend-task --source=html docs/design/login/v1/`——「按 v1 定稿实现登录页」
 
 读取冻结版本的 HTML、截图、元数据、资产和 `CONTRACT.md`。`downloadUrl` 先 manual redirect + body 校验；失败时使用浏览器登录态或网页端 ZIP，不把旧快照冒充新下载。
 
 ### API 页面
 
+> 你这么说：`$frontend-task inspect --source=api --type=new-page`——「订单列表页接 /api/orders，契约在 docs/api.md，先出字段映射」
+
 先读 API 契约和现有请求层，建立字段映射与请求状态，验证 loading、empty、error、unauthorized/forbidden、disabled、success、retry 和陈旧响应。
 
 ### Bug fix
 
+> 你这么说：`$frontend-task inspect --type=bug-fix`——「提交按钮双击会重复下单，先复现，修完重放给我看」
+
 先复现并记录实际/预期，定位根因，最小修复，重放失败和邻近正常路径。无法复现报告 `unverified`。
 
 ### Refactor
+
+> 你这么说：`$frontend-task inspect --type=refactor`——「把 UserProfile 拆成展示 + 容器两层，行为和视觉不能变」
 
 证明路由、行为、数据、权限、状态和视觉等价；若包含变化，改按 `incremental`。
 
