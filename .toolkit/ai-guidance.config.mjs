@@ -57,7 +57,7 @@ export default {
   },
   capabilityRequirements: {
     path: 'docs/capabilities.md',
-    requiredMarkers: ['figma@openai-api-curated', 'github', 'browser@openai-bundled'],
+    requiredMarkers: ['figma@openai-api-curated', 'github', 'browser@openai-bundled', 'chrome-devtools-mcp'],
   },
   flowContracts: [
     {
