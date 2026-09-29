@@ -70,7 +70,8 @@ export default {
     },
     {
       file: '.agents/skills/frontend-task/references/acceptance-matrix.md',
-      markers: ['命名会话', '-s=<task-id>', 'DPR'],
+      // 2026-09-29 playwright-cli vendored 退役：会话隔离标记由 CLI 命名会话语义（-s=<task-id>）更新为 chrome-devtools MCP 的独立会话语义
+      markers: ['独立会话', 'DPR'],
     },
     {
       file: 'docs/rules/FRONTEND_CONVENTIONS.md',

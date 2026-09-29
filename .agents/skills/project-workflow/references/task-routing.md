@@ -24,8 +24,8 @@
 | GSAP 动效实现与调优 | `$gsap-core`（tween、缓动、响应式）/ `$gsap-timeline`（多步编排）/ `$gsap-performance`（帧率与卡顿）按任务需要组合 | 实现取 core，多步编排取 timeline，性能问题取 performance；不引入第二套动画库 |
 | 已实现页面返工分流（三分判据） | 实现质量、局部替换 → 本仓 `$frontend-task` 直修；设计方向系统性变更 → 设计 lane `$design-task` 重开（含 DRIFT 反向对账） | 视觉/文案改动前先查 `docs/design/<特性>/` 定稿：定稿存在且实现偏离才记 `DRIFT.md`，无定稿不记、按普通实现质量处理 |
 | OpenAPI、请求、身份或权限 | `$api-design` + `$security-review` | 普通字段调整可只用项目 Skill；涉及信任边界时必须安全审查 |
-| 页面真实验收 | `$browser:control-in-app-browser` | 本地页面优先 Browser，不用 Computer Use 代替浏览器验证 |
-| 已接入接口页面的主流程 E2E（登录、权限拒绝、失败态、刷新持久化） | `$webapp-testing`（写 Python Playwright 脚本；`with_server.py` 管 dev server 生命周期，先 `--help` 再黑盒调用） | 运行时需本机 Python + playwright 包，缺失时报告不可用并回退 `$playwright-cli` 或人工浏览器验证；与上一行互补：快速目检走 Browser，可重复用例走脚本 |
+| 页面真实验收 | Codex：`$browser:control-in-app-browser`；Claude Code：chrome-devtools MCP（ecc 插件自带） | 本地页面优先真浏览器验证，不用 Computer Use 代替；交互证据以快照 uid 为准，不凭坐标猜 |
+| 已接入接口页面的主流程 E2E（登录、权限拒绝、失败态、刷新持久化） | `$webapp-testing`（写 Python Playwright 脚本；`with_server.py` 管 dev server 生命周期，先 `--help` 再黑盒调用） | 运行时需本机 Python + playwright 包，缺失时报告不可用并回退 chrome-devtools MCP 或人工浏览器验证；与上一行互补：快速目检走真浏览器，可重复用例走脚本 |
 | PR、Issue 或远端代码托管操作 | GitHub 插件 | 仅在用户要求远端读取或写入时使用；本地 Git 检查不需要插件 |
 | 项目图片批量压缩 | `$tinypng-compress` | 有损压缩，覆盖原图前确认；压缩产出入库路径以项目约定为准 |
 

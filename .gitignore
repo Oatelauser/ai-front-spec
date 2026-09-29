@@ -1,5 +1,4 @@
 /.serena/
-.playwright-cli/
 
 # 设计 lane 工作区（Stitch 同步产物，不入库）
 .stitch/

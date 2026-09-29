@@ -71,4 +71,4 @@ engineering: passed / failed / unverified
 
 ## 7. 浏览器证据和会话隔离
 
-使用 Browser/Playwright 或画像登记的等价能力进行真实页面验收。使用 `playwright-cli` 时必须在业务项目根目录运行，避免快照污染其他仓库；并使用命名会话 `-s=<task-id>` 隔离浏览器实例，避免并发任务抢占默认会话。若工具不支持 DPR、真机触屏或读屏播报，将对应项目记为 `unverified`，不能宣称已验证。
+使用 Browser/chrome-devtools MCP 或画像登记的等价能力进行真实页面验收。浏览器会话以目标页为唯一操作对象，不在无关页面残留状态；并发任务各用独立会话，避免抢占默认实例。若工具不支持 DPR、真机触屏或读屏播报，将对应项目记为 `unverified`，不能宣称已验证。

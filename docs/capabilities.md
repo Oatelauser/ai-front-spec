@@ -6,18 +6,18 @@
 
 ## 目录
 
-1. 内置技能（29，零安装）
+1. 内置技能（28，零安装）
 2. 宿主插件（可选）
 3. 宿主内置插件核对
 4. 宿主差异总览
 
-## 1. 内置技能（29，零安装）
+## 1. 内置技能（28，零安装）
 
 全部技能随本 Starter 分发在 `.agents/skills/`（Codex 与 Claude Code 双宿主同源，镜像见 `.claude/skills/`，字节一致——清单只列一次，宿主差异汇总见第 4 节），复制项目后即可发现，不需要安装命令。**名称冲突时以内置版本为准**，不覆盖用户级同名 Skill。
 
 自研 5 项：`project-workflow`、`project-profile`、`frontend-task`、`design-task`（专业 UI 原型设计 lane：设计系统先行、2–3 变体发散、定稿版本化归档）、`tinypng-compress`。
 
-Vendored 24 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。许可与修改记录见仓库根 `NOTICE`；机器可读基线（repo/SHA/快照日期）在仓库 toolkit.json 的 `vendored` 字段，配套升级器 `node scripts/update-vendored.mjs`（无参比对上游、`--diff` 评估变更×引用影响、`--rebaseline` 对账写基线、`--upgrade` 确认后覆盖并镜像校验）；也可从「上游」列手工取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
+Vendored 23 项，遵守**零修改原则**：vendored 目录与上游字节一致，升级 = 新快照纯覆盖。本仓适配只允许两种形式——附加文件（上游不存在的文件名，如 `product-design` 整包 vendor 时上游无根 SKILL.md，我们的适配层是纯附加，重 vendor 天然幸存）或外层文档/路由。许可与修改记录见仓库根 `NOTICE`；机器可读基线（repo/SHA/快照日期）在仓库 toolkit.json 的 `vendored` 字段，配套升级器 `node scripts/update-vendored.mjs`（无参比对上游、`--diff` 评估变更×引用影响、`--rebaseline` 对账写基线、`--upgrade` 确认后覆盖并镜像校验）；也可从「上游」列手工取最新快照覆盖 `.agents/skills/<目录>`，然后运行 `node .toolkit/scripts/sync-mirror.mjs` 重建镜像：
 
 | 技能（目录） | 上游 | 本仓说明 |
 | --- | --- | --- |
@@ -34,8 +34,7 @@ Vendored 24 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | `apple-design` | github.com/emilkowalski/skills | 2026-09-26 快照，MIT；对齐上游 HEAD（差异仅上游新增的 Initial Response 节） |
 | `compatibility-testing` | github.com/proffesor-for-testing/agentic-qe | 2026-09-17 快照，MIT；rebaseline 对账 = 上游 HEAD |
 | `mobile-ux-optimizer` | github.com/curiositech/some_claude_skills（原 erichowens/some-claude-skills 已 404，延续仓同 MIT） | 2026-09-25 快照，MIT；2026-09-25 补入延续仓新增的 `.claude-plugin/plugin.json` 后对齐上游 HEAD |
-| `playwright-cli` | github.com/microsoft/playwright-cli | 2026-09-25 回归上游 verbatim（官方手册 + 10 份 references，安装兜底见其 SKILL.md §Installation）；基线 74354ecc = tag v0.1.21 = npm 工具 0.1.21 版本配对；旧改编版退役；附加仅宿主元数据/图标/许可 |
-| `webapp-testing` | github.com/anthropics/skills | 2026-09-25 快照，Apache-2.0（目录内 LICENSE.txt）；Python Playwright 功能测试工具包（`with_server.py` 管 dev server 生命周期），服务"已接入接口页面"的主流程/失败/权限/刷新持久化 E2E（见任务路由"主流程 E2E"行）；运行时需本机 Python + playwright 包，缺失时报告不可用并回退 `$playwright-cli` 或人工浏览器验证；2026-09-26 实测：Python 3.14 无 playwright 轮子的机器上，等价回退 = 临时目录 `npm i playwright-core` + `chromium.launch({ channel: 'chrome' })` 驱动系统已装 Chrome |
+| `webapp-testing` | github.com/anthropics/skills | 2026-09-25 快照，Apache-2.0（目录内 LICENSE.txt）；Python Playwright 功能测试工具包（`with_server.py` 管 dev server 生命周期），服务"已接入接口页面"的主流程/失败/权限/刷新持久化 E2E（见任务路由"主流程 E2E"行）；运行时需本机 Python + playwright 包，缺失时报告不可用并回退 chrome-devtools MCP 或人工浏览器验证；2026-09-26 实测：Python 3.14 无 playwright 轮子的机器上，等价回退 = 临时目录 `npm i playwright-core` + `chromium.launch({ channel: 'chrome' })` 驱动系统已装 Chrome |
 | `ui-ux-pro-max` | github.com/nextlevelbuilder/ui-ux-pro-max-skill | 2026-09-27 快照，MIT；本地 CSV+BM25 检索的设计决策引擎（34 布局模式/79 风格/192 配色/74 字体配对），运行时依赖本机 Python 3，缺失时报不可用并降级静态清单+LLM 选择 |
 | `extract-static-html` / `upload-to-stitch` | github.com/google-labs-code/stitch-skills | 2026-09-28 快照，Apache-2.0；frontmatter 实名 `stitch::extract-static-html` / `stitch::upload-to-stitch`；缺口能力——运行中网页→自包含静态 HTML（Puppeteer + CSS/图片 base64 内联，认证钩子）、本地资产 / 大 DESIGN.md 上传 Stitch（>5KB 走 base64 直传 REST 绕 MCP token 上限）；与四陷阱无交集，design-task 编辑/下载纪律不受影响；官方插件其余技能经评估不采用（重叠层实测有害、实施转换层路线不符） |
 
@@ -52,6 +51,7 @@ Vendored 24 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | Product Design | Codex：`product-design`（OpenAI 官方插件市场，Plugin Management 搜索）。Claude Code：无官方插件，无需安装 | 设计探索、视觉复刻、UX 审计、原型（image-to-code 等子技能依赖 OpenAI 宿主能力） | **Starter 已内置整包 vendor 拷贝**（见第 1 节），方法论/audit/测量/清册部分全宿主可用；Codex 装官方插件解锁宿主能力依赖的子技能，装有插件后以插件版为准（`$product-design:index` 命名空间） |
 | Impeccable | 双宿主统一 `npx impeccable`（2026-09-28 评估裁定：插件卸载、四命令 npx 零损失，npm 引擎 4.1.0 实测；插件含 24 命令+agents 未接入路由）；仅当需要编辑时 hook 再选装插件（`/plugin` 市场） | 确定性设计质量检查：61 条无 LLM 规则。已接四命令——`detect` 实现后自查、`critique` 验收轮对稿机器意见、`polish` 样式微调精修清单、`audit` 存量体检（可选）；有意不接 craft/init（双契约冲突）、live/bolder/animate（与既有技能重叠） | 编辑时拦截（写入瞬间检查）是它的核心能力，属进阶自选——Claude `settings.json` / Codex `.codex/hooks.json` 手动接，接法见其官方指引，本仓安装器永不自动修改宿主配置；未接 hook 走既有验收矩阵 + `$web-design-guidelines` 环路 |
 | Stitch MCP | Claude Code：`claude mcp add stitch --transport http https://stitch.googleapis.com/mcp --header "X-Goog-Api-Key: <key>" -s user`。Codex 及其他 MCP 宿主：接入同一远程端点 `https://stitch.googleapis.com/mcp`，请求头带 `X-Goog-Api-Key` | 设计 lane（`$design-task`）的云端出稿引擎：生成 / 编辑 / 变体 / 截图下载 / 设计系统资产化 | key 从 stitch.withgoogle.com → Settings → API Keys 生成（**不入库不入日志**）；可选增强——未配置时 lane 响亮降级为 agent 自写 HTML（继承 SYSTEM.md，见 design-task 第 8 节，该节"配置指引"即本行）；HTML 定稿获取走 design-task 第 5 节决策流 |
+| chrome-devtools MCP（Google 官方 chrome-devtools-mcp） | Claude Code：ecc 插件自带（用户级插件，随 ecc 在装）。Codex：接同款官方 MCP 端点 | 浏览器页面验收主力：导航 / 截图 / a11y 快照（uid 定位）/ 点击填表 / DOM 求值 / 控制台 / 网络 / 性能追踪 | 2026-09-29 裁定为 Claude Code 侧首选浏览器能力（双实测：盲测全程 + 日常验证；同日 playwright-cli vendored 退役）；`webapp-testing` 仍管脚本化 E2E；交互证据以快照 uid 为准，不凭坐标猜 |
 
 安装规则：
 
@@ -74,7 +74,7 @@ Vendored 24 项，遵守**零修改原则**：vendored 目录与上游字节一�
 
 ## 4. 宿主差异总览
 
-第 1 节 29 个内置技能双宿主字节一致（`.agents` 源 + `.claude` 镜像），无差异。以下逐项对照，规则：**缺失项必附替代，不打裸 ❌**。精确安装命令见第 2 节。
+第 1 节 28 个内置技能双宿主字节一致（`.agents` 源 + `.claude` 镜像），无差异。以下逐项对照，规则：**缺失项必附替代，不打裸 ❌**。精确安装命令见第 2 节。
 
 | 能力 | Codex | Claude Code |
 | --- | --- | --- |
@@ -83,6 +83,6 @@ Vendored 24 项，遵守**零修改原则**：vendored 目录与上游字节一�
 | Product Design Plugin | ✅ OpenAI 官方插件（解锁 `image-to-code` 等宿主依赖子技能） | ❌ 无插件；替代：`$product-design` Skill（内置整包 vendor）<br>　`image-to-code` 场景走 `$frontend-task` Skill source=screenshot 或 `$design-task` Skill Stitch 出稿 |
 | Impeccable | ✅ npx CLI（`npx impeccable`，全命令） | ✅ npx CLI（2026-09-28 起统一同款路径；插件仅编辑时 hook 场景可选装） |
 | Stitch MCP | ✅ Stitch MCP（`https://stitch.googleapis.com/mcp` + `X-Goog-Api-Key` 头） | ✅ Stitch MCP（同端点同头；未配置时双宿主同降级 `$design-task` Skill 自写 HTML） |
-| 本地页面验证 | ✅ 宿主内置 `browser@openai-bundled`（`$browser:control-in-app-browser`） | ❌ `$webapp-testing` Skill 或 `$playwright-cli` Skill |
+| 本地页面验证 | ✅ 宿主内置 `browser@openai-bundled`（`$browser:control-in-app-browser`） | ❌ chrome-devtools MCP（ecc 插件自带）+ `$webapp-testing` Skill（脚本化 E2E） |
 | 用户浏览器操作 | ✅ 宿主内置 `chrome@openai-bundled` | ❌ `$design-task` Skill 第 5 节决策流①（弹用户默认浏览器 + agent 监听下载目录） |
 | 桌面应用操作 | ✅ 宿主内置 `computer-use@openai-bundled` | ❌ 无等价：用户人工执行，按第 3 节状态机如实记录 |

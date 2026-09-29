@@ -14,7 +14,7 @@ Version and commit facts live in 根目录 manifest; this table explains purpose
 | `apple-design` | Physical-feeling and interruptible motion |
 | `gsap-core` / `gsap-performance` / `gsap-timeline` | GSAP API, performance, and sequencing |
 | `tinypng-compress` | Image compression |
-| `playwright-cli` / `webapp-testing` | Browser automation and real UI verification |
+| `webapp-testing` (+ chrome-devtools MCP) | Browser automation and real UI verification |
 | `compatibility-testing` | Cross-browser, platform, and device validation |
 | `karpathy-guidelines` | Surgical, verifiable implementation |
 | `api-design` | REST API design |

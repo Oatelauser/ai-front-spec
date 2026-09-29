@@ -729,7 +729,7 @@ const DEAD_REF_SKILL_EXEMPTIONS = new Set(['grill-me', 'bootstrap-project'])
 // stitch-skills 两技能（2026-09-28 vendor）SKILL.md 含上游示例 URL（/_next/image、/settings/profile 等应用路由示例），非仓内路径。
 const DEAD_REF_FILE_EXEMPTIONS = [
   /^\.agents\/skills\/product-design\//,
-  /^\.agents\/skills\/(compatibility-testing|tdd-workflow|react-best-practices|playwright-cli|ui-ux-pro-max|extract-static-html|upload-to-stitch)\//,
+  /^\.agents\/skills\/(compatibility-testing|tdd-workflow|react-best-practices|ui-ux-pro-max|extract-static-html|upload-to-stitch)\//,
 ]
 // 运行态产物：init 生成前不存在，文档引用合法。
 const DEAD_REF_SKIP_PATHS = new Set(['.toolkit/profile-proposal.json'])

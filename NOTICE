@@ -15,7 +15,6 @@ ai-front-spec 按 MIT 许可发布（LICENSE）。
 | karpathy-guidelines | github.com/multica-ai/andrej-karpathy-skills | 2026-09-24 | MIT（frontmatter 声明，仓库无 LICENSE 文件） | 无（2026-09-26 核实为 verbatim 拷贝并建基线 2c606141；原"自研/本仓自撰"标注有误。内容源为 Andrej Karpathy 公开帖，上游 SKILL.md 已注明） |
 | web-design-guidelines | github.com/vercel-labs/agent-skills（内容源 github.com/vercel-labs/web-interface-guidelines） | 2026-09-23 | MIT | 无修改：SKILL.md verbatim（在线拉最新规则）；附加快照 `command.md` 来自内容源仓库，作离线回退，路由层（task-routing）指示其使用时机 |
 | react-best-practices | github.com/vercel-labs/agent-skills | 2026-09-23 | MIT（frontmatter 声明，仓库无 LICENSE 文件） | 无 |
-| playwright-cli | github.com/microsoft/playwright-cli | 2026-09-25 | Apache-2.0 © Microsoft | 无修改：2026-09-25 弃旧改编版（改名/wrapper/自写参考）回归上游 verbatim；基线 74354ecc = 上游 tag v0.1.21 = npm 工具 @playwright/cli 0.1.21，技能/工具版本配对；附加仅宿主元数据、图标与许可 |
 | webapp-testing | github.com/anthropics/skills | 2026-09-25 | Apache-2.0（目录内 LICENSE.txt）© 2026 Anthropic, PBC | 无：verbatim 快照，基线 33375500 |
 | gsap-core / gsap-performance / gsap-timeline | github.com/greensock/gsap-skills | 2026-09-17 | MIT © 2026 GreenSock | 无（rebaseline 对账 = 上游 HEAD） |
 | compatibility-testing | github.com/proffesor-for-testing/agentic-qe | 2026-09-17 | MIT © 2025 Agentic QE Contributors | 无（rebaseline 对账 = 上游 HEAD） |

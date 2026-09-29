@@ -14,7 +14,7 @@
 | `apple-design` | 物理感动效和可打断交互 |
 | `gsap-core` / `gsap-performance` / `gsap-timeline` | GSAP 基础、性能和时间线 |
 | `tinypng-compress` | 图片压缩 |
-| `playwright-cli` / `webapp-testing` | 浏览器自动化和真实 UI 验收 |
+| `webapp-testing`（+ chrome-devtools MCP） | 浏览器自动化和真实 UI 验收 |
 | `compatibility-testing` | 跨浏览器、平台和设备验证 |
 | `karpathy-guidelines` | 精简、可验证、避免过度实现 |
 | `api-design` | REST API 设计 |
