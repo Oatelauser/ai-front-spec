@@ -290,6 +290,13 @@ if (mode === 'diff' || mode === 'rebaseline' || mode === 'upgrade') {
     if (entry.pkg) {
       if (!bundleManifest) {
         const pkg = toolkit.packages?.[entry.pkg]
+        if (pkg?.npmDirect) {
+          console.log(`· ${skill}：npm 直装包（${entry.pkg} 基线 ${pkg?.version ?? '?'}）。升级为手工整目录替换流程：`)
+          console.log(`  1. 临时目录 npm i ${pkg.npm}@latest --omit=dev --no-audit --no-fund`)
+          console.log(`  2. 用 node_modules/${pkg.npm} 整目录覆盖 ${entry.path ?? 'tools/mcp/' + skill}/（版本以目录内 package.json 为准）`)
+          console.log('  3. 更新 toolkit.json packages.<包>.version → 门禁 → 提交发版')
+          continue
+        }
         console.log(`· ${skill}：npm 通道（${entry.pkg} 基线 ${pkg?.version ?? '?'}）。升级为手工快照流程：`)
         console.log(`  1. 宿主插件市场更新 ${entry.pkg} 后，取本机缓存新版本目录（如 ~/.claude/plugins/cache/claude-plugins-official/${entry.pkg}/<新版本>/）`)
         console.log(`  2. 覆盖拷贝对应技能目录到 .agents/skills/（同包技能：${Object.entries(vendored).filter(([, e]) => e.pkg === entry.pkg).map(([s]) => s).join('、')}）`)

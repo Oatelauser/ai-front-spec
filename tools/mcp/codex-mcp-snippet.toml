@@ -1,0 +1,8 @@
+# Codex CLI MCP 配置片段——chrome-devtools（项目 vendor 内置版）
+# 用法：并入 ~/.codex/config.toml（Codex 的 MCP 配置在用户级）。
+# 路径说明：相对路径在「仓库根启动 codex」时成立；全局配置请把 args[0] 换成绝对路径，
+# 如 D:/workspace/CC/ai-front-spec/tools/mcp/chrome-devtools-mcp/build/src/index.js
+
+[mcp_servers.chrome-devtools]
+command = "node"
+args = ["tools/mcp/chrome-devtools-mcp/build/src/index.js", "--channel=chrome"]
