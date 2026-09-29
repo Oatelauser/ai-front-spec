@@ -23,6 +23,7 @@
 | [impeccable 插件卸载](https://github.com/Oatelauser/ai-front-spec/issues/11) | 四命令统一 `npx`（与插件解耦）；插件仅编辑时 hook 场景可选装 | 更新 [#3](https://github.com/Oatelauser/ai-front-spec/issues/3) 行的"可选外部登记"表述：插件常驻的 24 命令 + 5 agents 名册成本不值，四命令验证证据本就是 npx 路径 |
 | [design-task 流程修订](https://github.com/Oatelauser/ai-front-spec/issues/11) | 双模式显式声明（`auto`/交互，不做在场推断）；定稿刚性兜底链 ⓪→①→②→③；冻结循环直到满意（多轮无上限）；候选定稿不阻塞、事后审阅转正 | 盲测（零内部信息 subagent）+ 同 brief 双路径对比实测后定型；分发验证再抓 MCP 启动缺陷并修 |
 | [页面标注反馈技能](https://github.com/Oatelauser/ai-front-spec/issues/11) | 独立 skill `$page-annotate`（自研第 6 项）：注入式页面标注器 v2.6.2（区域唯一原语、吸附+Alt 滚轮爬梯、提交/读回/已读变淡、单例 destroy 升级）+ 双轨路由（隔离轨默认 / 用户轨 `chrome-devtools-user` autoConnect 四步开关、fail-loud 不静默换轨）；design-task 冻结循环与 frontend-task 验收轮按 §5 契约共用；localStorage 持久化不做（不会自动删除，用户不接受残留，草案入技能 §7 备查） | 当日 14 轮迭代实测定型（v1 元素点击→v2 区域原语；幽灵监听器事故催生 destroy 单例纪律；fixed→文档坐标、滚动跟随、就近提示等修复均有实测证据）；`--browserUrl` 对真实 profile 死路（Chrome 136 安全变更）已查证入档 |
+| [标注交互模型重构](https://github.com/Oatelauser/ai-front-spec/issues/11) | page-picker v2.7.0（2026-09-29）交互模型重构为对象化语法：加删手势彻底分离——单击/拖拽只负责标注（嵌套标注共存、编号创建时定终身），删除走显式通道（悬停标注右上角 ✕ / `Delete`/`Backspace`，Esc 取消拖拽中的框，撤销/清空兜底）；吸附标注锚定元素防漂移（resize/滚动/read() 重画，read() 新增 anchorLost fail-loud）；修复轮幽灵对照（reload 后 `__picker.ghost(上轮rects)` 虚线重画、提交自动清） | 弃用"点击标注区域内取消/切换"机制：双击振荡、嵌套误删、拖拽路径绕过命中检测三个根因；依据 GitHub 同类方案（annotorious / tldraw / markerjs2 / hypothesis）均为对象化 + 显式删除语法 |
 
 ## 3. 有意不接与豁免
 
