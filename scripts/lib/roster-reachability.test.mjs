@@ -52,3 +52,28 @@ test('toolkit.json skills 数组与 .agents/skills/ 实际目录一致', () => {
   assert.deepEqual(onlyRoster, [], `roster 声明但目录缺失（补 vendored 或删 roster 项）：${onlyRoster.join('、')}`)
   assert.deepEqual(onlyDirs, [], `目录存在但未登记进 roster（补登记或删目录）：${onlyDirs.join('、')}`)
 })
+
+test('capabilities 头部计数与实际一致（目录数/vendored 数，防手维护漂移）', () => {
+  const caps = readFileSync(resolve(root, 'docs/capabilities.md'), 'utf8')
+  const onDisk = readdirSync(resolve(root, '.agents/skills'), { withFileTypes: true })
+    .filter((entry) => entry.isDirectory()).length
+  const vendoredSkills = Object.keys(toolkit.vendored).filter((name) => toolkit.skills.includes(name)).length
+  const builtinDeclared = [...caps.matchAll(/内置技能（(\d+)，零安装/g)].map((m) => Number(m[1]))
+  assert.ok(
+    builtinDeclared.length >= 2,
+    `capabilities 内置技能计数应至少出现 2 处（目录 + 标题），实测 ${builtinDeclared.length} 处`,
+  )
+  for (const declared of builtinDeclared) {
+    assert.equal(
+      declared,
+      onDisk,
+      `capabilities 内置技能计数 ${declared} ≠ .agents/skills 实际目录 ${onDisk}（手维护漂移，同步 TOC 与标题）`,
+    )
+  }
+  const declaredVendored = /Vendored (\d+) 项/.exec(caps)?.[1]
+  assert.equal(
+    Number(declaredVendored),
+    vendoredSkills,
+    `capabilities vendored 计数 ${declaredVendored} ≠ 实际 ${vendoredSkills}（roster 内有 vendored 登记的技能数）`,
+  )
+})
