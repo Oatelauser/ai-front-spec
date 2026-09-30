@@ -87,26 +87,26 @@
     "tdd-workflow": {
       "repo": "https://github.com/affaan-m/everything-claude-code",
       "path": "skills/tdd-workflow",
-      "sha": "e482e579415fde18357cafce70f177ae19fd7f03",
-      "snapshot": "2026-09-25"
+      "sha": "d3b8a3e908904e242ed2dbe66af62cca71131419",
+      "snapshot": "2026-09-30"
     },
     "api-design": {
       "repo": "https://github.com/affaan-m/everything-claude-code",
       "path": "skills/api-design",
-      "sha": "e482e579415fde18357cafce70f177ae19fd7f03",
-      "snapshot": "2026-09-23"
+      "sha": "d3b8a3e908904e242ed2dbe66af62cca71131419",
+      "snapshot": "2026-09-30"
     },
     "security-review": {
       "repo": "https://github.com/affaan-m/everything-claude-code",
       "path": "skills/security-review",
-      "sha": "e482e579415fde18357cafce70f177ae19fd7f03",
-      "snapshot": "2026-09-25"
+      "sha": "d3b8a3e908904e242ed2dbe66af62cca71131419",
+      "snapshot": "2026-09-30"
     },
     "frontend-design-direction": {
       "repo": "https://github.com/affaan-m/everything-claude-code",
       "path": "skills/frontend-design-direction",
-      "sha": "e482e579415fde18357cafce70f177ae19fd7f03",
-      "snapshot": "2026-09-23"
+      "sha": "d3b8a3e908904e242ed2dbe66af62cca71131419",
+      "snapshot": "2026-09-30"
     },
     "frontend-design": {
       "repo": "https://github.com/anthropics/skills",
@@ -178,8 +178,8 @@
     },
     "compatibility-testing": {
       "repo": "https://github.com/proffesor-for-testing/agentic-qe",
-      "snapshot": "2026-09-17",
-      "sha": "ffc0c6a5173874070bb2d07b29e9ae2a7383ed55",
+      "snapshot": "2026-09-30",
+      "sha": "e8909fdda00e0ac9bb2d23988eea3c548b52350d",
       "path": "assets/skills/compatibility-testing"
     },
     "mobile-ux-optimizer": {

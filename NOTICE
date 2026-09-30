@@ -8,8 +8,8 @@ ai-front-spec 按 MIT 许可发布（LICENSE）。
 
 | 目录 | 上游 | 快照 | 许可 | 本仓修改 |
 |---|---|---|---|---|
-| api-design / security-review / frontend-design-direction | github.com/affaan-m/everything-claude-code | 2026-09-23 | MIT（仓库级） | 无 |
-| tdd-workflow | github.com/affaan-m/everything-claude-code | 2026-09-25 | MIT（仓库级） | 无（2026-09-25 重 vendor：同上游 e482e579，SKILL.md 1 行更新） |
+| api-design / security-review / frontend-design-direction | github.com/affaan-m/everything-claude-code | 2026-09-30 | MIT（仓库级） | 无（2026-09-30 对齐上游 d3b8a3e9：内容零变化，仅登记 SHA 前移） |
+| tdd-workflow | github.com/affaan-m/everything-claude-code | 2026-09-30 | MIT（仓库级） | 无（2026-09-30 升至上游 d3b8a3e9：SKILL.md description 1 行更新，触发语义等价并扩「先写失败测试」触发点） |
 | frontend-design | github.com/anthropics/skills | 2026-09-23 | Apache-2.0（目录内 LICENSE.txt） | 无 |
 | taste-skill | github.com/leonxlnx/taste-skill | 2026-09-23 | MIT（仓库级） | 无 |
 | karpathy-guidelines | github.com/multica-ai/andrej-karpathy-skills | 2026-09-24 | MIT（frontmatter 声明，仓库无 LICENSE 文件） | 无（2026-09-26 核实为 verbatim 拷贝并建基线 2c606141；原"自研/本仓自撰"标注有误。内容源为 Andrej Karpathy 公开帖，上游 SKILL.md 已注明） |
@@ -17,7 +17,7 @@ ai-front-spec 按 MIT 许可发布（LICENSE）。
 | react-best-practices | github.com/vercel-labs/agent-skills | 2026-09-23 | MIT（frontmatter 声明，仓库无 LICENSE 文件） | 无 |
 | webapp-testing | github.com/anthropics/skills | 2026-09-25 | Apache-2.0（目录内 LICENSE.txt）© 2026 Anthropic, PBC | 无：verbatim 快照，基线 33375500 |
 | gsap-core / gsap-performance / gsap-timeline | github.com/greensock/gsap-skills | 2026-09-17 | MIT © 2026 GreenSock | 无（rebaseline 对账 = 上游 HEAD） |
-| compatibility-testing | github.com/proffesor-for-testing/agentic-qe | 2026-09-17 | MIT © 2025 Agentic QE Contributors | 无（rebaseline 对账 = 上游 HEAD） |
+| compatibility-testing | github.com/proffesor-for-testing/agentic-qe | 2026-09-30 | MIT © 2025 Agentic QE Contributors | 无（2026-09-30 升至上游 e8909fdd：evals 测试模型名 sonnet-4-6 → sonnet-5） |
 | mobile-ux-optimizer | github.com/curiositech/some_claude_skills（延续仓；原 erichowens/some-claude-skills 已 404） | 2026-09-25 | MIT © 2025 Erich Owens | 无（2026-09-25 补入延续仓新增的 `.claude-plugin/plugin.json` 后对齐上游 HEAD） |
 | apple-design | github.com/emilkowalski/skills | 2026-09-26 | MIT © 2026 Emil Kowalski | 无（2026-09-26 对齐上游 HEAD：吸收其新增的 Initial Response 节，其余内容原快照已一致） |
 | product-design | OpenAI product-design 插件 v0.1.52 本机快照（无公开源码仓） | 2026-09-23 | 无许可文件（private:true，默认全保留）——用户特赦：2026-09-24 裁定接受公开分发，2026-09-25 复核改无限期（非商用），风险自担 | 顶层薄路由 SKILL.md 自写，2026-09-24 增补「宿主能力边界」节 |
