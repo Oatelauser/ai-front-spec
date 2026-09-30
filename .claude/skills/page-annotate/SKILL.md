@@ -8,24 +8,34 @@ description: 页面标注反馈通道（"指哪打哪"）：用户在浏览器�
 
 用户不想用文字描述页面问题，想在页面上直接圈划指认。本技能提供：页面标注器（注入式）+ 双轨浏览器路由 + 读回协议。
 
-## 1. 双轨路由
+## 1. 双轨路由（双宿主）
 
-| 轨 | MCP 入口 | 适用 | 前置条件 |
-| --- | --- | --- | --- |
-| 隔离轨（默认） | `chrome-devtools` | agent 打开本地原型/开发服务器页面让用户标注 | 零前置，自动弹可见 Chrome 窗口 |
-| 用户轨 | `chrome-devtools-user`（`--autoConnect`） | 用户自己 Chrome 里开着的真实页面（内网系统、已登录页） | 用户在 `chrome://inspect/#remote-debugging` 开 toggle → 连入时批准 → 用完关 toggle |
+| 轨 | Claude Code 通道 | Codex 通道 | 适用 | 前置条件 |
+| --- | --- | --- | --- | --- |
+| 隔离轨（默认） | `chrome-devtools` MCP | `node assets/cdp-bridge.mjs launch --url <url>`（可见 Chrome + CDP evaluate，零依赖 Node ≥22） | agent 打开本地原型/开发服务器页面让用户标注 | Claude 零前置自动弹窗；Codex 需本机 Chrome + Node ≥22 |
+| 用户轨 | `chrome-devtools-user`（`--autoConnect`） | 同一 `cdp-bridge.mjs`：`user-port` 取端口 → `eval/inject/read --port` | 用户自己 Chrome 里开着的真实页面（内网系统、已登录页） | 同一套 toggle 四步（`chrome://inspect/#remote-debugging`）；Codex 侧**待实测** |
 
-- 轨道选择听用户的话锋："我的浏览器/真实页面/要登录的页面"→用户轨；其余默认隔离轨。含糊时问一句。
-- 用户轨 toggle 未开时调用会**响亮报错**（提示去开 toggle），这是特性：**绝不静默换轨**，防止用户以为在真实页、实际在隔离窗口。
+- 轨道选择听用户的话锋（宿主无关）："我的浏览器/真实页面/要登录的页面"→用户轨；其余默认隔离轨。含糊时问一句。
+- 用户轨 toggle 未开时两条宿主通道都会**响亮报错**（提示去开 toggle），这是特性：**绝不静默换轨**，防止用户以为在真实页、实际在隔离窗口。
+- Codex 通道为 2026-09-30 实测裁定：宿主 browser 工具不注入 exec 会话，shell+CDP 脚本即正式通道（依据见 DECISIONS「Codex 标注通道 C 转正」）。
 - 注入式标注器是只读 DOM 装饰：不改变页面行为、不发送数据；用户轨=真实身份，agent 在真实页面上只做读取与展示，任何写操作需用户明示。
 
-## 2. 注入协议
+## 2. 注入协议（通道无关三步）
+
+任意能「打开页面 + evaluate」的浏览器通道皆可承载，三步等价：**打开目标页 → evaluate 注入 `assets/page-picker.js` 全文（返回值应为 `'installed-v2.7.2'`）→ evaluate `__picker.read()` 读回**。脚本本体是**单例**：重复注入自动 destroy 旧实例并迁移遗留标注（含已读状态），无幽灵监听器。**刷新归 agent 管**：修改代码 → reload → 重新注入 → 请用户验收；每轮修复循环结束（reload 前）先 `read()` 消化未读标注。
+
+### Claude Code（chrome-devtools MCP）
 
 1. Read `assets/page-picker.js`，以 `() => { <文件内容> }` 形式 `evaluate_script` 注入目标页（pageId）；注入及一切带副作用的模拟脚本必须传 `waitForStableDom: false`，否则脚本会被默认稳定等待机制重跑（注入跑 N 遍、编号虚增）。
-2. 脚本是**单例**：重复注入自动 destroy 旧实例并迁移遗留标注（含已读状态），无幽灵监听器。
-3. **刷新归 agent 管**：修改代码 → reload 页面 → 重新注入 → 请用户验收。用户手动刷新会清掉标注器，发现后重新注入即可（未读标注有 beforeunload 守卫兜底确认）。
-4. 每轮修复循环结束（reload 前）先 `read()` 消化未读标注。
-5. **修复轮对照**：reload 并重新注入后，立即 `evaluate_script` 调 `__picker.ghost(上轮 read() 的 marks[].rect)`，上一轮标注以灰色虚线重画（近似坐标）供用户对照验收；「提交」自动清除，HUD 可开关。
+2. **修复轮对照**：reload 并重新注入后，立即 `evaluate_script` 调 `__picker.ghost(上轮 read() 的 marks[].rect)`，上一轮标注以灰色虚线重画（近似坐标）供用户对照验收；「提交」自动清除，HUD 可开关。
+
+### Codex（assets/cdp-bridge.mjs，零依赖 Node ≥22）
+
+1. `node .agents/skills/page-annotate/assets/cdp-bridge.mjs launch --url <url>` → 输出 `{port, targetId}`（可见 Chrome、一次性 profile；脚本统一 Page.navigate 开页——`/json/new` 带 url 对 `file://` 拒载、新 profile 首启 intro 抢 URL，两个实测坑均已内置规避）。
+2. `node …/cdp-bridge.mjs inject --port <port> --file …/assets/page-picker.js` → 输出 `'installed-v2.7.2'`（脚本自动 IIFE 包装顶层 `return`——实测坑：裸 evaluate 会 SyntaxError）。
+3. 用户标注后 `node …/cdp-bridge.mjs read --port <port>` → read() JSON；`eval --expr` 可执行任意补充诊断。
+4. 刷新循环：`eval --expr "location.reload()"` → 重新 inject；修复轮对照：`eval --expr "__picker.ghost(<上轮rects JSON>)"`。
+5. 用户轨：用户开 toggle 后 `user-port` 取端口，其余命令同上（此路径待实测）。
 
 ## 3. 标注交互模型（告知用户的话术）
 
@@ -60,7 +70,7 @@ description: 页面标注反馈通道（"指哪打哪"）：用户在浏览器�
 ## 6. 降级与边界
 
 - **仅交互模式**：触发条件均含真实用户在场（用户的手产生标注），`auto` 模式 / subagent / CI 会话**不触发、不阻塞**，验收自动落回既有通道（验收矩阵、快照 uid 断言、impeccable、`$webapp-testing`）。agent 自验有自己的工具，不需要也不应模拟用户标注。
-- MCP 浏览器不可用时降级为**静态截图标注**：发截图给用户，用户画框贴回，agent 按快照 uid 对账元素。
+- 通道浏览器不可用（MCP 失联或 cdp-bridge 启动失败）时降级为**静态截图标注**：发截图给用户，用户画框贴回，agent 按快照 uid 对账元素。
 - 只解决**静态视觉反馈**；流程/交互态问题（点击后跳转错等）仍走文字描述。
 - 桌面鼠标交互；touch 不支持。
 

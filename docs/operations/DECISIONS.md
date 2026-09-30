@@ -48,3 +48,4 @@
 | --- | --- | --- |
 | 2026-09-29 | 删除全部英文镜像文档（9 个 `.en.md`）与双语同步单测 `readme-bilingual.test.mjs`，仓库改单语文档 | 双份维护成本高、同步易漂移；`check-ai-guidance` 对 `.en.md` 均为存在性守卫，删除零破坏（恢复路径 = git 历史） |
 | 2026-09-29 | 运维文档按读者分流：`OPERATIONS.md` 拆为 `INSTALL.md`（安装手册，使用者）+ `OPERATIONS.md`（运维手册，维护者）；GitHub CI 说明由 UPGRADING.md 移入运维手册；README 最短路径同步瘦身为纯用户导航 | 原「Starter 安装与日常运维」混合两类读者，用户被迫路过维护者内容（自检、改 Skill、CI）；`vendored-check.yml` Issue 文案死引用（指向 README 不存在的章节）一并修正 |
+| 2026-09-30 | `$page-annotate` Codex 通道裁定 C 转正：技能自带零依赖 `cdp-bridge.mjs`（可见 Chrome + CDP evaluate，Node ≥22）为 Codex 正式通道；宿主内置 browser 插件出局（exec 会话工具不注入）；config.toml 注册 MCP 仅作可选配（安装器永不自动改宿主配置） | codex exec 0.158 实测：模型仅 `functions.exec_command`，shell+CDP 即兴全链路走通（可见窗口/注入/读回），4/11 次排错证明必须固化确定性脚本而非依赖模型即兴拼装 |
