@@ -42,7 +42,13 @@ Starter 与内置 Skill 的升级见 [升级手册](UPGRADING.md)。
 
 - **29 项内置 Skill 随安装自带，无任何安装命令**——不要为它们找安装方式，装完即用。
 - **下表 6 项才是可选插件**：按需安装对应能力，不装只是少该项，其余照常工作。
-- **两个内置 Skill 有可选运行时依赖**：`webapp-testing` 需本机 Python + playwright，`ui-ux-pro-max` 需 Python 3；缺失时如实报告并降级，不会静默失败。
+
+个别内置 Skill 另有可选运行时依赖——不是插件、没有安装命令，缺的只是本机环境，缺失时如实报告并降级，不会静默失败：
+
+| 内置 Skill | 可选运行时依赖 | 何时需要 |
+| --- | --- | --- |
+| `webapp-testing` | 本机 Python + playwright | 用它对本地 Web 应用做浏览器自动化验收 |
+| `ui-ux-pro-max` | Python 3（无外部依赖） | 用它检索内置 UI/UX 数据（运行 search.py） |
 
 插件细节、降级路径和安装状态机见 [能力安装清单](../capabilities.md)。
 
