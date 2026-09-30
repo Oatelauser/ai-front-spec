@@ -38,7 +38,13 @@ Starter 与内置 Skill 的升级见 [升级手册](UPGRADING.md)。
 
 ## 5. 🧩 可选插件安装总览
 
-除下表 6 项可选插件外，其余 29 项内置 Skill 随安装自带，无任何安装命令。个别内置 Skill 有可选运行时依赖（`webapp-testing` 需本机 Python + playwright、`ui-ux-pro-max` 需 Python 3），缺失时如实报告并降级。插件细节、降级路径和安装状态机见 [能力安装清单](../capabilities.md)。
+本节只讲需要动手的增量；使用本 Starter 的绝大部分能力不需要安装任何东西：
+
+- **29 项内置 Skill 随安装自带，无任何安装命令**——不要为它们找安装方式，装完即用。
+- **下表 6 项才是可选插件**：按需安装对应能力，不装只是少该项，其余照常工作。
+- **两个内置 Skill 有可选运行时依赖**：`webapp-testing` 需本机 Python + playwright，`ui-ux-pro-max` 需 Python 3；缺失时如实报告并降级，不会静默失败。
+
+插件细节、降级路径和安装状态机见 [能力安装清单](../capabilities.md)。
 
 | 能力 | 用途 | Claude Code | Codex | 备注 |
 | --- | --- | --- | --- | --- |
