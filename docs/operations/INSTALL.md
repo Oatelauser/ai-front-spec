@@ -2,13 +2,13 @@
 
 面向把本 Starter 安装到自己项目的使用者；维护本仓库看 [运维手册](OPERATIONS.md)。
 
-## 1. 环境要求
+## 1. 🧰 环境要求
 
 - Node.js >= 20。
 - Git 可用。
 - Claude Code 或 Codex 任一宿主，且已登录。
 
-## 2. 安装 Starter
+## 2. 📦 安装 Starter
 
 ### 方式一：命令安装
 
@@ -28,15 +28,15 @@ node scripts/build-starter.mjs --target <你的项目目录>
 
 GitHub 页面 Code → Download ZIP，解压后在解压目录内运行方式一的同一命令。适合不方便 `git clone` 的环境。
 
-## 3. 装完之后
+## 3. ▶️ 装完之后
 
 Codex 自动发现 `.agents/skills/`，Claude Code 自动发现 `.claude/skills/`，装完即用无需注册。首次使用先运行 `$project-profile` 初始化项目画像，再按 [README](../../README.md) 入口表选择任务。
 
-## 4. 升级
+## 4. 🔄 升级
 
 Starter 与内置 Skill 的升级见 [升级手册](UPGRADING.md)。
 
-## 5. 可选插件安装总览
+## 5. 🧩 可选插件安装总览
 
 除下表 6 项可选插件外，其余 29 项内置 Skill 随安装自带，无任何安装命令。个别内置 Skill 有可选运行时依赖（`webapp-testing` 需本机 Python + playwright、`ui-ux-pro-max` 需 Python 3），缺失时如实报告并降级。插件细节、降级路径和安装状态机见 [能力安装清单](../capabilities.md)。
 
@@ -49,7 +49,7 @@ Starter 与内置 Skill 的升级见 [升级手册](UPGRADING.md)。
 | Stitch MCP | 设计 lane 云端出稿引擎 | `claude mcp add stitch --transport http https://stitch.googleapis.com/mcp --header "X-Goog-Api-Key: <key>" -s user` | 同端点 + 同请求头 | 未配置时降级为 agent 自写 HTML |
 | chrome-devtools MCP | 浏览器页面验收、页面标注反馈 | 随包内置零安装（`.mcp.json` 双入口） | 不需要（宿主内置 browser） | 运行需 Node 20+ 与系统 Chrome stable |
 
-## 6. 安装故障排查
+## 6. 🚑 安装故障排查
 
 | 问题 | 处理 |
 | --- | --- |

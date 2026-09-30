@@ -4,7 +4,7 @@
 
 面向 Codex 和 Claude Code 的前端项目 AI 规则 Starter：把项目事实、任务路由、设计流程、实现流程和验收要求放进仓库，让智能体先读约束，再做修改，并用证据交付。
 
-## 先选入口
+## 🧭 先选入口
 
 | 你要做什么 | 使用入口 | 详细手册 |
 | --- | --- | --- |
@@ -17,7 +17,7 @@
 | 查看内置能力和外部插件 | — | [能力清单](docs/operations/BUILT-IN-CAPABILITIES.md) |
 | 设计质量确定性检查（实现自查 / 验收对稿 / 精修清单 / 存量体检） | impeccable 插件（Claude Code）或 `npx impeccable`（Codex） | [能力清单 §2](docs/capabilities.md) |
 
-## 最短路径
+## 🚀 最短路径
 
 安装与环境要求见 [安装手册](docs/operations/INSTALL.md)；装完之后：
 
@@ -30,7 +30,7 @@ $frontend-task verify
 $frontend-task report
 ```
 
-## 核心规则
+## 📜 核心规则
 
 - `.agents/skills/` 是 Skill 人工源；`.claude/skills/` 是自动镜像，不要手改。
 - 项目事实以画像、组件目录、代码、测试和接口契约为准；外部设计材料只负责它明确覆盖的事实。
@@ -38,7 +38,7 @@ $frontend-task report
 - 高影响决定先确认再实现；未验证项必须报告，不能写成已完成。
 - 根 README 只做入口导航；具体任务规则见 `docs/tasks/`，维护升级规则见 `docs/operations/`。
 
-## 目录
+## 📁 目录
 
 ```text
 .agents/skills/        Skill 人工源

@@ -2,7 +2,7 @@
 
 版本和提交事实以 根目录 manifest 为准；本表只说明用途。自研能力的使用细节见 `docs/tasks/` 手册；vendored 能力的上游、许可与升级见 [能力安装清单](../capabilities.md)。
 
-## 自研能力（6）
+## 🛠️ 自研能力（6）
 
 | Skill | 用途 | 使用手册 |
 | --- | --- | --- |
@@ -15,7 +15,7 @@
 
 页面标注的浏览器双轨、标注操作与场景示例随手册走：[PAGE-ANNOTATE.md](../tasks/PAGE-ANNOTATE.md)。
 
-## Vendored 内置能力（23，随包分发零安装）
+## 📦 Vendored 内置能力（23，随包分发零安装）
 
 上游快照、许可与升级基线见 [能力安装清单](../capabilities.md)。
 
@@ -38,7 +38,7 @@
 | `web-design-guidelines` | Web 界面、可访问性和 UX 审查 |
 | `ui-ux-pro-max` | UI/UX 设计辅助 |
 
-## 可选外部能力
+## 🧩 可选外部能力
 
 | 能力 | 用途 | 约束 |
 | --- | --- | --- |
@@ -48,6 +48,6 @@
 | Browser/Chrome/Computer Use | 真实 UI 验收或登录态流程 | 只在宿主实际暴露时使用 |
 | Impeccable | 确定性 UI 检查 | 可选外部能力，不是 Starter 必需项 |
 
-## 选择原则
+## ⚖️ 选择原则
 
 先用内置能力；需要外部能力时读取 `docs/capabilities.md` 和宿主安装清单；外部插件/MCP 只有宿主实际安装或连接成功才算可用；不可用就报告缺口并走降级路径，不能假装已连接。

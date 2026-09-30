@@ -31,7 +31,7 @@ description: 页面标注反馈通道（"指哪打哪"）：用户在浏览器�
 
 ### Codex（assets/cdp-bridge.mjs，零依赖 Node ≥22）
 
-1. `node .agents/skills/page-annotate/assets/cdp-bridge.mjs launch --url <url>` → 输出 `{port, targetId}`（可见 Chrome、一次性 profile；脚本统一 Page.navigate 开页——`/json/new` 带 url 对 `file://` 拒载、新 profile 首启 intro 抢 URL，两个实测坑均已内置规避）。
+1. `node .agents/skills/page-annotate/assets/cdp-bridge.mjs launch --url <url>` → 输出 `{port, targetId}`（可见 Chrome、一次性 profile；脚本统一 Page.navigate 开页——DevTools 开页端点 json/new 带 url 时对 `file://` 拒载、新 profile 首启 intro 抢 URL，两个实测坑均已内置规避）。
 2. `node …/cdp-bridge.mjs inject --port <port> --file …/assets/page-picker.js` → 输出 `'installed-v2.7.2'`（脚本自动 IIFE 包装顶层 `return`——实测坑：裸 evaluate 会 SyntaxError）。
 3. 用户标注后 `node …/cdp-bridge.mjs read --port <port>` → read() JSON；`eval --expr` 可执行任意补充诊断。
 4. 刷新循环：`eval --expr "location.reload()"` → 重新 inject；修复轮对照：`eval --expr "__picker.ghost(<上轮rects JSON>)"`。
