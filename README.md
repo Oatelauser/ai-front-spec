@@ -2,7 +2,19 @@
 
 [![CI](https://github.com/Oatelauser/ai-front-spec/actions/workflows/ci.yml/badge.svg)](https://github.com/Oatelauser/ai-front-spec/actions/workflows/ci.yml) [![vendored-check](https://github.com/Oatelauser/ai-front-spec/actions/workflows/vendored-check.yml/badge.svg)](https://github.com/Oatelauser/ai-front-spec/actions/workflows/vendored-check.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Node >=20](https://img.shields.io/badge/node-%E2%89%A5%2020-green.svg)](https://nodejs.org)
 
-面向 Codex 和 Claude Code 的前端项目 AI 规则 Starter：把项目事实、任务路由、设计流程、实现流程和验收要求放进仓库，让智能体先读约束，再做修改，并用证据交付。
+**面向 Codex 和 Claude Code 的前端项目 AI 规则 Starter** —— 把项目事实、任务路由、设计流程、实现流程和验收要求放进仓库：智能体先读约束、再做修改、用证据交付，不做「看起来好了」式开发。
+
+## ✨ 为什么选 ai-front-spec
+
+| 💡 亮点 | 说明 |
+|---|---|
+| 🧭 **先读后写** | 项目画像 + 组件目录把项目事实（目标端、技术栈、命令、权限、验收参数）放进仓库——agent 动手前先读约束，不凭模型记忆猜你的项目 |
+| 💬 **双宿主，一套规则** | `.agents/skills/`（人工源）+ `.claude/skills/`（自动镜像），Codex 与 Claude Code 同时生效，不用维护两份提示词 |
+| 🛤️ **三 lane 全流程** | 专业设计（`$design-task` 出稿翻选定稿）→ 工程实现（`$frontend-task` 六命令链）→ 验收微调（`$page-annotate` 指哪打哪），从一句话需求到带证据交付 |
+| 📍 **指哪打哪验收** | 反馈不用文字描述位置——直接在浏览器页面上圈选，agent 读回坐标与元素诊断逐条修，改完刷新对照上一轮标注 |
+| 📦 **29 项 Skill 开箱自带** | 自研 6 + vendored 23（anthropics、vercel-labs、GSAP 等上游），零安装命令；CI 每周盯上游提交，离线 bundle 升级带逐文件 diff 审查，不悄悄丢功能 |
+| 🧾 **证据交付** | 四维结果（visual / behavior / data / engineering）如实报告，没验证的标 `unverified`——HTTP 200 不算业务成功，mock 不算真实联调 |
+| 🚦 **质量门禁** | strict 提示词一致性校验（42 文件）+ 单测 + 双目录镜像检查 + 双 OS CI 矩阵，规则漂移当场红 |
 
 ## 🧭 先选入口
 
