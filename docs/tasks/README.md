@@ -6,6 +6,7 @@
 
 | 目标 | 入口 | 下一步 |
 | --- | --- | --- |
+| 初始化或维护项目画像与组件目录 | `$project-profile` | 阅读 [PROJECT-PROFILE.md](PROJECT-PROFILE.md) |
 | 一次性验证交互或视觉方向 | `$prototype` | 原型验证后决定是否进入开发 |
 | 专业视觉设计、多轮调整、定稿冻结 | `$design-task` | 阅读 [DESIGN-TASK.md](DESIGN-TASK.md) |
 | 从需求/截图/原型/Figma/HTML 实现页面 | `$frontend-task` | 阅读 [FRONTEND-TASK.md](FRONTEND-TASK.md) |

@@ -10,7 +10,7 @@
 | `design-task` | 专业 UI 设计、多轮变体和定稿交接 | [DESIGN-TASK.md](../tasks/DESIGN-TASK.md) |
 | `page-annotate` | 页面标注反馈"指哪打哪"：页面上圈选指认问题，agent 读回坐标与元素诊断后逐条修改；design-task 修订轮与 frontend-task 验收轮内建 | [PAGE-ANNOTATE.md](../tasks/PAGE-ANNOTATE.md) |
 | `project-workflow` | agent 强制工作入口：项目事实、路由、执行、验证（内部契约，入口见 AGENTS.md） | — |
-| `project-profile` | 项目画像、目标端和组件目录初始化（内部契约，入口见 AGENTS.md） | — |
+| `project-profile` | 项目画像、目标端和组件目录建档与维护（内部契约，入口见 AGENTS.md） | [PROJECT-PROFILE.md](../tasks/PROJECT-PROFILE.md) |
 | `tinypng-compress` | 批量图片压缩（工具型，`$tinypng-compress` 直调） | — |
 
 页面标注的浏览器双轨、标注操作与场景示例随手册走：[PAGE-ANNOTATE.md](../tasks/PAGE-ANNOTATE.md)。

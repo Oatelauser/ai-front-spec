@@ -9,7 +9,7 @@
 | 你要做什么 | 使用入口 | 详细手册 |
 | --- | --- | --- |
 | 安装 Starter 到项目 | `node scripts/build-starter.mjs --target <目录>` | [安装手册](docs/operations/INSTALL.md) |
-| 初始化项目画像与组件目录 | `$project-profile` | [任务总览](docs/tasks/README.md) |
+| 初始化项目画像与组件目录 | `$project-profile` | [Project Profile 手册](docs/tasks/PROJECT-PROFILE.md) |
 | 做专业视觉设计、多轮调整、定稿归档 | `$design-task` | [Design Task 手册](docs/tasks/DESIGN-TASK.md) |
 | 把需求、截图、原型、Figma 或 HTML 做成页面 | `$frontend-task` | [Frontend Task 手册](docs/tasks/FRONTEND-TASK.md) |
 | 在页面上圈选指认问题（"指哪打哪"） | `$page-annotate` | [Page Annotate 手册](docs/tasks/PAGE-ANNOTATE.md) |
