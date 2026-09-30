@@ -99,12 +99,12 @@ sequenceDiagram
 
 ### 🧲 场景 D：搬运样式 / 存参考（显式引用提取协议）
 
-> 扩展用法：引用[页面样式提取协议](../rules/AI_PAGE_EXTRACT.md)后，圈选的不只是问题——可以整块搬走。协议细节（提取产物、落点、红线）都在那份文档里，这里只演示怎么开口。
+> 扩展用法：开口时点名[页面样式提取协议](../rules/AI_PAGE_EXTRACT.md)（说「按 docs/rules/AI_PAGE_EXTRACT.md 来」），圈选的不只是问题——可以整块搬走。协议细节（提取产物、落点、红线）都在那份文档里，这里只演示怎么开口。
 
 **copy——照着外网系统做进开发页：**
 
 ```text
-👤：把 XX 后台这块表格区搬到我开发中的 /list 页，按页面样式提取协议来
+👤：把 XX 后台这块表格区搬到我开发中的 /list 页，按 docs/rules/AI_PAGE_EXTRACT.md 来
 🤖：源页在用户轨——chrome://inspect/#remote-debugging 打开开关，登录后导航到目标页
 👤：（开开关 → 登录 → 导航到那页）
 🤖：（连入你的 Chrome，只读；标注器就绪）圈完点「提交」，回来说「读」
@@ -118,7 +118,7 @@ sequenceDiagram
 **save——这页好看，存下来：**
 
 ```text
-👤：这个侧边栏好看，存下来给以后的页面用，按页面样式提取协议
+👤：这个侧边栏好看，存下来给以后的页面用，按 docs/rules/AI_PAGE_EXTRACT.md
 🤖：（同上捕获提取）条目已落 docs/design/references/xx-admin-侧边栏/
       （多状态截图+结构+样式+功能规格摘要），日后做页面可直接引用作视觉依据
 ```
