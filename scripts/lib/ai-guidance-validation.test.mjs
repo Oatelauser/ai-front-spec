@@ -274,6 +274,31 @@ description: >-
     assert.ok(withoutGate.some((e) => e.code === 'PE020' && e.message.includes('硬门槛')))
   })
 
+  // 票 13：common-workflow §0（两档五维判据 + 事实新鲜度）存在性契约——
+  // 仅证明规则在档（逐标记删除均被拒、全文通过），不证明宿主真的少读少问或正确升级。
+  it('common-workflow 风险分档契约：六标记逐条隔离删除均报 PE020，全文通过，标记集与配置一致', async () => {
+    const repoConfig = (await import('../../.toolkit/ai-guidance.config.mjs')).default
+    const entry = repoConfig.flowContracts.find((c) => c.file === '.agents/skills/frontend-task/references/common-workflow.md')
+    assert.ok(entry, '真实配置应登记 common-workflow 流程契约（票 13）')
+    const expectedMarkers = ['五维', '证据不足不能推定低风险', '每个阶段开始前必须通过工具重新读取', '本阶段的实际读取', '不能证明内容未变', '不因轻量标签自动跳过', '静默降档']
+    assert.deepEqual(entry.markers, expectedMarkers, '真实配置的必要标记集合应逐项明确')
+
+    const real = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../../.agents/skills/frontend-task/references/common-workflow.md'), 'utf8')
+    const flowConfig = { ...config, flowContracts: [entry] }
+    const intact = collectGuidanceErrors({ config: flowConfig, files: { ...validFiles, [entry.file]: real } })
+    assert.deepEqual(intact.filter((e) => e.code === 'PE020'), [])
+
+    for (const marker of expectedMarkers) {
+      const stripped = real.replaceAll(marker, '（该标记已删）')
+      assert.notEqual(stripped, real, `标记「${marker}」应真实存在于原文`)
+      const broken = collectGuidanceErrors({ config: flowConfig, files: { ...validFiles, [entry.file]: stripped } })
+      assert.ok(
+        broken.some((e) => e.code === 'PE020' && e.message.includes(marker)),
+        `单独删除标记「${marker}」应报 PE020 并点名该标记`,
+      )
+    }
+  })
+
   it('模板端状态词不在词表报 PE016（词表两侧同步防漂移）', () => {
     const template = '.agents/skills/project-profile/templates/project-profile.vue.md'
     const good = collectGuidanceErrors({
@@ -478,6 +503,64 @@ describe('validateTaskRecords 任务状态执法（PE021）', () => {
     } finally {
       rmSync(root, { recursive: true, force: true })
     }
+  })
+
+  // F1 回归：task-state.md 是词表权威，文档示例/模板必须直接通过校验，防止再次漂移。
+  const taskStateDoc = readFileSync(
+    resolve(dirname(fileURLToPath(import.meta.url)), '../../.agents/skills/frontend-task/references/task-state.md'),
+    'utf8',
+  )
+  const validateRecord = (record) => {
+    const root = mkdtempSync(join(tmpdir(), 'task-contract-'))
+    try {
+      mkdirSync(join(root, 'docs/tasks/example'), { recursive: true })
+      writeFileSync(join(root, 'docs/tasks/example/STATE.json'), JSON.stringify(record))
+      return validateTaskRecords(root)
+    } finally {
+      rmSync(root, { recursive: true, force: true })
+    }
+  }
+
+  it('task-state.md 的 JSON 示例与模板直接通过 PE021（防文档↔校验器漂移）', () => {
+    const example = /```json\r?\n([\s\S]*?)```/.exec(taskStateDoc)
+    assert.ok(example, 'task-state.md 应包含 ```json 示例块')
+    assert.deepEqual(validateRecord(JSON.parse(example[1])), [])
+
+    const template = JSON.parse(readFileSync(
+      resolve(dirname(fileURLToPath(import.meta.url)), '../../.agents/skills/frontend-task/templates/task-state.template.json'),
+      'utf8',
+    ))
+    assert.deepEqual(validateRecord(template), [])
+  })
+
+  it('模板与文档示例默认携带四维 unverified acceptance 与空 acceptanceEvidence', () => {
+    const emptyEvidence = { visual: [], behavior: [], data: [], engineering: [] }
+    const template = JSON.parse(readFileSync(
+      resolve(dirname(fileURLToPath(import.meta.url)), '../../.agents/skills/frontend-task/templates/task-state.template.json'),
+      'utf8',
+    ))
+    assert.deepEqual(template.acceptance, { visual: 'unverified', behavior: 'unverified', data: 'unverified', engineering: 'unverified' })
+    assert.deepEqual(template.acceptanceEvidence, emptyEvidence)
+    assert.deepEqual(validateRecord(template), [])
+
+    const example = JSON.parse(/```json\r?\n([\s\S]*?)```/.exec(taskStateDoc)[1])
+    assert.deepEqual(example.acceptanceEvidence, emptyEvidence)
+  })
+
+  it('sourceStatus 合法失败态可表达，旧 v1 记录兼容，非法值仍拒绝', () => {
+    const base = {
+      schemaVersion: 2, taskId: 't', taskType: 'bug-fix', taskStatus: 'failed', currentStage: 'verify',
+      plan: { revision: 1, fingerprint: 'f', confirmation: 'pending' }, stages: {}, overrides: [],
+    }
+    assert.deepEqual(validateRecord({ ...base, sourceStatus: { screenshot: 'unavailable', api: 'changed', design: 'unverified' } }), [])
+    assert.deepEqual(validateRecord({
+      ...base, schemaVersion: 1, taskStatus: 'done', currentStage: 'report', sourceStatus: { 'screenshot:x': 'analyzed' },
+    }), [])
+
+    const illegal = validateRecord({ ...base, schemaVersion: 3, sourceStatus: { api: 'bogus' } })
+    assert.ok(illegal.some((e) => e.message.includes('schemaVersion')), JSON.stringify(illegal))
+    assert.ok(illegal.some((e) => e.message.includes('sourceStatus[api]')), JSON.stringify(illegal))
+    assert.ok(illegal.every((e) => e.code === 'PE021'))
   })
 })
 

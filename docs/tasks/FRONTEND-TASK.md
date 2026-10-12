@@ -231,7 +231,7 @@ sequenceDiagram
 
 ## 5. 🤖 Agent 侧规则速览（你无需操心，遇到再对照）
 
-- `inspect` 前持续读取：`AGENTS.md`、项目画像（含支持端与运行环境）、`deliveryTargets`、组件目录、前端任务规则；只加载与来源匹配的 reference。
+- `inspect` 前完整读取：`AGENTS.md`、项目画像（含支持端与运行环境）、`deliveryTargets`、组件目录、前端任务规则；后续每阶段开始前通过工具重新读取三份核心事实（画像支持端、deliveryTargets、组件目录）；只加载与来源匹配的 reference。
 - 目标端缺失、冲突或 `deferred` 时不猜，转 `$project-profile update`，无任务级绕过。
 - 来源是证据不是事实：采纳、排除、存疑都要记录理由；生成代码和 AI 建议只是实现参考。
 - 纪律：截图不是背景图；mock 不是真实联调；HTTP 200 不等于业务成功；无法复现的缺陷报 `unverified` 不算完成。

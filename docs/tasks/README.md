@@ -1,4 +1,4 @@
-﻿# 任务手册
+# 任务手册
 
 本目录是执行设计和开发任务时的操作手册。根 `README.md` 只做导航；智能体执行时仍以 `.agents/skills/` 和项目画像为准。
 
@@ -23,7 +23,7 @@
 
 ## 🚧 前端任务硬门槛
 
-在 `inspect` 前，以及 `plan`、`implement`、`verify`、`report` 阶段持续读取：
+在 `inspect` 前完整读取；`plan`、`implement`、`verify`、`report` 每个阶段开始前通过工具重新读取（implement 首次依赖写入与 verify 取证前必须已有本阶段实际读取）：
 
 - `AGENTS.md`
 - `docs/PROJECT_PROFILE.md` 的“支持端与运行环境”
@@ -43,7 +43,7 @@
 
 ## 📁 任务记录
 
-复杂、视觉、多轮或可恢复任务保存到 `docs/tasks/<task>/`：
+复杂、多轮、可恢复或需留存来源对照/正式验收的任务保存到 `docs/tasks/<task>/`（视觉影响本身不强制建目录，可见改动仍交付实际 UI 证据；只建实际需要的文件）：
 
 ```text
 PLAN.md STATE.json PROMPTS.md ACCEPTANCE.md REPORT.md

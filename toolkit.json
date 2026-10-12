@@ -13,7 +13,10 @@
       ".claude",
       ".toolkit",
       "LICENSE",
-      "NOTICE"
+      "NOTICE",
+      ".mcp.json",
+      "tools/mcp/chrome-devtools-mcp",
+      "tools/mcp/codex-mcp-snippet.toml"
     ]
   },
   "distExcludes": [

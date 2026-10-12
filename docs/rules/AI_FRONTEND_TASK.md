@@ -6,7 +6,7 @@
 
 任务输入可以是对话或 `.agents/skills/frontend-task/templates/frontend-task.template.json` 的实例：taskType 支持 new-page、incremental、bug-fix、refactor；sources 每项包含 type（screenshot/prototype/html/figma/api/requirement）、path 或 url、版本及适用的 viewport/DPR。另提供目标路由/路径、保留约束、验收和已确认决定。实例留在业务项目任务记录，不修改模板源。
 
-全流程契约：`inspect`、`plan`、`implement`、`verify`、`report` 每一阶段都必须读取 `PROJECT_PROFILE.md` 的“支持端与运行环境”、`.toolkit/profile-state.json.deliveryTargets` 和 `AI_COMPONENT_CATALOG.md`。计划必须记录适用端、关键视口、组件复用/扩展/业务域/页面私有决策及目标端变体；plan 中的视觉判定、行为推断、token 取值等结论逐条标注证据等级：已测量（材料可直接确认）、有依据的推断（跨材料归纳）、暂时假设（材料不足采用的默认值，须明示）；组件目录与画像不一致时先执行 `$project-profile update`，或记录任务级确认；`deliveryTargets` 缺失、冲突或处于 `deferred` 时不得猜测目标端，页面声明扩端必须走 update 访谈与矩阵复检，不得以任务级确认放行。
+全流程契约：`inspect` 前完整读取 `PROJECT_PROFILE.md` 的“支持端与运行环境”、`.toolkit/profile-state.json.deliveryTargets` 和 `AI_COMPONENT_CATALOG.md`；`plan`、`implement`、`verify`、`report` 每个阶段开始前通过工具重新读取这三份（implement 首次依赖写入与 verify 取证前必须已有本阶段实际读取；其他规则按需加载不回退全文重读，规则见 frontend-task common-workflow §0）。计划必须记录适用端、关键视口、组件复用/扩展/业务域/页面私有决策及目标端变体；plan 中的视觉判定、行为推断、token 取值等结论逐条标注证据等级：已测量（材料可直接确认）、有依据的推断（跨材料归纳）、暂时假设（材料不足采用的默认值，须明示）；组件目录与画像不一致时先执行 `$project-profile update`，或记录任务级确认；`deliveryTargets` 缺失、冲突或处于 `deferred` 时不得猜测目标端，页面声明扩端必须走 update 访谈与矩阵复检，不得以任务级确认放行。
 
 ## 可直接使用
 
@@ -45,7 +45,7 @@
 
 `$frontend-task` 支持 `inspect`、`plan`、`confirm`、`implement`、`verify`、`report` 和 `resume` 子命令，也支持按依赖顺序组合调用。直接提出实现请求时，必须先执行 inspect 和 plan，并判断高影响决策；高影响信息未确认时停在确认阶段，不能因为“直接实现”而绕过判断。
 
-需要多轮确认、跨会话恢复、正式验收或明显截图/原型/HTML 材料时，在 `docs/tasks/<task-id>/` 保存 `TASK.md`、`PLAN.md`、`STATE.json`、`ACCEPTANCE.md` 及必要的 `assets/`。来源材料记录路径或 URL、版本、读取时间、视口/DPR 和摘要；本地截图、原型和 HTML 可复制到 `assets/`。任务级 override 只对当前任务有效。
+需要多轮确认、跨会话恢复、正式验收、留存来源对照或明显截图/原型/HTML 材料时，在 `docs/tasks/<task-id>/` 保存 `TASK.md`、`PLAN.md`、`STATE.json`、`ACCEPTANCE.md` 及必要的 `assets/`——只创建实际需要的文件；局部可见改动按页面流程交付实际 UI 证据即可，不因视觉影响本身建全套记录，轻量档证据底线见 common-workflow §0。来源材料记录路径或 URL、版本、读取时间、视口/DPR 和摘要；本地截图、原型和 HTML 可复制到 `assets/`。任务级 override 只对当前任务有效。
 
 ## 页面执行契约
 
