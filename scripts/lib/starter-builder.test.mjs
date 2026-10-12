@@ -98,7 +98,7 @@ test('release 命令回放：RUNNER_TEMP 含空格时目标与产物均为单一
   const release = ci.slice(ci.indexOf('  release:'))
   const commands = []
   let inRun = false
-  for (const line of release.split('\n')) {
+  for (const line of release.split(/\r?\n/)) {
     if (/^ {8}run: \|$/.test(line)) { inRun = true; continue }
     const single = line.match(/^ {8}run: (.+)$/)
     if (single) { commands.push(single[1]); inRun = false; continue }

@@ -349,7 +349,7 @@ describe('vendored-check 步骤门控结构（F3 声明式钉）', () => {
     // 条件用 ${{ }} 包裹（裸 ! 开头的普通标量不是合法 YAML）
     const packGates = workflow.match(/if: \$\{\{ !cancelled\(\) && steps\.check\.outputs\.exit != '0'/g) ?? []
     assert.equal(packGates.length, 2, 'pack 与 upload 都应在非全绿且未取消时运行')
-    assert.ok(/id: upload\n\s+if: \$\{\{ !cancelled\(\) && steps\.check\.outputs\.exit != '0' && steps\.pack\.outputs\.count/.test(workflow),
+    assert.ok(/id: upload\r?\n\s+if: \$\{\{ !cancelled\(\) && steps\.check\.outputs\.exit != '0' && steps\.pack\.outputs\.count/.test(workflow),
       'upload 应以 count 非空非 0 为门（打包失败/无产物不上传）')
     assert.ok(workflow.includes('if: ${{ !cancelled() && (github.event_name =='), '报告步骤应 !cancelled()，前置失败仍运行')
     const continueOnError = workflow.match(/continue-on-error: true/g) ?? []
