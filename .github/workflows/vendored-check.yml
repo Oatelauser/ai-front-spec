@@ -1,6 +1,11 @@
 name: vendored-check
 
 # 周度技能升级检查：update-vendored check 跑在 GitHub 干净网络（git SHA + npm 版本双通道）。
+# 退出码三态 + 步骤契约（scripts/lib/update-vendored.test.mjs 用 bash 替身锁定控制流）：
+#   exit=0（探测完整且无更新）→ 允许关闭待办，工作流绿；
+#   exit=1（可升级，非探测失败）→ 报告 + 打包上传，工作流绿；
+#   exit≥2 或输出无小结行（未知/错误/崩溃）→ check 步骤失败，工作流标红，只告警不关闭；
+#   打包/上传 continue-on-error：失败只留注记，不阻断报告路径；报告仅在真实上传成功时承诺升级包。
 # 报告落 Issue 并 @ 维护者；push 触发只做冒烟（验证工作流健康），不落 Issue 防刷屏。
 on:
   schedule: [{ cron: "23 3 * * 1" }]
@@ -21,37 +26,73 @@ jobs:
           set +e
           node scripts/update-vendored.mjs check > report.txt
           EXIT=$?
+          set -e
           cat report.txt
+          # 小结行是 check 脚本完整跑完的可信标记：缺失时原始退出码（含崩溃残留的 0/1）不可当结论，
+          # 下游消费统一归为 2（未知/错误）——输出必须先过完整性校验再写 GITHUB_OUTPUT
+          if ! grep -q '小结：' report.txt; then
+            echo "检查输出不完整（缺少小结行），按未知/错误处理"
+            echo "exit=2" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
           echo "exit=$EXIT" >> "$GITHUB_OUTPUT"
-      - name: 打包离线升级包（仅有可升级项）
-        if: steps.check.outputs.exit == '1'
-        run: node scripts/update-vendored.mjs --pack bundle
-      - name: 上传离线升级包
-        if: steps.check.outputs.exit == '1'
+          if [ "$EXIT" -ge 2 ]; then
+            echo "探测不完整或异常（退出码 $EXIT），工作流标红，不关闭待办"
+            exit 1
+          fi
+          exit 0
+      - name: 打包离线升级包（有可升级项才有产物；失败不阻断报告）
+        id: pack
+        if: ${{ !cancelled() && steps.check.outputs.exit != '0' }}
+        continue-on-error: true
+        run: |
+          node scripts/update-vendored.mjs --pack bundle
+          COUNT=$(node -e "const m=require('./bundle/manifest.json');console.log(Object.keys(m.skills).length+Object.values(m.packages||{}).flatMap(p=>p.skills||[]).length)")
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+      - name: 上传离线升级包（仅有产物且打包成功才上传）
+        id: upload
+        if: ${{ !cancelled() && steps.check.outputs.exit != '0' && steps.pack.outputs.count != '' && steps.pack.outputs.count != '0' }}
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: vendored-bundle-${{ github.run_number }}
           path: bundle
           retention-days: 90
-      - name: 报告落 Issue（仅定时/手动触发）
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+      - name: 报告落 Issue（仅定时/手动触发；前置步骤失败仍运行）
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           TITLE="📦 vendored 技能升级待办（自动检查）"
+          # 只有真实上传成功的升级包才允许在报告里承诺；打包无产物或上传失败都不提及
+          BUNDLE_NOTE=""
+          if [ -n "${{ steps.pack.outputs.count }}" ] && [ "${{ steps.pack.outputs.count }}" != "0" ] && [ "${{ steps.upload.outcome }}" = "success" ]; then
+            BUNDLE_NOTE="本地克隆慢/失败时用离线通道：[点此打开本运行的 Artifacts 下载页](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})（页面底部 Artifacts 区）下载 vendored-bundle-${{ github.run_number }}（zip，含 manifest.json），解压后执行 node scripts/update-vendored.mjs --diff --offline <解压目录> 评估、--upgrade --offline <解压目录> 应用（零克隆）。在线五步（check → diff → upgrade → 镜像 → 校验发版）见 docs/operations/UPGRADING.md。"
+          fi
           BODY="@Oatelauser UTC $(date -u +%F\ %H:%M) 检查结果：
           \`\`\`
           $(cat report.txt)
           \`\`\`
-          本地克隆慢/失败时用离线通道：[点此打开本运行的 Artifacts 下载页](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})（页面底部 Artifacts 区）下载 vendored-bundle-${{ github.run_number }}（zip，含 manifest.json），解压后执行 node scripts/update-vendored.mjs --diff --offline <解压目录> 评估、--upgrade --offline <解压目录> 应用（零克隆）。在线五步（check → diff → upgrade → 镜像 → 校验发版）见 docs/operations/UPGRADING.md。"
+          $BUNDLE_NOTE"
+          WARN="@Oatelauser ⚠️ 本轮升级检查探测不完整（退出码 ${{ steps.check.outputs.exit }}，非 0 也非 1）：可能含网络失败、缺基线或通道未登记（详见下方报告），不能据此认定无升级项，待办保留不关闭。
+          \`\`\`
+          $(cat report.txt)
+          \`\`\`
+          $BUNDLE_NOTE"
           ISSUE=$(gh issue list --state open --search "in:title vendored 技能升级待办" --json number --jq '.[0].number')
-          if [ "${{ steps.check.outputs.exit }}" = "1" ]; then
+          if [ "${{ steps.check.outputs.exit }}" = "0" ] && [ "${{ steps.check.outcome }}" = "success" ]; then
+            if [ -n "$ISSUE" ]; then
+              gh issue close "$ISSUE" --comment "@Oatelauser 本轮探测完整且无升级项（UTC $(date -u +%F)），关闭。"
+              echo "全绿（探测完整），已关闭 Issue #$ISSUE"
+            else
+              echo "全绿且无未决 Issue，不动作。"
+            fi
+          elif [ "${{ steps.check.outputs.exit }}" = "1" ]; then
             if [ -n "$ISSUE" ]; then gh issue comment "$ISSUE" --body "$BODY"
             else gh issue create --title "$TITLE" --body "$BODY"; fi
             echo "已报告可升级项 → Issue #$ISSUE"
-          elif [ -n "$ISSUE" ]; then
-            gh issue close "$ISSUE" --comment "@Oatelauser 本轮无升级项（UTC $(date -u +%F)），关闭。"
-            echo "全绿，已关闭 Issue #$ISSUE"
           else
-            echo "全绿且无未决 Issue，不动作。"
+            if [ -n "$ISSUE" ]; then gh issue comment "$ISSUE" --body "$WARN"
+            else gh issue create --title "$TITLE" --body "$WARN"; fi
+            echo "探测不完整（未知/错误），保留待办 → Issue #$ISSUE"
           fi

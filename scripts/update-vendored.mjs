@@ -182,32 +182,37 @@ const saveToolkit = async () => await writeFile(toolkitPath, JSON.stringify(tool
 
 if (mode === 'check') {
   console.log('vendored 上游检查（git SHA / npm 版本双通道）：\n')
+  // 三态结果：0=全部探测且无更新（全绿）；1=存在可升级；2=存在未知/错误（探测失败/缺基线/通道未登记）。
+  // 未知绝不允许伪装全绿——周检工作流只用 0 关闭待办（F3 教训）。
   let drift = 0
+  let unknown = 0
+  let clean = 0
   const reportedPkgs = new Set()
   for (const [skill, entry] of Object.entries(vendored)) {
     // npm 通道：共享包基线（toolkit.packages），同包只报一次
     if (entry.pkg) {
       const pkg = toolkit.packages?.[entry.pkg]
-      if (!pkg?.npm) { console.log(`  ! ${skill}：引用包 ${entry.pkg} 未登记 npm 通道`); continue }
+      if (!pkg?.npm) { console.log(`  ! ${skill}：引用包 ${entry.pkg} 未登记 npm 通道`); unknown++; continue }
       if (reportedPkgs.has(entry.pkg)) continue
       reportedPkgs.add(entry.pkg)
       const skills = Object.entries(vendored).filter(([, e]) => e.pkg === entry.pkg).map(([s]) => s)
-      const view = npmRun( ['view', pkg.npm, 'version'])
-      if (view.status !== 0) { console.log(`  ! ${entry.pkg}：npm registry 不可达`); continue }
+      const view = npmRun(['view', pkg.npm, 'version'])
+      if (view.status !== 0) { console.log(`  ! ${entry.pkg}：npm registry 不可达`); unknown++; continue }
       const latest = view.stdout.trim()
-      if (latest === pkg.version) console.log(`  ✓ ${entry.pkg} ${pkg.version}（覆盖：${skills.join('、')}）`)
+      if (latest === pkg.version) { console.log(`  ✓ ${entry.pkg} ${pkg.version}（覆盖：${skills.join('、')}）`); clean++ }
       else { console.log(`  ↑ ${entry.pkg}：${pkg.version} → ${latest}（覆盖：${skills.join('、')}；升级指引：--upgrade ${skills[0]}）`); drift++ }
       continue
     }
     if (!entry.repo) { console.log(`  · ${skill}：${entry.source ?? '本地包来源'}（无公开 repo，手工升级）`); continue }
     const head = run('git', ['ls-remote', entry.repo, 'HEAD'])
-    if (head.status !== 0) { console.log(`  ! ${skill}：无法探测上游（网络/代理）`); continue }
+    if (head.status !== 0) { console.log(`  ! ${skill}：无法探测上游（网络/代理）`); unknown++; continue }
     const remote = head.stdout.split('\t')[0]
-    if (!entry.sha) { console.log(`  ? ${skill}：未建基线 → 跑 --rebaseline ${skill} 对账`); continue }
-    if (remote === entry.sha) console.log(`  ✓ ${skill}：最新（${entry.sha.slice(0, 8)}）`)
+    if (!entry.sha) { console.log(`  ? ${skill}：未建基线 → 跑 --rebaseline ${skill} 对账`); unknown++; continue }
+    if (remote === entry.sha) { console.log(`  ✓ ${skill}：最新（${entry.sha.slice(0, 8)}）`); clean++ }
     else { console.log(`  ↑ ${skill}：可升级 ${entry.sha.slice(0, 8)} → ${remote.slice(0, 8)}（先 --diff ${skill}）`); drift++ }
   }
-  process.exit(drift ? 1 : 0)
+  console.log(`\n小结：可升级 ${drift} · 未知/错误 ${unknown} · 无变化 ${clean}（退出码 0=全绿 1=可升级 2=未知/错误）`)
+  process.exit(unknown ? 2 : drift ? 1 : 0)
 }
 
 if (mode === 'pack') {

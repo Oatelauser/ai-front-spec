@@ -1,10 +1,22 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "taskId": "<task-id>",
   "taskType": "new-page",
   "taskStatus": "draft",
   "currentStage": "inspect",
   "sourceStatus": {},
+  "acceptance": {
+    "visual": "unverified",
+    "behavior": "unverified",
+    "data": "unverified",
+    "engineering": "unverified"
+  },
+  "acceptanceEvidence": {
+    "visual": [],
+    "behavior": [],
+    "data": [],
+    "engineering": []
+  },
   "plan": {
     "revision": 0,
     "fingerprint": null,

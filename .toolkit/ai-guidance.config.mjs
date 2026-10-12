@@ -65,6 +65,11 @@ export default {
       markers: ['硬门槛', '方向原型', '2–3', 'PLAN.md'],
     },
     {
+      // 票 13：轻量/完整两档五维判据与事实新鲜度的存在性契约——仅证规则在档，不证宿主行为
+      file: '.agents/skills/frontend-task/references/common-workflow.md',
+      markers: ['五维', '证据不足不能推定低风险', '每个阶段开始前必须通过工具重新读取', '本阶段的实际读取', '不能证明内容未变', '不因轻量标签自动跳过', '静默降档'],
+    },
+    {
       file: '.agents/skills/project-workflow/references/task-routing.md',
       markers: ['$prototype'],
     },

@@ -1,5 +1,6 @@
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
-import { dirname, isAbsolute, join, relative, resolve } from 'node:path'
+import { existsSync, lstatSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 
 export function parseSkillFrontmatter(content) {
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)
@@ -427,11 +428,90 @@ function validateTemplateVocabulary(config, files) {
 }
 
 // PE021 任务状态执法：docs/tasks/**/STATE.json 的词表与结构以实战收敛集为准（四轮 dogfooding 实况锁定）。
+// schemaVersion 2 为当前版（task-state.md 示例），1 为历史兼容；sourceStatus 词表以 task-state.md 为权威
+//（含失败态 changed/unavailable/unverified，允许如实记录来源失效）。文档示例有回归测试直接校验，防再次漂移。
 const TASK_STATUSES = ['draft', 'awaiting-confirmation', 'done', 'failed']
+const TASK_SCHEMA_VERSIONS = [1, 2]
+const SOURCE_STATUSES = ['analyzed', 'changed', 'unavailable', 'unverified']
 const TASK_TYPES = ['new-page', 'incremental', 'bug-fix', 'refactor']
 const TASK_STAGES = ['inspect', 'plan', 'confirm', 'implement', 'verify', 'report']
 const TASK_STAGE_FIELDS = ['status', 'lastRun', 'notes']
 const TASK_OVERRIDE_KEYS = ['missingFact', 'impact', 'assumption', 'userDecision', 'followUp']
+const ACCEPTANCE_DIMENSIONS = ['visual', 'behavior', 'data', 'engineering']
+const ACCEPTANCE_STATUSES = ['passed', 'failed', 'unverified']
+const isPlainRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value)
+
+function checkEvidenceReference(root, reference, rel, errors) {
+  if (!isPlainRecord(reference) || typeof reference.path !== 'string' || typeof reference.sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(reference.sha256)) {
+    errors.push(diagnostic('PE021', rel, 'acceptanceEvidence 引用须为 {path, sha256}，sha256 为 64 位十六进制。', '补全证据引用字段。'))
+    return
+  }
+  const evidencePath = reference.path
+  const segments = evidencePath.split('/')
+  if (evidencePath === '' || isAbsolute(evidencePath) || evidencePath.includes(String.fromCharCode(92)) || evidencePath.includes(':') || /[\x00-\x1f]/.test(evidencePath) || segments.some((segment) => segment === '' || segment === '.' || segment === '..')) {
+    errors.push(diagnostic('PE021', rel, `acceptanceEvidence.path「${evidencePath}」须为仓内相对路径，禁止绝对/穿越/反斜杠/冒号/控制字符。`, '证据文件必须留在仓库内。'))
+    return
+  }
+  let current = root
+  for (const [index, segment] of segments.entries()) {
+    current = join(current, segment)
+    let entry = null
+    try {
+      entry = lstatSync(current)
+    } catch {
+      entry = null
+    }
+    if (!entry) {
+      errors.push(diagnostic('PE021', rel, `acceptanceEvidence 引用文件缺失：${evidencePath}`, '留存证据文件不存在。'))
+      return
+    }
+    if (entry.isSymbolicLink()) {
+      errors.push(diagnostic('PE021', rel, `acceptanceEvidence 路径含符号链接/junction：${evidencePath}`, '证据不得经链接引用。'))
+      return
+    }
+    if (index < segments.length - 1 && !entry.isDirectory()) {
+      errors.push(diagnostic('PE021', rel, `acceptanceEvidence 路径中段不是目录：${evidencePath}`, '修正证据路径。'))
+      return
+    }
+    if (index === segments.length - 1 && !entry.isFile()) {
+      errors.push(diagnostic('PE021', rel, `acceptanceEvidence 引用不是普通文件：${evidencePath}`, '证据须为普通文件。'))
+      return
+    }
+  }
+  let trustedRoot = null
+  try {
+    trustedRoot = realpathSync(root)
+  } catch {
+    errors.push(diagnostic('PE021', rel, 'acceptanceEvidence 校验根无法解析（realpath）。', '校验根不可用，证据按未验证处理。'))
+    return
+  }
+  let resolvedPath = null
+  try {
+    resolvedPath = realpathSync(current)
+  } catch {
+    errors.push(diagnostic('PE021', rel, `acceptanceEvidence 路径无法解析（realpath）：${evidencePath}`, '修正证据路径。'))
+    return
+  }
+  const resolvedRelative = relative(trustedRoot, resolvedPath)
+  if (isAbsolute(resolvedRelative) || resolvedRelative === '..' || resolvedRelative.startsWith('..' + sep)) {
+    errors.push(diagnostic('PE021', rel, `acceptanceEvidence 解析后越出仓库根：${evidencePath}`, '证据必须物理留在仓库内。'))
+    return
+  }
+  let bytes = null
+  try {
+    bytes = readFileSync(resolvedPath)
+  } catch {
+    errors.push(diagnostic('PE021', rel, `acceptanceEvidence 证据文件读取失败：${evidencePath}`, '读取失败按未验证处理。'))
+    return
+  }
+  if (bytes.length === 0) {
+    errors.push(diagnostic('PE021', rel, `acceptanceEvidence 引用文件为空：${evidencePath}`, '空文件不是留存证据。'))
+    return
+  }
+  if (createHash('sha256').update(bytes).digest('hex') !== reference.sha256) {
+    errors.push(diagnostic('PE021', rel, `acceptanceEvidence 哈希与当前字节不一致：${evidencePath}`, '证据内容已变更，需重新留证。'))
+  }
+}
 
 export function validateTaskRecords(root) {
   const errors = []
@@ -447,8 +527,12 @@ export function validateTaskRecords(root) {
       errors.push(diagnostic('PE021', rel, 'STATE.json 必须是有效 JSON。', '任务状态文件损坏；修复或重建后再验收。'))
       return
     }
-    if (state.schemaVersion !== 1) {
-      errors.push(diagnostic('PE021', rel, 'schemaVersion 必须为 1。', '对齐 task-state 模板。'))
+    if (!isPlainRecord(state)) {
+      errors.push(diagnostic('PE021', rel, 'STATE.json 根必须是 JSON 对象。', '任务状态结构损坏；修复或重建后再验收。'))
+      return
+    }
+    if (!TASK_SCHEMA_VERSIONS.includes(state.schemaVersion)) {
+      errors.push(diagnostic('PE021', rel, `schemaVersion「${state.schemaVersion}」不在 ${TASK_SCHEMA_VERSIONS.join('/')}（2 为当前版，1 为历史兼容）。`, '对齐 task-state.md 词表。'))
     }
     if (!TASK_TYPES.includes(state.taskType)) {
       errors.push(diagnostic('PE021', rel, `taskType「${state.taskType}」不在 ${TASK_TYPES.join('/')}。`, '对齐 task-state.md 词表。'))
@@ -460,8 +544,8 @@ export function validateTaskRecords(root) {
       errors.push(diagnostic('PE021', rel, `currentStage「${state.currentStage}」不在六阶段集合。`, '对齐 task-state.md 词表。'))
     }
     for (const [source, value] of Object.entries(state.sourceStatus ?? {})) {
-      if (value !== 'analyzed') {
-        errors.push(diagnostic('PE021', rel, `sourceStatus[${source}] 值「${value}」不合法（收敛集仅 analyzed）。`, '对齐 task-state.md 词表。'))
+      if (!SOURCE_STATUSES.includes(value)) {
+        errors.push(diagnostic('PE021', rel, `sourceStatus[${source}] 值「${value}」不在 ${SOURCE_STATUSES.join('/')}。`, '对齐 task-state.md 词表。'))
       }
     }
     const confirmation = state.plan?.confirmation
@@ -485,6 +569,48 @@ export function validateTaskRecords(root) {
       const missing = TASK_OVERRIDE_KEYS.filter((key) => !(key in (override ?? {})))
       if (missing.length) {
         errors.push(diagnostic('PE021', rel, `overrides[${index}] 缺五要素：${missing.join('、')}。`, 'override 必须记录 missingFact/impact/assumption/userDecision/followUp。'))
+      }
+    }
+    const acceptance = state.acceptance
+    const acceptanceValid = isPlainRecord(acceptance)
+    if (acceptance !== undefined && !acceptanceValid) {
+      errors.push(diagnostic('PE021', rel, 'acceptance 必须是对象（维度 → passed/failed/unverified）。', '对齐验收四维词表。'))
+    }
+    if (acceptanceValid) {
+      for (const [dimension, status] of Object.entries(acceptance)) {
+        if (!ACCEPTANCE_DIMENSIONS.includes(dimension)) {
+          errors.push(diagnostic('PE021', rel, `acceptance 维度「${dimension}」未登记（${ACCEPTANCE_DIMENSIONS.join('/')}）。`, '对齐验收四维词表。'))
+        }
+        if (!ACCEPTANCE_STATUSES.includes(status)) {
+          errors.push(diagnostic('PE021', rel, `acceptance[${dimension}] 状态「${status}」不在 ${ACCEPTANCE_STATUSES.join('/')}。`, '如实报告 passed/failed/unverified。'))
+        }
+      }
+    }
+    const evidence = state.acceptanceEvidence
+    const evidenceValid = isPlainRecord(evidence)
+    if (evidence !== undefined && !evidenceValid) {
+      errors.push(diagnostic('PE021', rel, 'acceptanceEvidence 必须是对象（维度 → 引用数组）。', '证据按维度分组。'))
+    }
+    if (evidenceValid) {
+      for (const [dimension, references] of Object.entries(evidence)) {
+        if (!ACCEPTANCE_DIMENSIONS.includes(dimension)) {
+          errors.push(diagnostic('PE021', rel, `acceptanceEvidence 维度「${dimension}」未登记（${ACCEPTANCE_DIMENSIONS.join('/')}）。`, '对齐验收四维词表。'))
+          continue
+        }
+        if (!Array.isArray(references)) {
+          errors.push(diagnostic('PE021', rel, `acceptanceEvidence[${dimension}] 须为引用数组。`, '每维至少一份 {path, sha256}。'))
+          continue
+        }
+        for (const reference of references) checkEvidenceReference(root, reference, rel, errors)
+      }
+    }
+    if (acceptanceValid) {
+      for (const [dimension, status] of Object.entries(acceptance)) {
+        if (status !== 'passed' || !ACCEPTANCE_DIMENSIONS.includes(dimension)) continue
+        const references = evidenceValid ? evidence[dimension] : undefined
+        if (!Array.isArray(references) || references.length === 0) {
+          errors.push(diagnostic('PE021', rel, `acceptance[${dimension}] 为 passed 但缺非空 acceptanceEvidence 证据。`, '显式通过必须绑定留存证据；不能补证则如实降为 unverified。'))
+        }
       }
     }
   }

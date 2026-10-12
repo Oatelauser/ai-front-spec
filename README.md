@@ -1,6 +1,11 @@
 # ai-front-spec
 
-[![CI](https://github.com/Oatelauser/ai-front-spec/actions/workflows/ci.yml/badge.svg)](https://github.com/Oatelauser/ai-front-spec/actions/workflows/ci.yml) [![vendored-check](https://github.com/Oatelauser/ai-front-spec/actions/workflows/vendored-check.yml/badge.svg)](https://github.com/Oatelauser/ai-front-spec/actions/workflows/vendored-check.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Node >=20](https://img.shields.io/badge/node-%E2%89%A5%2020-green.svg)](https://nodejs.org)
+[![CI](https://github.com/Oatelauser/ai-front-spec/actions/workflows/ci.yml/badge.svg)](https://github.com/Oatelauser/ai-front-spec/actions/workflows/ci.yml) [![vendored-check](https://github.com/Oatelauser/ai-front-spec/actions/workflows/vendored-check.yml/badge.svg)](https://github.com/Oatelauser/ai-front-spec/actions/workflows/vendored-check.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Node 22/25](https://img.shields.io/badge/node-22%20%2F%2025-green.svg)](https://nodejs.org)
+
+## 运行环境与支持边界
+
+- 建议使用当前已验证的 Node.js 22（实测 v22.23.3）或 25（实测 v25.0.0）；**Node 20 不作兼容保证、不列入承诺 CI 矩阵**。其它未测版本与操作系统不自动认证。
+- Windows 已有实证；CI 声明的 ubuntu/windows 轴保留但 Linux 尚未实测，真实 GitHub Actions 编排亦未验证。
 
 **面向 Codex 和 Claude Code 的前端项目 AI 规则 Starter** —— 把项目事实、任务路由、设计流程、实现流程和验收要求放进仓库：智能体先读约束、再做修改、用证据交付，不做「看起来好了」式开发。
 
@@ -56,6 +61,7 @@ $frontend-task report
 .agents/skills/        Skill 人工源
 .claude/skills/        Claude Code 自动镜像
 .toolkit/              校验器、镜像脚本和安装期运行文件
+tools/mcp/             随包 MCP 工具（chrome-devtools-mcp 与 Codex 接入片段）
 scripts/               Starter 构建、升级、移除工具
 docs/tasks/            设计与前端任务手册
 docs/operations/       安装、能力、升级、CI 与故障排查手册

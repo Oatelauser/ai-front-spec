@@ -35,6 +35,14 @@
 - 秘密与敏感数据：[检查结果]
 - 生成文件、重复基础设施和兼容性：[检查结果]
 
+证据关联（STATE.json）：
+- acceptanceEvidence 按 visual/behavior/data/engineering 四维引用仓内留存文件，元素为 {path, sha256}（仓内相对普通文件路径 + 当前字节的 SHA-256，64 位小写十六进制）
+- 显式 passed 的维度至少关联一份当前哈希一致的非空文件；不适用、豁免或被阻塞的维度在此写明理由，不冒充 passed
+- done 仅表示执行收尾，done + unverified 合法，不据此推定验收通过
+- 旧记录显式 passed 但无留存证据的，补证或如实降为 unverified
+- 哈希一致只证明文件存在且未漂移，不证明结论真实；实际动作与结论仍以本文档与审查为准
+- 起草占位用反引号路径示例（如 `docs/tasks/<task-id>/assets/run.log`）；示例非证据，只有已留存的真实非空仓内文件及当前匹配 SHA 才可用于 passed
+
 未验证项：
 - [无，或具体阻塞、风险和继续条件]
 ```

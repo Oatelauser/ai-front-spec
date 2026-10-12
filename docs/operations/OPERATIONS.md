@@ -38,7 +38,7 @@ CI 的存在目的：在 GitHub 干净环境验证仓库健康（不受本地工
 
 ### `ci.yml`：测试、校验与发布
 
-`main` push 和 `v*` tag 触发；Ubuntu/Windows 双系统 + Node 22 跑单元测试和 strict 校验。推 `v*` tag 时额外执行：校验 tag 与根目录 manifest 版本一致（不一致直接失败）→ 构建干净副本 → 打 zip → 自动创建 Release。因此发布动作就是推一个匹配版本的 tag；产物只信 CI 生成的，不手工修改。
+`main` push、`v*` tag 与 PR 触发；声明 Ubuntu/Windows 双系统 × Node 22/25 矩阵（Windows 已本地实测该两版，Linux 与真实 Actions 编排未验证）跑单元测试和 strict 校验。推 `v*` tag 时 release 受 `release-policy` 前置门禁约束：当前公开发布暂停（该 job 无条件非零退出，源码级实现、未部署远端），恢复须明确批准与材料核查；此前描述的「推 tag 即自动发布」在暂停期内不生效。
 
 ### `vendored-check.yml`：上游技能版本巡检
 

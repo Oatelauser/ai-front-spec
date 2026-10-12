@@ -66,7 +66,7 @@ When sources conflict, record the region/field, source A/B, impact, recommended 
 
 ## Required behavior
 
-1. Before every stage, read `AGENTS.md`, `docs/PROJECT_PROFILE.md` (including `支持端与运行环境`), `.toolkit/profile-state.json` (`deliveryTargets`), the task contract, frontend guidance, conventions, and `docs/rules/AI_COMPONENT_CATALOG.md`. Load only the source-specific reference that matches the input.
+1. Before first execution, read `AGENTS.md`, `docs/PROJECT_PROFILE.md` (including `支持端与运行环境`), `.toolkit/profile-state.json` (`deliveryTargets`), the task contract, frontend guidance, conventions, and `docs/rules/AI_COMPONENT_CATALOG.md`. Re-read them via tools at the start of every stage (hard gate in `references/common-workflow.md` §0): before the first dependent write in implement and before adopting any verify evidence, this stage's actual reads must already exist. Load only the source-specific reference that matches the input.
 2. Inspect the repository and task evidence before planning. Determine `taskType`, `impactModes`, source responsibility, target routes, and high-impact gaps before implementation.
 3. If profile facts, `deliveryTargets`, or component-catalog facts are missing, draft, deferred, or conflicted, identify whether the gap has high impact. Never force profile completion and never silently invent framework, route, API, permission, target, component variant, or acceptance facts. For `deliveryTargets` gaps (missing, conflicted, deferred, or page declarations exceeding the confirmed set), route to `$project-profile update` with no task-scoped bypass.
 4. When a visible UI reference is provided, record its path or URL, version/date, source viewport/CSS viewport/DPR when known, affected regions/states, and acceptance criteria. For screenshots, inspect actual image dimensions and preserve the original baseline.
@@ -76,7 +76,7 @@ When sources conflict, record the region/field, source A/B, impact, recommended 
 8. For `bug-fix`, reproduce before changing code and replay the original failure plus adjacent normal paths after the fix. If the defect cannot be reproduced, report it as unconfirmed rather than complete.
 9. For `refactor`, prove external equivalence across route, behavior, data, permissions, states, and visual baseline. If equivalence is not the goal, reclassify the changed scope.
 10. Verify confirmed target types plus responsive, theme, interaction, keyboard, accessibility, overflow, console, and API states required by the profile and component catalog. Separate `visual`, `behavior`, `data`, and `engineering` completion status. When the user prefers pointing at the page over describing issues in text, run the acceptance feedback round through the `$page-annotate` contract (open the page, let the user mark regions, read back, fix, reload, re-inject).
-11. Persist complex, visual, multi-round, or resumable work under `docs/tasks/<task>/`; keep simple changes lightweight.
+11. Persist complex, multi-round, resumable work, or work needing retained source comparison or formal acceptance under `docs/tasks/<task>/`, creating only files actually needed; visual impact alone does not force the full record set — visible changes still route through the page flow with actual UI evidence. Keep simple changes lightweight under the two-tier criteria in `references/common-workflow.md` §0.
 
 Read `references/common-workflow.md`, `references/acceptance-matrix.md`, and `references/task-state.md` before implementation or verification.
 

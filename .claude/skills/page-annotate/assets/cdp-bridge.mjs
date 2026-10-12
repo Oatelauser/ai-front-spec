@@ -13,8 +13,9 @@
 import { spawn } from 'node:child_process';
 import { existsSync, readFileSync, mkdtempSync } from 'node:fs';
 import { createServer } from 'node:net';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
+import { pathToFileURL } from 'node:url';
 
 const argv = process.argv.slice(2);
 const cmd = argv[0];
@@ -52,14 +53,35 @@ const pageTarget = async (port, targetId) => {
 };
 
 const openWs = (url) => new Promise((res, rej) => { const ws = new WebSocket(url); ws.onopen = () => res(ws); ws.onerror = () => rej(new Error('WebSocket 连接失败')); });
-const cdp = (ws) => {
+// 导出供 scripts/lib 回归测试直接驱动；超时可注入（默认 30s 不变）。
+export const cdp = (ws, timeoutMs = 30000) => {
   let seq = 0;
   return (method, params) => new Promise((res, rej) => {
     const id = ++seq;
-    const onmsg = (ev) => { const m = JSON.parse(ev.data); if (m.id === id) { ws.removeEventListener('message', onmsg); res(m); } };
+    let timer = null;
+    // 成功/错误/超时/断连统一走 cleanup：clearTimeout + 三个监听器全部移除，
+    // 不留 30s 残留 timer 拖住进程生命周期（F4 教训，有资源级回归测试锁定）。
+    const cleanup = () => {
+      if (timer !== null) clearTimeout(timer);
+      ws.removeEventListener('message', onmsg);
+      ws.removeEventListener('close', onclose);
+      ws.removeEventListener('error', onerror);
+    };
+    const onmsg = (ev) => { const m = JSON.parse(ev.data); if (m.id !== id) return; cleanup(); res(m); };
+    const onclose = () => { cleanup(); rej(new Error(method + ' 连接已关闭')); };
+    const onerror = () => { cleanup(); rej(new Error(method + ' 连接错误')); };
     ws.addEventListener('message', onmsg);
-    ws.send(JSON.stringify({ id, method, params: params || {} }));
-    setTimeout(() => { ws.removeEventListener('message', onmsg); rej(new Error(method + ' 超时（30s）')); }, 30000);
+    ws.addEventListener('close', onclose);
+    ws.addEventListener('error', onerror);
+    // timer 必须先于 send 创建：同步回包在 send 内触发 cleanup 时 timer 已就位，能被真正 clear。
+    timer = setTimeout(() => { cleanup(); rej(new Error(method + ` 超时（${timeoutMs / 1000}s）`)); }, timeoutMs);
+    // 序列化/send 同步抛错时 Promise 会自动拒绝，但资源必须统一清理并保留原始异常（F4 补修）。
+    try {
+      ws.send(JSON.stringify({ id, method, params: params || {} }));
+    } catch (err) {
+      cleanup();
+      rej(err);
+    }
   });
 };
 const evaluate = async (port, expression, targetId) => {
@@ -73,6 +95,9 @@ const evaluate = async (port, expression, targetId) => {
   return msg.result.result;
 };
 
+// CLI 守卫：被 import（测试）时不执行命令分发，只有作为主模块运行才走 CLI。
+const invokedAsScript = process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
+if (invokedAsScript) {
 if (cmd === 'launch') {
   const chrome = opt('--chrome') || findChrome();
   if (!chrome) die('未找到 Chrome（用 --chrome 指定路径，或设 CHROME_PATH）');
@@ -115,4 +140,5 @@ if (cmd === 'launch') {
   console.log(readFileSync(p, 'utf8').trim().split(/\r?\n/)[0]);
 } else {
   die('未知命令。用法见文件头注释：launch / eval / inject / read / user-port');
+}
 }
