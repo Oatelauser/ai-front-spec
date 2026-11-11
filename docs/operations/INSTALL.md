@@ -4,7 +4,7 @@
 
 ## 1. 🧰 环境要求
 
-- Node.js 22 或 25（建议使用当前已验证版本：实测 v22.23.3 / v25.0.0；Node 20 不作兼容保证，见 [README 运行环境与支持边界](../../README.md)）。
+- Node.js 22 或 25（本地实测 v22.23.3 / v25.0.0，GitHub Actions 实测 v22.23.3 / v25.9.0；Node 20 不作兼容保证，系统范围见 [运维手册 CI 矩阵](OPERATIONS.md#4-github-ci)）。
 - Git 可用。
 - Claude Code 或 Codex 任一宿主，且已登录。
 
@@ -43,7 +43,7 @@ node scripts/build-starter.mjs --target <你的项目目录> --accept-mcp
 
 ### 方式二：GitHub Release 下载
 
-在 [Releases](https://github.com/Oatelauser/ai-front-spec/releases) 下载 `ai-front-spec-v<版本>.zip`（CI 从干净副本自动构建），解压后把内容复制进你的项目根目录。内容与方式一一致；差别是手动复制不执行 `skipIfExists` 保护——目标项目已有 `AGENTS.md`、`CLAUDE.md` 等文件时先自查再覆盖。
+当前新增公开发布暂停，维护侧的最新修复不保证已有 Release 包包含；需要当前源码时使用方式一或方式三。若选用 [Releases](https://github.com/Oatelauser/ai-front-spec/releases) 中既有的 `ai-front-spec-v<版本>.zip`，先核对版本与包内内容，再解压复制进你的项目根目录。手动复制不执行 `skipIfExists` 保护——目标项目已有 `AGENTS.md`、`CLAUDE.md` 等文件时先自查再覆盖。发布暂停与恢复条件见 [运维手册](OPERATIONS.md#5-发布前)。
 
 ### 方式三：源码 zip
 

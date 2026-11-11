@@ -8,6 +8,7 @@ import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync,
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { nativeBash as BASH } from './native-bash.mjs'
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const script = resolve(repoRoot, 'scripts/update-vendored.mjs')
@@ -96,17 +97,6 @@ describe('update-vendored check 三态退出码（F3）', () => {
 
 // F3 补修验证：从工作流 YAML 提取各步骤的 run 脚本，用命令替身（node/gh 函数）在本地 bash 真实执行控制流。
 // 这不是文本匹配，也不是真实 GitHub Actions 运行——步骤级 if:/continue-on-error 属声明式语义，仍用最小结构钉锁定。
-const findBash = () => {
-  const candidates = ['bash']
-  for (const root of [process.env.ProgramFiles, process.env['ProgramFiles(x86)']]) {
-    if (root) candidates.push(join(root, 'Git', 'bin', 'bash.exe'), join(root, 'Git', 'usr', 'bin', 'bash.exe'))
-  }
-  for (const candidate of candidates) {
-    if (spawnSync(candidate, ['-c', 'echo ok'], { encoding: 'utf8' }).status === 0) return candidate
-  }
-  return null
-}
-const BASH = findBash()
 
 // 提取锚点所在步骤的 run: | 脚本块（10 空格缩进），越界到下一个 step 即止
 const extractRunBlock = (anchor) => {

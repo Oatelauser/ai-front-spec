@@ -97,6 +97,30 @@ test('三方基线：更新未定制文件，保留单方定制，双方变化�
   assert.deepEqual(snapshot(target), before)
 })
 
+test('大文件重装报告有界，换行归一与重复差异行不改变保留语义', (context) => {
+  const { source, target, temp, install } = fixture(context)
+  const large = Array.from({ length: 200000 }, (_, index) => `unique-line-${index}\n`).join('')
+  write(join(source, 'docs/a.md'), large)
+  install()
+  const local = large.replace(/\n/g, '\r\n')
+  write(join(target, 'docs/a.md'), local)
+  const reinstall = () => spawnSync(process.execPath, [join(source, 'scripts/build-starter.mjs'), '--target', target], {
+    encoding: 'utf8', timeout: 10000,
+    env: { ...process.env, TMP: temp, TEMP: temp, TMPDIR: temp },
+  })
+  const before = snapshot(target)
+  const equal = reinstall()
+  assert.equal(equal.status, 0, `大文件重装应在时限内退出：${equal.signal}\n${equal.stderr}`)
+  assert.match(equal.stdout, /docs\/a\.md（与新版内容相同/)
+  assert.deepEqual(snapshot(target), before)
+  write(join(target, 'docs/a.md'), local + 'user-only\r\nuser-only\r\n')
+  const customized = snapshot(target)
+  const changed = reinstall()
+  assert.equal(changed.status, 0, `大文件定制报告应在时限内退出：${changed.signal}\n${changed.stderr}`)
+  assert.match(changed.stdout, /docs\/a\.md（与新版有 2 行差异/)
+  assert.deepEqual(snapshot(target), customized)
+})
+
 test('旧安装无基线的差异不覆盖，坏 manifest 不重置', (context) => {
   const { target, run } = fixture(context)
   write(join(target, 'docs/a.md'), 'legacy custom')
