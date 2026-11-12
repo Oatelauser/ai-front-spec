@@ -4,8 +4,9 @@
 
 ## 运行环境与支持边界
 
-- 建议使用当前已验证的 Node.js 22（实测 v22.23.3）或 25（实测 v25.0.0）；**Node 20 不作兼容保证、不列入承诺 CI 矩阵**。其它未测版本与操作系统不自动认证。
-- Windows 已有实证；CI 声明的 ubuntu/windows 轴保留但 Linux 尚未实测，真实 GitHub Actions 编排亦未验证。
+- 建议使用 Node.js 22 或 25：本地实测 v22.23.3 / v25.0.0，GitHub Actions 实测 v22.23.3 / v25.9.0；**Node 20 不作兼容保证、不列入承诺 CI 矩阵**。其它未测版本与操作系统不自动认证。
+- GitHub Actions 已验证 Ubuntu 24.04.5 / Windows Server 2025 × Node 22/25 的 PR、main push 与测试 tag 门禁；范围及运行证据见 [运维手册](docs/operations/OPERATIONS.md#4-github-ci)。这些结果不替代 Codex / Claude Code 的独立模型行为验收。
+- **当前公开发布仍暂停**：远端测试 tag 已实测 `release-policy` 阻断、`release` 跳过；CI 通过不自动恢复发布。
 
 **面向 Codex 和 Claude Code 的前端项目 AI 规则 Starter** —— 把项目事实、任务路由、设计流程、实现流程和验收要求放进仓库：智能体先读约束、再做修改、用证据交付，不做「看起来好了」式开发。
 

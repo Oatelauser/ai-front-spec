@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os'
 import { spawnSync } from 'node:child_process'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { nativeBash as BASH } from './native-bash.mjs'
 
 const repository = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const workflowPath = join(repository, '.github/workflows/ci.yml')
@@ -145,11 +146,12 @@ test('公开发布暂停：独立 release-policy 无条件非零，release 双�
 })
 
 test('暂停脚本真实执行：Git Bash 回放输出暂停标记且非零退出', async () => {
+  assert.ok(BASH, '本机需要经认证的原生 Git Bash（Windows）或 bash（Linux/CI）才能回放暂停脚本')
   const workflow = loadWorkflow()
   const runText = workflow.jobs['release-policy'].steps.find((step) => step.run).run
   const venue = await mkdtemp(join(tmpdir(), 'ci-policy-'))
   try {
-    const replay = spawnSync('bash', ['-c', runText], { encoding: 'utf8', cwd: venue })
+    const replay = spawnSync(BASH, ['-c', runText], { encoding: 'utf8', cwd: venue })
     assert.notEqual(replay.status, 0, '暂停脚本必须非零退出')
     assert.ok(replay.stdout.includes(policyMarker), '退出前必须先输出暂停标记：' + replay.stdout + replay.stderr)
     assert.equal(replay.stderr.includes('gh '), false, '本地回放不得触发真实 gh 调用')

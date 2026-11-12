@@ -1,4 +1,4 @@
-# Frontend task records and state
+﻿# Frontend task records and state
 
 Persist complex, multi-round or resumable work, or work needing retained source comparison or formal acceptance, under `docs/tasks/<task-id>/` (visual impact alone does not force this directory — see common-workflow.md §0; visible changes still produce actual UI evidence):
 

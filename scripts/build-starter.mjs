@@ -495,7 +495,9 @@ if (overlay) {
     if (stockText === null || userText === null) { console.log(`  跳过：${rel}`); continue }
     const norm = (t) => t.replace(/\r\n/g, '\n').split('\n')
     const [a, b] = [norm(stockText), norm(userText)]
-    const diff = a.filter((line) => !b.includes(line)).length + b.filter((line) => !a.includes(line)).length
+    const aLines = new Set(a)
+    const bLines = new Set(b)
+    const diff = a.filter((line) => !bLines.has(line)).length + b.filter((line) => !aLines.has(line)).length
     console.log(diff === 0 ? `  跳过：${rel}（与新版内容相同，不代表历史基线）` : `  跳过：${rel}（与新版有 ${diff} 行差异；保留现状，需人工核对后采纳）`)
   }
   // 退役技能检测：目标里存在而新版名册没有的技能目录（如 playwright → playwright-cli 改名后的旧目录），提示手工清理。

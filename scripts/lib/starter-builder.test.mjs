@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join, resolve, sep } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { nativeBash as BASH } from './native-bash.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const builder = join(root, 'scripts/build-starter.mjs')
@@ -94,6 +95,7 @@ test('release 产物在 checkout 外构建打包，构建/打包/发布路径一
 })
 
 test('release 命令回放：RUNNER_TEMP 含空格时目标与产物均为单一参数', async () => {
+  assert.ok(BASH, '本机需要经认证的原生 Git Bash（Windows）或 bash（Linux/CI）才能回放 release 命令')
   const ci = await readFile(join(root, '.github/workflows/ci.yml'), 'utf8')
   const release = ci.slice(ci.indexOf('  release:'))
   const commands = []
@@ -130,7 +132,7 @@ test('release 命令回放：RUNNER_TEMP 含空格时目标与产物均为单一
       ...commands,
       'echo replay-ok',
     ].join('\n')
-    const run = spawnSync('bash', ['-c', script], { encoding: 'utf8' })
+    const run = spawnSync(BASH, ['-c', script], { encoding: 'utf8' })
     assert.equal(run.status, 0, '回放脚本应整体成功（stub 隔离，无真实远端调用）：\n' + script + '\n---\n' + run.stdout + run.stderr)
     const logged = await readFile(record, 'utf8')
     assert.ok(logged.includes('target=[' + runnerTemp + '/dist-starter]'), '构建目标须为单一参数且含空格路径完整：\n' + logged)
